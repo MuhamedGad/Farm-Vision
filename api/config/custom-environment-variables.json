@@ -1,0 +1,11 @@
+{
+    "seckey": "seckeyvariable",
+    "dbConfig": {
+        "host": "host",
+        "user": "user",
+        "password": "password",
+        "database": "database",
+        "port": "port",
+        "dialect": "dialect"
+    }
+}

@@ -1,0 +1,1 @@
+module.exports = ['Ash weevil','Blister beetle','Fruit Fly','Fruit moth' ,'Hellula' ,'Leaf webber','Leuci','Mealy Bug','Pieris','Plutella aug','root_grubs','schizaphis_graminum','Uroleucon_compositae','Whitefly']

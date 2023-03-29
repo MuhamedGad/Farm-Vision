@@ -1,0 +1,20 @@
+const express = require("express")
+const router = express.Router()
+const userController = require("../controllers/userController.js")
+const validID = require("../middlewares/checkValidIDMW")
+const createUserValidator = require("../middlewares/createUserValidatorMW")
+const updateUserValidator = require("../middlewares/updateUserValidatorMW")
+const encryptPassword = require("../middlewares/ecryptPasswordMW")
+const authrization = require("../middlewares/authrizationMW")
+const checkUserFound = require("../middlewares/checkUserFoundMW")
+const checkPermission = require("../middlewares/checkPermissionMW")
+const confirmPassword = require("../middlewares/confirmPasswordMW")
+const checkAdmin = require("../middlewares/checkAdminMW")
+
+router.get("/", authrization, checkAdmin, userController.getAllUsers)
+router.get("/:id", validID, authrization, checkPermission, checkUserFound, userController.getUserByID)
+router.post("/", createUserValidator, confirmPassword, encryptPassword, userController.createUser)
+router.put("/:id", validID, authrization, checkPermission, updateUserValidator, checkUserFound, userController.updateUser)
+router.delete("/:id", validID, authrization, checkPermission, checkUserFound, userController.deleteUser)
+
+module.exports = router
