@@ -110,7 +110,6 @@ function EditProfile({ show, onHide, user, userImg, handleRefetch }) {
         toastMsg("error", err.response.data.message);
       });
   };
-
   return (
     <Modal
       show={show}
@@ -302,18 +301,20 @@ function EditProfile({ show, onHide, user, userImg, handleRefetch }) {
                     }}
                     className="flex flex-col gap-2 text-lg text-emerald-600 font-semibold"
                   >
-                    <Form.FloatingLabel>
-                      <Form.Control
-                        value={oldPassword}
-                        onChange={(e) => setOldPassword(e.target.value)}
-                        type="password"
-                        placeholder="oldPassword"
-                        className="form-field"
-                      />
-                      <Form.Label htmlFor="oldPassword">
-                        old Password *
-                      </Form.Label>
-                    </Form.FloatingLabel>
+                    {!auth.admin && (
+                      <Form.FloatingLabel>
+                        <Form.Control
+                          value={oldPassword}
+                          onChange={(e) => setOldPassword(e.target.value)}
+                          type="password"
+                          placeholder="oldPassword"
+                          className="form-field"
+                        />
+                        <Form.Label htmlFor="oldPassword">
+                          old Password *
+                        </Form.Label>
+                      </Form.FloatingLabel>
+                    )}
                     <Form.FloatingLabel>
                       <Form.Control
                         value={password}

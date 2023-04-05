@@ -28,7 +28,7 @@ function PlantDiseaseApp() {
           modelType == "modelv2" &&
             axios
               .get(
-                "http://localhost:3001/modelv2image/" + res.data["image"],
+                "http://192.168.0.101:3001/modelv2image/" + res.data["image"],
                 {
                   responseType: "blob",
                 }
@@ -69,7 +69,8 @@ function PlantDiseaseApp() {
         disabled={loading}
       />
       <ButtonGroup className="flex justify-center">
-        <Btn isLoading={loading} model={process} modelType={"modelv2"}/>
+        <Btn isLoading={loading} model={process} modelType={"modelv1"} />
+        <Btn isLoading={loading} model={process} modelType={"modelv2"} />
       </ButtonGroup>
     </Form>
   );
