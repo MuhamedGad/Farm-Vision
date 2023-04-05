@@ -1,5 +1,5 @@
 import axios from "axios";
 
 export default axios.create({
-  baseURL: "https://smart-farm.onrender.com/api",
+  baseURL: "http://localhost:8888/api",
 });

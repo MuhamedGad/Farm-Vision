@@ -30,7 +30,7 @@ router.put("/:id", validID, authrization, checkPermission, checkUserFound, uploa
             token
         })
     }
-
+    
     let imgsrc = req.file.filename
     if(user.image !== "logo.jpg"){
         let directoryPath = __dirname.replace("routes", "public/images/")
