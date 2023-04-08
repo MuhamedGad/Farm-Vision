@@ -34,9 +34,9 @@ User.hasMany(Post, {
 })
 Post.belongsTo(User);
 
-// Like Relation Between User and Post
-User.belongsToMany(Post, { through: 'PostLike' });
-Post.belongsToMany(User, { through: 'PostLike' });
+// // Like Relation Between User and Post
+// User.belongsToMany(Post, { through: 'PostLike' });
+// Post.belongsToMany(User, { through: 'PostLike' });
 
 (async () => {
     await Post.sync({alter:true});

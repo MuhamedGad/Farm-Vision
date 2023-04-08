@@ -44,9 +44,9 @@ Comment.hasMany(Comment, {
 })
 Comment.belongsTo(Comment);
 
-// Like Relation Between User and Comment
-User.belongsToMany(Comment, { through: 'CommentLike' });
-Comment.belongsToMany(User, { through: 'CommentLike' });
+// // Like Relation Between User and Comment
+// User.belongsToMany(Comment, { through: 'CommentLike' });
+// Comment.belongsToMany(User, { through: 'CommentLike' });
 
 (async () => {
     await Comment.sync({alter:true});
