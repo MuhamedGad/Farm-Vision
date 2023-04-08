@@ -2,7 +2,7 @@ const config = require("config")
 const jwt = require("jsonwebtoken")
 const userModel = require("../models/User")
 const tokenModel = require("../models/Token")
-const sequelize = require("../models/Sequelize")
+const sequelize = require("../models/sequelize")
 
 let checkPassOfCreateAdmin = (req, res, next) => {
     let pass = req.params.password
