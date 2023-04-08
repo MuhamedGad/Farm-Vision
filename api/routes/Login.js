@@ -6,7 +6,7 @@ const tokenModel = require("../models/Token")
 const loginValidator = require("../middlewares/loginValidatorMW")
 const jwt = require("jsonwebtoken")
 const config = require("config")
-const sequelize = require("../models/Sequelize")
+const sequelize = require("../models/sequelize")
 
 router.post("/", loginValidator, async (req, res) => {
     try {

@@ -3,7 +3,7 @@ const router = express.Router()
 const tokenModel = require("../models/Token")
 const userModel = require("../models/User")
 const authrization = require("../middlewares/authrizationMW")
-const sequelize = require("../models/Sequelize")
+const sequelize = require("../models/sequelize")
 
 router.post("/", authrization, async (req, res) => {
     let token = req.header("x-auth-token"),
