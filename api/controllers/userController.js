@@ -1,9 +1,13 @@
 const userModel = require("../models/User")
 const tokenModel = require("../models/Token")
+const post = require("../models/Post")
+const comment = require("../models/Comment")
+const postTags = require("../models/PostTags")
+const UserFeatures = require("../models/UserFeatures")
 const fs = require("fs")
 const jwt = require("jsonwebtoken")
 const config = require("config")
-const sequelize = require("../models/Sequelize")
+const sequelize = require("../models/sequelize")
 
 let catchFunc = (type, err, token) => {
     return res.status(500).json({

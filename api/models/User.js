@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize")
-const sequelize = require("./Sequelize")
+const sequelize = require("./sequelize")
 
 const User = sequelize.define('User', {
   // Model attributes are defined here
@@ -78,7 +78,7 @@ const User = sequelize.define('User', {
 });
 
 (async () => {
-  await User.sync({alter:true});
+  await User.sync({ alter: true });
 })();
 
 module.exports = User
