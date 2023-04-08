@@ -19,7 +19,7 @@ function Btn({ model, isLoading, modelType }) {
           Processing
         </>
       ) : (
-        `Process`
+        `Process ${modelType}`
       )}
     </Button>
   );

@@ -31,6 +31,7 @@ function Dashboard() {
   const [loading, setLoading] = useLoader();
   const [showEdit, setShowEdit] = useState(false);
   const userImg = useUserImage();
+  const [userSelected, setUserSelected] = useState(null);
   const getUsers = async () => {
     setLoading(true);
     await axios
@@ -90,7 +91,7 @@ function Dashboard() {
     getUsers();
   }, [refetch]);
   return (
-    <div className="flex flex-col items-center px-3 gap-4">
+    <Container className="flex flex-col items-center px-3 gap-4">
       {userDisplayed && (
         <Details
           user={userDisplayed}
@@ -98,11 +99,19 @@ function Dashboard() {
           onHide={() => setShowDetails(false)}
         />
       )}
-
-      <h1 className="text-6xl w-full flex justify-between items-center">
+      {userSelected && (
+        <EditProfile
+          show={showEdit}
+          onHide={() => setShowEdit(false)}
+          user={userSelected}
+          userImg={userImg}
+          handleRefetch={handleRefetch}
+        />
+      )}
+      <h1 className="text-6xl w-full flex justify-between items-center bg-gray-200 p-2 rounded-md">
         <u>Users</u> <Button className="bg-blue-600">Add User</Button>
       </h1>
-      <Container>
+      <div>
         <Row className="gap-2">
           {users.map((user) => {
             return (
@@ -164,18 +173,14 @@ function Dashboard() {
                             Details
                           </Dropdown.Item>
                           <Dropdown.Item
-                            onClick={() => setShowEdit(true)}
+                            onClick={() => {
+                              setShowEdit(true);
+                              setUserSelected(user);
+                            }}
                             className="hover:text-white text-center hover:bg-yellow-500 active:bg-yellow-500"
                           >
                             Edit
                           </Dropdown.Item>
-                          <EditProfile
-                            show={showEdit}
-                            onHide={() => setShowEdit(false)}
-                            user={user}
-                            userImg={userImg}
-                            handleRefetch={handleRefetch}
-                          />
                         </Dropdown.Menu>
                       </Dropdown>
                     </Card.Title>
@@ -189,8 +194,8 @@ function Dashboard() {
             );
           })}
         </Row>
-      </Container>
-    </div>
+      </div>
+    </Container>
   );
 }
 
