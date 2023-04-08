@@ -9,7 +9,7 @@ const config = require("config")
 //   dialect:"mysql"
 // }
 const dbConfig = {
-  host    : "dpg-cg5lcf4eoogsv90200q0-a",
+  host    : "dpg-cg5lcf4eoogsv90200q0-a.oregon-postgres.render.com",
   user    : "smart_farm",
   password: "HzwOrOrxsYlPfQTKTOxranWnnpuLKFkw",
   database: "smart_farm",
