@@ -4,10 +4,10 @@ const fs = require("fs")
 const jwt = require("jsonwebtoken")
 const config = require("config")
 const sequelize = require("../models/sequelize")
-const { op } = require("sequelize")
+const { Op } = require("sequelize")
 const deviceDetector = require("device-detector-js")
 
-let catchFunc = (type, err) => {
+let catchFunc = (res, type, err) => {
     return res.status(500).json({
         message: type + " User Error: " + err
     })
@@ -33,14 +33,14 @@ let getAllUsers = async (req, res) => {
             message: "Not found any users :("
         })
     } catch (err) {
-        catchFunc("Get All", err)
+        catchFunc(res, "Get All", err)
     }
 }
 
 let createUser = async (req, res) => {
     try {
         let user = await userModel.findOne({ where: {
-            [op.or]: [
+            [Op.or]: [
                 { email: req.body.email },
                 { phoneNumber: req.body.phoneNumber }
             ]
@@ -76,17 +76,17 @@ let createUser = async (req, res) => {
         const detector = new deviceDetector();
         const device = detector.parse(req.header("user-agent"));
 
-        tokenData["clientName"] = device.client.name
-        tokenData["clientType"] = device.client.type
-        tokenData["clientVersion"] = device.client.version
-        tokenData["clientEngine"] = device.client.engine
-        tokenData["clientEngineVersion"] = device.client.engineVersion
-        tokenData["osName"] = device.os.name
-        tokenData["osVersion"] = device.os.version
-        tokenData["osPlatform"] = device.os.platform
-        tokenData["deviceType"] = device.device.type
-        tokenData["deviceBrand"] = device.device.brand
-        tokenData["deviceModel"] = device.device.model
+        tokenData["clientName"] = (device.client)?device.client.name:device.client
+        tokenData["clientType"] = (device.client)?device.client.type:device.client
+        tokenData["clientVersion"] = (device.client)?device.client.version:device.client
+        tokenData["clientEngine"] = (device.client)?device.client.engine:device.client
+        tokenData["clientEngineVersion"] = (device.client)?device.client.engineVersion:device.client
+        tokenData["osName"] = (device.os)?device.os.name:device.os
+        tokenData["osVersion"] = (device.os)?device.os.version:device.os
+        tokenData["osPlatform"] = (device.os)?device.os.platform:device.os
+        tokenData["deviceType"] = (device.device)?device.device.type:device.device
+        tokenData["deviceBrand"] = (device.device)?device.device.brand:device.device
+        tokenData["deviceModel"] = (device.device)?device.device.model:device.device
         tokenData["bot"] = device.bot
 
         await sequelize.transaction(async (t) => {
@@ -118,10 +118,10 @@ let updateUser = async (req, res) => {
             userData = {}
 
         let testUser = await userModel.findOne({ where: {
-            [op.or]: [{ email: req.body.email }, { phoneNumber: req.body.phoneNumber }]
+            [Op.or]: [{ email: req.body.email }, { phoneNumber: req.body.phoneNumber }]
         }})
 
-        if (testUser !== null) return res.status(400).json({
+        if (testUser !== null && user.id !== testUser.id) return res.status(400).json({
             message: "Email or phone number is actually exist :(",
         })
 
@@ -130,14 +130,14 @@ let updateUser = async (req, res) => {
         userData["email"] = req.body.email || user.email
         userData["role"] = req.body.role || user.role
         userData["devicesNumber"] = parseInt(req.body.devicesNumber) || user.devicesNumber
-        userData["phoneNumber"] = req.body.phoneNumber || user.firstName
-        userData["workField"] = req.body.workField || user.firstName
-        userData["usageTarget"] = req.body.usageTarget || user.firstName
-        userData["streetName"] = req.body.streetName || user.firstName
-        userData["city"] = req.body.city || user.firstName
-        userData["state"] = req.body.state || user.firstName
-        userData["country"] = req.body.country || user.firstName
-        userData["postCode"] = req.body.postCode || user.firstName
+        userData["phoneNumber"] = req.body.phoneNumber || user.phoneNumber
+        userData["workField"] = req.body.workField || user.workField
+        userData["usageTarget"] = req.body.usageTarget || user.usageTarget
+        userData["streetName"] = req.body.streetName || user.streetName
+        userData["city"] = req.body.city || user.city
+        userData["state"] = req.body.state || user.state
+        userData["country"] = req.body.country || user.country
+        userData["postCode"] = req.body.postCode || user.postCode
 
         await userModel.update(userData, { where: { id: user.id } })
 
@@ -145,7 +145,7 @@ let updateUser = async (req, res) => {
             message: "User Updated Successfully :)"
         })
     } catch (err) {
-        return catchFunc("Update", err)
+        return catchFunc(res, "Update", err)
     }
 }
 
@@ -170,7 +170,7 @@ let deleteUser = async (req, res) => {
         })
 
     } catch (err) {
-        return catchFunc("Delete", err)
+        return catchFunc(res, "Delete", err)
     }
 }
 

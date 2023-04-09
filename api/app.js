@@ -22,6 +22,11 @@ app.use(helmet()) // add some security variables
 app.use(express.static("./public")) // static folder
 app.use(cors())
 
+// app.post("/", (req, res)=>{
+//   console.log(req.body)
+//   res.json(req.body)
+// })
+
 app.use("/api/user", user)
 app.use("/api/logo", logo)
 app.use("/api/login", login)

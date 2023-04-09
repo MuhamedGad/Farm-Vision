@@ -23,7 +23,6 @@ const User = sequelize.define('User', {
   image: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
     defaultValue: "logo.jpg"
   },
   role: {

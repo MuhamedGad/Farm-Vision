@@ -49,7 +49,7 @@ POST
 | password | password | must not be less than 8 and must be string | false |
 | confirmPassword | password | must not be less than 8 and must be string | false |
 | role | text | must be one of this (farmer, engineer) | false |
-| phoneNumber | number | must be number | false |
+| phoneNumber | number | must be number and less than 11 | false |
 | devicesNumber | number | must be number and default=5 | true |
 | workField | text | must be string | false |
 | usageTarget | text | must be string | false |
@@ -95,7 +95,7 @@ PUT
 | lastName | text | must be string | false |
 | email | email | must be string | false |
 | role | text | must be one of this (farmer, engineer) | false |
-| phoneNumber | number | must be number | false |
+| phoneNumber | number | must be number must be number and less than 11 | false |
 | devicesNumber | number | must be number and default=5 | true |
 | workField | text | must be string | false |
 | usageTarget | text | must be string | false |
@@ -196,7 +196,7 @@ POST
 | password | password | must not be less than 8 and must be string | false |
 | confirmPassword | password | must not be less than 8 and must be string | false |
 | role | text | must be one of this (admin, superAdmin, farmer, engineer) | false |
-| phoneNumber | number | must be number | false |
+| phoneNumber | number | must be number must be number and less than 11 | false |
 | devicesNumber | number | must be number and default=5 | true |
 | workField | text | must be string | false |
 | usageTarget | text | must be string | false |

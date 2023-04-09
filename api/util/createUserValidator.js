@@ -30,6 +30,7 @@ const schema = {
         "phoneNumber":{
             "type":"string",
             "nullable": false,
+            "minLength":11
         },
         "workField":{
             "type":"string",
