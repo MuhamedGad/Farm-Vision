@@ -1,28 +1,8 @@
 const express = require("express")
 const router = express.Router()
-const tokenModel = require("../models/Token")
-const userModel = require("../models/User")
 const authrization = require("../middlewares/authrizationMW")
-const sequelize = require("../models/sequelize")
+const tokenController = require("../controllers/tokenController")
 
-router.post("/", authrization, async (req, res) => {
-    try {
-        let token = req.token,
-            user
-        await sequelize.transaction(async (t) => {
-            await tokenModel.destroy({ where: { token: token.token }, transaction: t })
-            user = await userModel.findOne({ where: { id: token.UserId }, transaction: t })
-            await userModel.update({ loginDevices: user.loginDevices - 1 }, { where: { id: user.id }, transaction: t })
-        });
-
-        return res.status(200).json({
-            message: "Logout Successfully..!"
-        })
-    } catch (err) {
-        return res.status(500).json({
-            message: "Logout Error: " + err
-        })
-    }
-})
+router.post("/", authrization, tokenController.logout)
 
 module.exports = router

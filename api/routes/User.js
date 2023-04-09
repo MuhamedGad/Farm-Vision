@@ -7,14 +7,15 @@ const updateUserValidator = require("../middlewares/updateUserValidatorMW")
 const encryptPassword = require("../middlewares/ecryptPasswordMW")
 const authrization = require("../middlewares/authrizationMW")
 const checkUserFound = require("../middlewares/checkUserFoundMW")
-const checkPermission = require("../middlewares/checkPermissionMW")
+const checkPermission = require("../middlewares/checkPermissionOnUserMW")
 const confirmPassword = require("../middlewares/confirmPasswordMW")
 const checkAdmin = require("../middlewares/checkAdminMW")
+const checkValidUserFeatures = require("../middlewares/userFeaturesValidatorMW.js")
 
 router.get("/", authrization, checkAdmin, userController.getAllUsers)
 router.get("/:id", validID, authrization, checkUserFound, checkPermission, userController.getUserByID)
-router.post("/", createUserValidator, confirmPassword, encryptPassword, userController.createUser)
-router.put("/:id", validID, authrization, checkUserFound, checkPermission, updateUserValidator, userController.updateUser)
+router.post("/", createUserValidator, checkValidUserFeatures, confirmPassword, encryptPassword, userController.createUser)
+router.put("/:id", validID, authrization, checkUserFound, checkPermission, updateUserValidator, checkValidUserFeatures, userController.updateUser)
 router.delete("/:id", validID, authrization, checkUserFound, checkPermission, userController.deleteUser)
 
 module.exports = router

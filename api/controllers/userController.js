@@ -1,11 +1,13 @@
 const userModel = require("../models/User")
 const tokenModel = require("../models/Token")
+const userFeaturesModel = require("../models/UserFeatures")
 const fs = require("fs")
 const jwt = require("jsonwebtoken")
 const config = require("config")
 const sequelize = require("../models/sequelize")
 const { Op } = require("sequelize")
 const deviceDetector = require("device-detector-js")
+const detector = new deviceDetector()
 
 let catchFunc = (res, type, err) => {
     return res.status(500).json({
@@ -39,15 +41,17 @@ let getAllUsers = async (req, res) => {
 
 let createUser = async (req, res) => {
     try {
+        const device = detector.parse(req.header("user-agent"))
         let user = await userModel.findOne({ where: {
             [Op.or]: [
                 { email: req.body.email },
                 { phoneNumber: req.body.phoneNumber }
             ]
-        }}),
-            token,
-            userData = {},
-            tokenData = {}
+        }})
+        let token
+        let userData = {}
+        let tokenData = {}
+        let features = req.body.features
 
         if (user !== null) return res.status(400).json({
             message: "Email or phone number is actually exist :("
@@ -73,9 +77,6 @@ let createUser = async (req, res) => {
         userData["country"] = req.body.country
         userData["postCode"] = req.body.postCode
 
-        const detector = new deviceDetector();
-        const device = detector.parse(req.header("user-agent"));
-
         tokenData["clientName"] = (device.client)?device.client.name:device.client
         tokenData["clientType"] = (device.client)?device.client.type:device.client
         tokenData["clientVersion"] = (device.client)?device.client.version:device.client
@@ -89,13 +90,17 @@ let createUser = async (req, res) => {
         tokenData["deviceModel"] = (device.device)?device.device.model:device.device
         tokenData["bot"] = device.bot
 
+
         await sequelize.transaction(async (t) => {
             user = await userModel.create(userData, { transaction: t })
-
+            if(req.featuresValid){
+                features.forEach(async e => {
+                    await userFeaturesModel.create({feature: e, UserId: user.id}, { transaction: t })
+                })
+            }
             token = jwt.sign({ user_id: user.id, role: user.role }, config.get("seckey"))
             tokenData["token"] = token
             tokenData["UserId"] = user.id
-
             await tokenModel.create(tokenData, { transaction: t })
         })
 
@@ -115,8 +120,9 @@ let createUser = async (req, res) => {
 let updateUser = async (req, res) => {
     try {
         let user = req.user,
-            userData = {}
-
+            userData = {},
+            features = req.body.features
+            
         let testUser = await userModel.findOne({ where: {
             [Op.or]: [{ email: req.body.email }, { phoneNumber: req.body.phoneNumber }]
         }})
@@ -139,7 +145,16 @@ let updateUser = async (req, res) => {
         userData["country"] = req.body.country || user.country
         userData["postCode"] = req.body.postCode || user.postCode
 
-        await userModel.update(userData, { where: { id: user.id } })
+        await sequelize.transaction(async (t) => {
+            if(req.featuresValid){
+                await userFeaturesModel.destroy({ where: { UserId: user.id }, transaction: t })
+                features.forEach(async e => {
+                    await userFeaturesModel.create({feature: e, UserId: user.id}, {transaction: t})
+                })
+            }
+            await userModel.update(userData, { where: { id: user.id }, transaction: t })
+        })
+
 
         return res.status(200).json({
             message: "User Updated Successfully :)"

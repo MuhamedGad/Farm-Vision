@@ -2,6 +2,7 @@ const config = require("config")
 const jwt = require("jsonwebtoken")
 const userModel = require("../models/User")
 const tokenModel = require("../models/Token")
+const userFeaturesModel = require("../models/UserFeatures")
 const sequelize = require("../models/sequelize")
 
 /* let checkPassOfCreateAdmin = (req, res, next) => {
@@ -52,7 +53,8 @@ let addUser = async (req, res) => {
                     { phoneNumber: req.body.phoneNumber }
                 ]
             }}),
-            userData = {}
+            userData = {},
+            features = req.body.features
 
         if (user !== null) return res.status(400).json({
             message: "Email is or phone number actually exist :("
@@ -78,7 +80,15 @@ let addUser = async (req, res) => {
         userData["country"] = req.body.country
         userData["postCode"] = req.body.postCode
 
-        user = await userModel.create(userData)
+        await sequelize.transaction(async (t) => {
+            if(req.featuresValid){
+                features.forEach(async e => {
+                    await userFeaturesModel.create({feature: e, UserId: user.id}, { transaction: t })
+                })
+            }
+            user = await userModel.create(userData, { transaction: t })
+        })
+
 
         return res.status(200).json({
             message: "User Created Successfully :)",

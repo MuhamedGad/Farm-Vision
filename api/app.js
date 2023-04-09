@@ -7,6 +7,7 @@ const port = process.env.PORT || 8888
 const cors = require("cors")
 
 const user = require("./routes/User")
+const token = require("./routes/Token")
 const logo = require("./routes/Logo")
 const login = require("./routes/Login")
 const logout = require("./routes/Logout")
@@ -28,6 +29,7 @@ app.use(cors())
 // })
 
 app.use("/api/user", user)
+app.use("/api/token", token)
 app.use("/api/logo", logo)
 app.use("/api/login", login)
 app.use("/api/logout", logout)

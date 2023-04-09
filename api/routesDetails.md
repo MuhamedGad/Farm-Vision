@@ -58,6 +58,7 @@ POST
 | state | text | must be string | false |
 | country | text | must be string | false |
 | postCode | text | must be string | false |
+| features | checkboxes | must be an array of our project features selected by user | true |
 ---
 ## Get User:
 **Route**:
@@ -104,6 +105,7 @@ PUT
 | state | text | must be string | false |
 | country | text | must be string | false |
 | postCode | text | must be string | false |
+| features | checkboxes | must be an array of our project features selected by user | true |
 ----
 ## Delete User:
 **Route**:
@@ -205,4 +207,5 @@ POST
 | state | text | must be string | false |
 | country | text | must be string | false |
 | postCode | text | must be string | false |
+| features | checkboxes | must be an array of our project features selected by user | true |
 ---

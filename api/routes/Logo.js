@@ -6,7 +6,7 @@ const validID = require("../middlewares/checkValidIDMW")
 const fs = require("fs")
 const authrization = require("../middlewares/authrizationMW")
 const checkUserFound = require("../middlewares/checkUserFoundMW")
-const checkPermission = require("../middlewares/checkPermissionMW")
+const checkPermission = require("../middlewares/checkPermissionOnUserMW")
 
 router.get("/:id", validID, authrization, checkUserFound, checkPermission, (req, res) => {
     let options = {
