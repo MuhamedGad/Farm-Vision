@@ -3,7 +3,7 @@
 ## Some Notes:
 ```
 1- token must send in request header with name "x-auth-token"
-2- URL of the API "https://smart-farm.onrender.com"
+2- URL of the API "https://farm-vision.onrender.com"
 ```
 ---
 ## Sign In:
@@ -48,9 +48,16 @@ POST
 | email | email | must be string | false |
 | password | password | must not be less than 8 and must be string | false |
 | confirmPassword | password | must not be less than 8 and must be string | false |
-| address | text | must be string | false |
+| role | text | must be one of this (farmer, engineer) | false |
 | phoneNumber | number | must be number | false |
 | devicesNumber | number | must be number and default=5 | true |
+| workField | text | must be string | false |
+| usageTarget | text | must be string | false |
+| streetName | text | must be string | false |
+| city | text | must be string | false |
+| state | text | must be string | false |
+| country | text | must be string | false |
+| postCode | text | must be string | false |
 ---
 ## Get User:
 **Route**:
@@ -82,14 +89,21 @@ GET
 PUT
 ```
 **Form**:
-| input name | Type | validate| nullable |
-|--------|------|--------|---------|
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
 | firstName | text | must be string | false |
 | lastName | text | must be string | false |
 | email | email | must be string | false |
-| address | text | must be string | false |
+| role | text | must be one of this (farmer, engineer) | false |
 | phoneNumber | number | must be number | false |
-| devicesNumber | number | must be number and default = 5 | true |
+| devicesNumber | number | must be number and default=5 | true |
+| workField | text | must be string | false |
+| usageTarget | text | must be string | false |
+| streetName | text | must be string | false |
+| city | text | must be string | false |
+| state | text | must be string | false |
+| country | text | must be string | false |
+| postCode | text | must be string | false |
 ----
 ## Delete User:
 **Route**:
@@ -125,7 +139,32 @@ PUT
 |--------|------|
 | image | file |
 ---
-## Update Admin:
+## Update Password:
+**Route**:
+```
+/api/password/:id       - (:id) means id of user that is owner of password
+```
+**Method**:
+```
+PUT
+```
+**Form**:
+
+- if you are owner:
+
+    | input name | Type | validate | nullable |
+    |--------|------|------|-------|
+    | oldPassword | password | must not be less than 8 and must be string | false |
+    | password | password | must not be less than 8 and must be string | false |
+    | confirmPassword | password | must not be less than 8 and must be string | false |
+
+- if you are admin:
+    | input name | Type | validate | nullable |
+    |--------|------|------|-------|
+    | password | password | must not be less than 8 and must be string | false |
+    | confirmPassword | password | must not be less than 8 and must be string | false |
+---
+## Update Role To admin:
 **Route**:
 ```
 /api/admin/:id       - (:id) means id of user that wanted to change its administration
@@ -134,6 +173,10 @@ PUT
 ```
 PUT
 ```
+**Form**:
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
+| role | text | must be one of this (farmer, engineer, admin, superAdmin) | false |
 ---
 ## Add user by admin:
 **Route**:
@@ -152,24 +195,14 @@ POST
 | email | email | must be string | false |
 | password | password | must not be less than 8 and must be string | false |
 | confirmPassword | password | must not be less than 8 and must be string | false |
-| address | text | must be string | false |
+| role | text | must be one of this (admin, superAdmin, farmer, engineer) | false |
 | phoneNumber | number | must be number | false |
-| admin | checkbox | must be boolean & default false | true |
 | devicesNumber | number | must be number and default=5 | true |
----
-## Update Password:
-**Route**:
-```
-/api/password/:id       - (:id) means id of user that is owner of password
-```
-**Method**:
-```
-PUT
-```
-**Form**:
-| input name | Type | validate | nullable |
-|--------|------|------|-------|
-| oldPassword | password | must not be less than 8 and must be string | false |
-| password | password | must not be less than 8 and must be string | false |
-| confirmPassword | password | must not be less than 8 and must be string | false |
+| workField | text | must be string | false |
+| usageTarget | text | must be string | false |
+| streetName | text | must be string | false |
+| city | text | must be string | false |
+| state | text | must be string | false |
+| country | text | must be string | false |
+| postCode | text | must be string | false |
 ---

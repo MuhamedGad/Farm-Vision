@@ -12,9 +12,9 @@ const confirmPassword = require("../middlewares/confirmPasswordMW")
 const checkAdmin = require("../middlewares/checkAdminMW")
 
 router.get("/", authrization, checkAdmin, userController.getAllUsers)
-router.get("/:id", validID, authrization, checkPermission, checkUserFound, userController.getUserByID)
+router.get("/:id", validID, authrization, checkUserFound, checkPermission, userController.getUserByID)
 router.post("/", createUserValidator, confirmPassword, encryptPassword, userController.createUser)
-router.put("/:id", validID, authrization, checkPermission, updateUserValidator, checkUserFound, userController.updateUser)
-router.delete("/:id", validID, authrization, checkPermission, checkUserFound, userController.deleteUser)
+router.put("/:id", validID, authrization, checkUserFound, checkPermission, updateUserValidator, userController.updateUser)
+router.delete("/:id", validID, authrization, checkUserFound, checkPermission, userController.deleteUser)
 
 module.exports = router

@@ -24,16 +24,43 @@ const schema = {
             "type":"string",
             "minLength":8
         },
-        "address":{
-            "type":"string",
-            "nullable": false
+        "role":{
+            enum:["farmer", "engineer"]
         },
         "phoneNumber":{
             "type":"string",
             "nullable": false,
+        },
+        "workField":{
+            "type":"string",
+            "nullable": false,
+        },
+        "usageTarget":{
+            "type":"string",
+            "nullable": false,
+        },
+        "streetName": {
+            "type": "string",
+            "nullable": false
+        },
+        "city": {
+            "type": "string",
+            "nullable": false
+        },
+        "state": {
+            "type": "string",
+            "nullable": false
+        },
+        "country": {
+            "type": "string",
+            "nullable": false
+        },
+        "postCode": {
+            "type": "string",
+            "nullable": false
         }
     },
-    "required":["firstName", "lastName", "email", "password", "confirmPassword", "address", "phoneNumber"]
+    "required":["firstName", "lastName", "email", "password", "confirmPassword", "role", "phoneNumber", "workField", "usageTarget", "streetName", "city", "state", "country", "postCode"]
 }
 
 module.exports = ajv.compile(schema)

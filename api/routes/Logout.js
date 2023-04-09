@@ -6,12 +6,12 @@ const authrization = require("../middlewares/authrizationMW")
 const sequelize = require("../models/sequelize")
 
 router.post("/", authrization, async (req, res) => {
-    let token = req.header("x-auth-token"),
-        user
     try {
+        let token = req.token,
+            user
         await sequelize.transaction(async (t) => {
-            await tokenModel.destroy({ where: { token }, transaction: t })
-            user = await userModel.findOne({ where: { id: req.token.UserId }, transaction: t })
+            await tokenModel.destroy({ where: { token: token.token }, transaction: t })
+            user = await userModel.findOne({ where: { id: token.UserId }, transaction: t })
             await userModel.update({ loginDevices: user.loginDevices - 1 }, { where: { id: user.id }, transaction: t })
         });
 
@@ -20,8 +20,7 @@ router.post("/", authrization, async (req, res) => {
         })
     } catch (err) {
         return res.status(500).json({
-            message: "Logout Error: " + err,
-            token
+            message: "Logout Error: " + err
         })
     }
 })

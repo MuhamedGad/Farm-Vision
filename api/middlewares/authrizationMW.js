@@ -9,8 +9,7 @@ module.exports = async (req, res, next) => {
     try {
         let tokenFromDataBase = await tokenModel.findOne({ where: { token: token } })
         if (tokenFromDataBase === null) return res.status(404).json({
-            message: "Invalid Token :(",
-            token
+            message: "Invalid Token :("
         })
         else {
             req.token = tokenFromDataBase

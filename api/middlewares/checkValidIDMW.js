@@ -3,8 +3,7 @@ module.exports = (req, res, next)=>{
         next()
     }else{
         return res.status(400).json({
-            message: "Invalid ID :(",
-            token: req.header("x-auth-token")
+            message: "Invalid ID :("
         })
     }
 }

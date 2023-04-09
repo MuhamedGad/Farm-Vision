@@ -14,16 +14,6 @@ const admin = require("./routes/Admin")
 const password = require("./routes/Password")
 const aiModel = require("./routes/AIModel")
 
-// app.get("/", (req, res)=>{
-//   const deviceDetectorJs = require("device-detector-js")
-//   const detector = new deviceDetectorJs();
-//   const userAgent = req.header('user-agent')
-//   // const userAgent = 'Mozilla/5.0 (Linux; Android 7.0; SM-G892A Build/NRD90M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/60.0.3112.107 Mobile Safari/537.36';
-//   const device = detector.parse(userAgent);
-//   // console.log(device);
-//   res.json(device)
-// })
-
 // use some built in middlewares
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))

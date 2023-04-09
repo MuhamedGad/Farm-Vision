@@ -2,13 +2,12 @@ const jwt = require("jsonwebtoken")
 const config = require("config")
 
 module.exports = (req, res, next)=>{
-    let token = req.token,
-        user = req.user
-    jwt.verify(token.token, config.get("seckey"), function(err, decoded) {
+    let token = req.token
+    jwt.verify(token, config.get("seckey"), function(err, decoded) {
         if(err) return res.status(500).json({
             message: "JWT verify error: " + err
         })
-        else if(decoded.user_id == user.id || (decoded.role === "admin" && (user.role === "farmer" || user.role === "engineer")) || (decoded.role === "superAdmin" && user.role !== "superAdmin")) {
+        else if(decoded.user_id == req.params.id) {
             req.token.role = decoded.role
             next()
         }

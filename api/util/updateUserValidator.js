@@ -16,13 +16,48 @@ const schema = {
             "type":"string",
             "pattern":".+\@.+\..+"
         },
-        "address":{
+        "password":{
             "type":"string",
-            "nullable": false,
+            "minLength":8
+        },
+        "confirmPassword":{
+            "type":"string",
+            "minLength":8
+        },
+        "role":{
+            enum:["farmer", "engineer"]
         },
         "phoneNumber":{
             "type":"string",
             "nullable": false,
+        },
+        "workField":{
+            "type":"string",
+            "nullable": false,
+        },
+        "usageTarget":{
+            "type":"string",
+            "nullable": false,
+        },
+        "streetName": {
+            "type": "string",
+            "nullable": false
+        },
+        "city": {
+            "type": "string",
+            "nullable": false
+        },
+        "state": {
+            "type": "string",
+            "nullable": false
+        },
+        "country": {
+            "type": "string",
+            "nullable": false
+        },
+        "postCode": {
+            "type": "string",
+            "nullable": false
         }
     }
 }

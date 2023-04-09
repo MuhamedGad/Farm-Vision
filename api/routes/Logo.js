@@ -8,7 +8,7 @@ const authrization = require("../middlewares/authrizationMW")
 const checkUserFound = require("../middlewares/checkUserFoundMW")
 const checkPermission = require("../middlewares/checkPermissionMW")
 
-router.get("/:id", validID, authrization, checkPermission, checkUserFound, (req, res) => {
+router.get("/:id", validID, authrization, checkUserFound, checkPermission, (req, res) => {
     let options = {
         root: __dirname.replace("routes", "public"),
     },
@@ -20,37 +20,35 @@ router.get("/:id", validID, authrization, checkPermission, checkUserFound, (req,
     })
 })
 
-router.put("/:id", validID, authrization, checkPermission, checkUserFound, upload.single("image"), async (req, res) => {
-    let token = req.header("x-auth-token"),
-        user = req.user
+router.put("/:id", validID, authrization, checkUserFound, checkPermission, upload.single("image"), async (req, res) => {
+    let user = req.user
 
     if (!req.file) {
         return res.status(403).json({
-            message: "No File Uploaded :(",
-            token
+            message: "No File Uploaded :("
         })
     }
 
-    let imgsrc = req.file.filename
-    if (user.image !== "logo.jpg") {
-        let directoryPath = __dirname.replace("routes", "public/images/")
-        fs.unlink(directoryPath + user.image, (err) => {
-            if (err) return res.status(500).json({
-                message: "Delete logo from server error: " + err
-            })
-        })
-    }
-
+    
     try {
+        let imgsrc = req.file.filename
+    
+        if (user.image !== "logo.jpg") {
+            let directoryPath = __dirname.replace("routes", "public/images/")
+            fs.unlink(directoryPath + user.image, (err) => {
+                if (err) return res.status(500).json({
+                    message: "Delete logo from server error: " + err
+                })
+            })
+        }
+
         await userModel.update({ image: imgsrc }, { where: { id: user.id } })
         return res.status(200).json({
-            message: "Image updated Successfully :)",
-            token
+            message: "Image updated Successfully :)"
         })
     } catch (err) {
         return res.status(500).json({
-            message: "Update Image Error: " + err,
-            token
+            message: "Update Image Error: " + err
         })
     }
 })
