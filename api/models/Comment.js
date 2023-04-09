@@ -49,7 +49,7 @@ Comment.belongsTo(Comment);
 // Comment.belongsToMany(User, { through: 'CommentLike' });
 
 (async () => {
-    await Comment.sync({alter:true});
+    await Comment.sync(/* {alter:true} */);
 })();
 
 module.exports = Comment

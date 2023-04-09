@@ -20,7 +20,7 @@ Post.hasMany(PostTags, {
 PostTags.belongsTo(Post);
 
 (async () => {
-    await PostTags.sync({alter:true});
+    await PostTags.sync(/* {alter:true} */);
 })();
 
 module.exports = PostTags

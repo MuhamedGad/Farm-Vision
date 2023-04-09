@@ -20,7 +20,7 @@ User.hasMany(UserFeatures, {
 UserFeatures.belongsTo(User);
 
 (async () => {
-    await UserFeatures.sync({alter:true});
+    await UserFeatures.sync(/* {alter:true} */);
 })();
 
 module.exports = UserFeatures

@@ -56,7 +56,7 @@ User.hasMany(Token, {
 Token.belongsTo(User);
 
 (async () => {
-    await Token.sync({ alter: true })
+    await Token.sync(/* { alter: true } */)
 })()
 
 module.exports = Token
