@@ -2,6 +2,24 @@ const tokenModel = require("../models/Token")
 const userModel = require("../models/User")
 const sequelize = require("../models/sequelize")
 
+let getAllTokens = async(req, res)=>{
+    try {
+        let tokens = await tokenModel.findAndCountAll()
+        if (tokens.length !== 0) return res.status(200).json({
+            message: "Found tokens :)",
+            length: tokens.count,
+            data: tokens.rows
+        })
+        else return res.status(400).json({
+            message: "Not found any users :("
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message: "Get all tokens Error: " + err
+        })
+    }
+}
+
 let getTokenByID = async(req, res)=>{
     let token = req.tokenFound
     return res.status(200).json({
@@ -62,5 +80,6 @@ module.exports = {
     getTokenByID,
     logoutFromOtherDevice,
     logout,
-    getTokensForUser
+    getTokensForUser,
+    getAllTokens
 }

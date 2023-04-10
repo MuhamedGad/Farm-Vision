@@ -1,46 +1,46 @@
 # Forms Names
 
-## Some Notes:
+## **Some Notes:**
 ```
 1- token must send in request header with name "x-auth-token"
 2- URL of the API "https://farm-vision.onrender.com"
 ```
 ---
-## Sign In:
-**Route**:
+## **Sign In:**
+### Route:
 ```
 /api/login
 ```
-**Method**:
+### Method:
 ```
 POST
 ```
-**Form**:
+### Form:
 | input name | Type | validate | nullable |
 |--------|------|--------|-------|
 | email | email | must be string | false |
 | password | password | must not be less than 8 and must be string | false |
 ---
-## Sign Out:
-**Route**:
+## **Sign Out:**
+Route:
 ```
 /api/logout
 ```
-**Method**:
+Method:
 ```
 POST
 ```
 ----
-## Sign Up:
-**Route**:
+## **Sign Up:**
+Route:
 ```
 /api/user
 ```
-**Method**:
+Method:
 ```
 POST
 ```
-**Form**:
+Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
 | firstName | text | must be string | false |
@@ -60,36 +60,36 @@ POST
 | postCode | text | must be string | false |
 | features | checkboxes | must be an array of our project features selected by user | true |
 ---
-## Get User:
-**Route**:
+## **Get User:**
+Route:
 ```
 /api/user/:id       - (:id) means id of user that wanted to get
 ```
-**Method**:
+Method:
 ```
 GET
 ```
 ---
-## Get All Users:
-**Route**:
+## **Get All Users:**
+Route:
 ```
-/api/user
+/api/admin/user
 ```
-**Method**:
+Method:
 ```
 GET
 ```
-----
-## Update User:
-**Route**:
+---
+## **Update User:**
+Route:
 ```
 /api/user/:id       - (:id) means id of user that wanted to update
 ```
-**Method**:
+Method:
 ```
 PUT
 ```
-**Form**:
+Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
 | firstName | text | must be string | false |
@@ -107,50 +107,50 @@ PUT
 | postCode | text | must be string | false |
 | features | checkboxes | must be an array of our project features selected by user | true |
 ----
-## Delete User:
-**Route**:
+## **Delete User:**
+Route:
 ```
 /api/user/:id       - (:id) means id of user that wanted to delete
 ```
-**Method**:
+Method:
 ```
 DELETE
 ```
 ---
-## Get Profile Image:
-**Route**:
+## **Get Profile Image:**
+Route:
 ```
 /api/logo/:id       - (:id) means id of user that is owner of image
 ```
-**Method**:
+Method:
 ```
 GET
 ```
 ---
-## Update Profile Image:
-**Route**:
+## **Update Profile Image:**
+Route:
 ```
 /api/logo/:id       - (:id) means id of user that is owner of image
 ```
-**Method**:
+Method:
 ```
 PUT
 ```
-**Form**:
+Form:
 | input name | Type |
 |--------|------|
 | image | file |
 ---
-## Update Password:
-**Route**:
+## **Update Password:**
+Route:
 ```
 /api/password/:id       - (:id) means id of user that is owner of password
 ```
-**Method**:
+Method:
 ```
 PUT
 ```
-**Form**:
+Form:
 
 - if you are owner:
 
@@ -166,30 +166,30 @@ PUT
     | password | password | must not be less than 8 and must be string | false |
     | confirmPassword | password | must not be less than 8 and must be string | false |
 ---
-## Update Role To admin:
-**Route**:
+## **Update Role of user:**
+Route:
 ```
-/api/admin/:id       - (:id) means id of user that wanted to change its administration
+/api/admin/user/:id       - (:id) means id of user that wanted to change its role
 ```
-**Method**:
+Method:
 ```
 PUT
 ```
-**Form**:
+Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
 | role | text | must be one of this (farmer, engineer, admin, superAdmin) | false |
 ---
-## Add user by admin:
-**Route**:
+## **Add user by admin:**
+Route:
 ```
-/api/admin
+/api/admin/user
 ```
-**Method**:
+Method:
 ```
 POST
 ```
-**Form**:
+Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
 | firstName | text | must be string | false |
@@ -208,4 +208,54 @@ POST
 | country | text | must be string | false |
 | postCode | text | must be string | false |
 | features | checkboxes | must be an array of our project features selected by user | true |
+---
+## **Get device info**
+Route:
+```
+/api/token/:id        -(id) mean id of device that wanted
+```
+Method:
+```
+get
+```
+---
+## **Get Devices logined by my account:**
+Route:
+```
+/api/token/
+```
+Method:
+```
+get
+```
+---
+## **Delete(logout) device that logined:**
+Route:
+```
+/api/token/:id        -(id) mean id of device that wanted
+```
+Method:
+```
+delete
+```
+---
+## **Get all devices of website**
+Route:
+```
+/api/admin/token        -(id) mean id of device that wanted
+```
+Method:
+```
+get
+```
+---
+## **Get all devices logined by specific user**
+Route:
+```
+/api/admin/token/:id        -(id) mean id of user that wanted
+```
+Method:
+```
+get
+```
 ---

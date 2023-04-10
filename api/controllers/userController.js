@@ -40,19 +40,55 @@ let getAllUsers = async (req, res) => {
     }
 }
 
+let createUserData = (req)=>{
+    let userData = {}
+    userData["firstName"] = req.body.firstName
+    userData["lastName"] = req.body.lastName
+    userData["email"] = req.body.email
+    userData["password"] = req.body.password
+    userData["devicesNumber"] = parseInt(req.body.devicesNumber) || 5
+    userData["phoneNumber"] = req.body.phoneNumber
+    userData["loginDevices"] = 1
+    userData["workField"] = req.body.workField
+    userData["usageTarget"] = req.body.usageTarget
+    userData["streetName"] = req.body.streetName
+    userData["city"] = req.body.city
+    userData["state"] = req.body.state
+    userData["country"] = req.body.country
+    userData["postCode"] = req.body.postCode
+    return userData
+}
+
+let createTokenData = (req)=>{
+    const device = detector.parse(req.header("user-agent"))
+    let tokenData = {}
+    tokenData["clientName"] = (device.client)?device.client.name:device.client
+    tokenData["clientType"] = (device.client)?device.client.type:device.client
+    tokenData["clientVersion"] = (device.client)?device.client.version:device.client
+    tokenData["clientEngine"] = (device.client)?device.client.engine:device.client
+    tokenData["clientEngineVersion"] = (device.client)?device.client.engineVersion:device.client
+    tokenData["osName"] = (device.os)?device.os.name:device.os
+    tokenData["osVersion"] = (device.os)?device.os.version:device.os
+    tokenData["osPlatform"] = (device.os)?device.os.platform:device.os
+    tokenData["deviceType"] = (device.device)?device.device.type:device.device
+    tokenData["deviceBrand"] = (device.device)?device.device.brand:device.device
+    tokenData["deviceModel"] = (device.device)?device.device.model:device.device
+    tokenData["bot"] = device.bot
+    return tokenData
+}
+
 let createUser = async (req, res) => {
     try {
-        const device = detector.parse(req.header("user-agent"))
         let user = await userModel.findOne({ where: {
-            [Op.or]: [
-                { email: req.body.email },
-                { phoneNumber: req.body.phoneNumber }
-            ]
-        }})
-        let token
-        let userData = {}
-        let tokenData = {}
-        let features = req.body.features
+                [Op.or]: [
+                    { email: req.body.email },
+                    { phoneNumber: req.body.phoneNumber }
+                ]
+            }}),
+            token,
+            userData = createUserData(req),
+            tokenData = createTokenData(req),
+            features = req.body.features
 
         if (user !== null) return res.status(400).json({
             message: "Email or phone number is actually exist :("
@@ -62,42 +98,15 @@ let createUser = async (req, res) => {
             message: "please enter phone number :("
         })
 
-        userData["firstName"] = req.body.firstName
-        userData["lastName"] = req.body.lastName
-        userData["email"] = req.body.email
-        userData["password"] = req.body.password
         userData["role"] = req.body.role
-        userData["devicesNumber"] = parseInt(req.body.devicesNumber) || 5
-        userData["phoneNumber"] = req.body.phoneNumber
-        userData["loginDevices"] = 1
-        userData["workField"] = req.body.workField
-        userData["usageTarget"] = req.body.usageTarget
-        userData["streetName"] = req.body.streetName
-        userData["city"] = req.body.city
-        userData["state"] = req.body.state
-        userData["country"] = req.body.country
-        userData["postCode"] = req.body.postCode
-
-        tokenData["clientName"] = (device.client)?device.client.name:device.client
-        tokenData["clientType"] = (device.client)?device.client.type:device.client
-        tokenData["clientVersion"] = (device.client)?device.client.version:device.client
-        tokenData["clientEngine"] = (device.client)?device.client.engine:device.client
-        tokenData["clientEngineVersion"] = (device.client)?device.client.engineVersion:device.client
-        tokenData["osName"] = (device.os)?device.os.name:device.os
-        tokenData["osVersion"] = (device.os)?device.os.version:device.os
-        tokenData["osPlatform"] = (device.os)?device.os.platform:device.os
-        tokenData["deviceType"] = (device.device)?device.device.type:device.device
-        tokenData["deviceBrand"] = (device.device)?device.device.brand:device.device
-        tokenData["deviceModel"] = (device.device)?device.device.model:device.device
-        tokenData["bot"] = device.bot
-
 
         await sequelize.transaction(async (t) => {
             user = await userModel.create(userData, { transaction: t })
             if(req.featuresValid){
-                features.forEach(async e => {
+                for (let i = 0; i < features.length; i++) {
+                    const e = features[i]
                     await userFeaturesModel.create({feature: e, UserId: user.id}, { transaction: t })
-                })
+                }
             }
             token = jwt.sign({ user_id: user.id, role: user.role }, config.get("seckey"))
             tokenData["token"] = token
@@ -110,6 +119,52 @@ let createUser = async (req, res) => {
             token,
             user_id: user.id,
             role: user.role
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message: "Create User Error: " + err
+        })
+    }
+}
+
+let addUserByAdmin = async (req, res) => {
+    try {
+        let user = await userModel.findOne({ where: {
+                [Op.or]: [
+                    { email: req.body.email },
+                    { phoneNumber: req.body.phoneNumber }
+                ]
+            }}),
+            userData = createUserData(req),
+            features = req.body.features,
+            token = req.token
+
+        if (user !== null) return res.status(400).json({
+            message: "Email or phone number is actually exist :("
+        })
+        
+        if (!req.body.phoneNumber) return res.status(400).json({
+            message: "please enter phone number :(",
+        })
+        
+        if(token.role === "admin" && req.body.role === "superAdmin") return res.status(401).json({
+            message: "Access Denied :("
+        })
+        else userData["role"] = req.body.role
+
+        await sequelize.transaction(async (t) => {
+            user = await userModel.create(userData, { transaction: t })
+            if(req.featuresValid){
+                for (let i = 0; i < features.length; i++) {
+                    const e = features[i]
+                    await userFeaturesModel.create({feature: e, UserId: user.id}, { transaction: t })
+                }
+            }
+        })
+
+        return res.status(200).json({
+            message: "User Created Successfully :)",
+            user_id: user.id
         })
     } catch (err) {
         return res.status(500).json({
@@ -190,10 +245,40 @@ let deleteUser = async (req, res) => {
     }
 }
 
+let updateRole = async (req, res) => {
+    let token = req.token,
+        user = req.user,
+        role = req.body.role
+    try {
+        if(role === "superAdmin"){
+            if(token.role === "superAdmin") await sequelize.transaction(async (t) => {
+                    await userModel.update({ role: role }, { where: { id: user.id }, transaction: t });
+                    await tokenModel.destroy({ where: { UserId: user.id }, transaction: t });
+                });
+            else return res.status(401).json({
+                message: "Access Denied :("
+            })
+        }else await sequelize.transaction(async (t) => {
+            await userModel.update({ role: role }, { where: { id: user.id }, transaction: t });
+            await tokenModel.destroy({ where: { UserId: user.id }, transaction: t });
+        });
+
+        return res.status(200).json({
+            message: "Role Updated Successfully :)"
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message: "Update Role Error: " + err
+        })
+    }
+}
+
 module.exports = {
     createUser,
     updateUser,
     deleteUser,
     getUserByID,
-    getAllUsers
+    getAllUsers,
+    updateRole,
+    addUserByAdmin
 }
