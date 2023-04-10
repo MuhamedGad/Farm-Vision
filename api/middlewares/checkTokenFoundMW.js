@@ -12,7 +12,7 @@ module.exports = async(req, res, next)=>{
         }
     } catch (err) {
         return res.status(500).json({
-            message: "Found Token Error: " + err
+            message: "Find Token Error: " + err
         })
     }
 }

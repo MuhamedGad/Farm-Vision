@@ -17,7 +17,6 @@ let catchFunc = (res, type, err) => {
 
 let getUserByID = async (req, res) => {
     let user = req.user
-    console.log(user.features)
     return res.status(200).json({
         message: "User Found :)",
         data: {user, features: user.features}

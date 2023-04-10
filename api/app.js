@@ -13,6 +13,7 @@ const login = require("./routes/Login")
 const logout = require("./routes/Logout")
 const admin = require("./routes/Admin")
 const password = require("./routes/Password")
+const post = require("./routes/Post")
 const aiModel = require("./routes/AIModel")
 
 // use some built in middlewares
@@ -35,6 +36,7 @@ app.use("/api/login", login)
 app.use("/api/logout", logout)
 app.use("/api/admin", admin)
 app.use("/api/password", password)
+app.use("/api/post", post)
 app.use("/api/predict", aiModel)
 
 app.use((req, res)=>{

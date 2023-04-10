@@ -259,3 +259,70 @@ Method:
 get
 ```
 ---
+## **Get all posts:**
+Route:
+```
+/api/post
+```
+Method:
+```
+get
+```
+---
+## **Get posts of specific user:**
+Route:
+```
+/api/post/userposts/:id         -(id) mean id of user that wanted his posts
+```
+Method:
+```
+get
+```
+---
+## **Get post:**
+Route:
+```
+/api/post/:id        -(id) mean id of post that wanted
+```
+Method:
+```
+get
+```
+---
+## **Create post:**
+Route:
+```
+/api/post/:id        -(id) mean id of post that wanted
+```
+Method:
+```
+get
+```
+Form:
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
+| content | text | must be between 10-1000 characters | false |
+---
+## **Update post:**
+Route:
+```
+/api/post/:id        -(id) mean id of post that wanted
+```
+Method:
+```
+get
+```
+Form:
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
+| content | text | must be between 10-1000 characters | false |
+---
+## **Delete post:**
+Route:
+```
+/api/post/:id        -(id) mean id of post that wanted
+```
+Method:
+```
+delete
+```

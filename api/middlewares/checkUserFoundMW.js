@@ -10,20 +10,16 @@ module.exports = async (req, res, next) => {
         else {
             let features = await userFeaturesModel.findAll({where:{UserId: user.id}})
             let userFeatures = []
-            // features = JSON.stringify(features, null, 2)
-            // console.log(features)
             features.forEach(e=>{
                 userFeatures.push(e.feature)
             })
-            // console.log(userFeatures)
             user.features = userFeatures
             req.user = user
-            // console.log(req.user.features)
             next()
         }
     } catch (err) {
         return res.status(500).json({
-            message: "Found User Error: " + err
+            message: "Find User Error: " + err
         })
     }
 }
