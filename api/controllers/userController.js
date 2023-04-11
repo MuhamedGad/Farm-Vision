@@ -116,7 +116,7 @@ let createUser = async (req, res) => {
         return res.status(200).json({
             message: "User Created Successfully :)",
             token,
-            user_id: user.id,
+            id: user.id,
             role: user.role
         })
     } catch (err) {
@@ -163,7 +163,7 @@ let addUserByAdmin = async (req, res) => {
 
         return res.status(200).json({
             message: "User Created Successfully :)",
-            user_id: user.id
+            id: user.id
         })
     } catch (err) {
         return res.status(500).json({

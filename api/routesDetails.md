@@ -6,22 +6,25 @@
 2- URL of the API "https://farm-vision.onrender.com"
 ```
 ---
-## **Sign In:**
-### Route:
+
+## **User Routes:**
+### **Sign In:**
+Route:
 ```
 /api/login
 ```
-### Method:
+Method:
 ```
 POST
 ```
-### Form:
+Form:
 | input name | Type | validate | nullable |
 |--------|------|--------|-------|
 | email | email | must be string | false |
 | password | password | must not be less than 8 and must be string | false |
----
-## **Sign Out:**
+</br>
+
+### **Sign Out:**
 Route:
 ```
 /api/logout
@@ -30,8 +33,9 @@ Method:
 ```
 POST
 ```
-----
-## **Sign Up:**
+</br>
+
+### **Sign Up:**
 Route:
 ```
 /api/user
@@ -59,8 +63,9 @@ Form:
 | country | text | must be string | false |
 | postCode | text | must be string | false |
 | features | checkboxes | must be an array of our project features selected by user | true |
----
-## **Get User:**
+</br>
+
+### **Get User:**
 Route:
 ```
 /api/user/:id       - (:id) means id of user that wanted to get
@@ -69,18 +74,9 @@ Method:
 ```
 GET
 ```
----
-## **Get All Users:**
-Route:
-```
-/api/admin/user
-```
-Method:
-```
-GET
-```
----
-## **Update User:**
+</br>
+
+### **Update User:**
 Route:
 ```
 /api/user/:id       - (:id) means id of user that wanted to update
@@ -106,8 +102,9 @@ Form:
 | country | text | must be string | false |
 | postCode | text | must be string | false |
 | features | checkboxes | must be an array of our project features selected by user | true |
-----
-## **Delete User:**
+</br>
+
+### **Delete User:**
 Route:
 ```
 /api/user/:id       - (:id) means id of user that wanted to delete
@@ -116,8 +113,9 @@ Method:
 ```
 DELETE
 ```
----
-## **Get Profile Image:**
+</br>
+
+### **Get Profile Image:**
 Route:
 ```
 /api/logo/:id       - (:id) means id of user that is owner of image
@@ -126,8 +124,9 @@ Method:
 ```
 GET
 ```
----
-## **Update Profile Image:**
+</br>
+
+### **Update Profile Image:**
 Route:
 ```
 /api/logo/:id       - (:id) means id of user that is owner of image
@@ -140,8 +139,9 @@ Form:
 | input name | Type |
 |--------|------|
 | image | file |
----
-## **Update Password:**
+</br>
+
+### **Update Password:**
 Route:
 ```
 /api/password/:id       - (:id) means id of user that is owner of password
@@ -166,21 +166,52 @@ Form:
     | password | password | must not be less than 8 and must be string | false |
     | confirmPassword | password | must not be less than 8 and must be string | false |
 ---
-## **Update Role of user:**
+## **Devices that logined Routes:**
+### **Get device info**
 Route:
 ```
-/api/admin/user/:id       - (:id) means id of user that wanted to change its role
+/api/token/:id        -(id) mean id of device that wanted
 ```
 Method:
 ```
-PUT
+get
 ```
-Form:
-| input name | Type | validate | nullable |
-|--------|------|-------|--------|
-| role | text | must be one of this (farmer, engineer, admin, superAdmin) | false |
+</br>
+
+### **Get Devices logined by my account:**
+Route:
+```
+/api/token/
+```
+Method:
+```
+get
+```
+</br>
+
+### **Delete (logout) device that logined:**
+Route:
+```
+/api/token/:id        -(id) mean id of device that wanted
+```
+Method:
+```
+delete
+```
 ---
-## **Add user by admin:**
+## **Admin Only Routes:**
+### **Get All Users:**
+Route:
+```
+/api/admin/user
+```
+Method:
+```
+GET
+```
+</br>
+
+### **Add user by admin:**
 Route:
 ```
 /api/admin/user
@@ -208,38 +239,24 @@ Form:
 | country | text | must be string | false |
 | postCode | text | must be string | false |
 | features | checkboxes | must be an array of our project features selected by user | true |
----
-## **Get device info**
+</br>
+
+### **Update Role of user:**
 Route:
 ```
-/api/token/:id        -(id) mean id of device that wanted
+/api/admin/user/:id       - (:id) means id of user that wanted to change its role
 ```
 Method:
 ```
-get
+PUT
 ```
----
-## **Get Devices logined by my account:**
-Route:
-```
-/api/token/
-```
-Method:
-```
-get
-```
----
-## **Delete(logout) device that logined:**
-Route:
-```
-/api/token/:id        -(id) mean id of device that wanted
-```
-Method:
-```
-delete
-```
----
-## **Get all devices of website**
+Form:
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
+| role | text | must be one of this (farmer, engineer, admin, superAdmin) | false |
+</br>
+
+### **Get all devices on website**
 Route:
 ```
 /api/admin/token        -(id) mean id of device that wanted
@@ -248,8 +265,9 @@ Method:
 ```
 get
 ```
----
-## **Get all devices logined by specific user**
+</br>
+
+### **Get all devices logined by specific user**
 Route:
 ```
 /api/admin/token/:id        -(id) mean id of user that wanted
@@ -259,7 +277,8 @@ Method:
 get
 ```
 ---
-## **Get all posts:**
+## **Post Routes:**
+### **Get all posts:**
 Route:
 ```
 /api/post
@@ -268,8 +287,9 @@ Method:
 ```
 get
 ```
----
-## **Get posts of specific user:**
+</br>
+
+### **Get posts of specific user:**
 Route:
 ```
 /api/post/userposts/:id         -(id) mean id of user that wanted his posts
@@ -278,8 +298,9 @@ Method:
 ```
 get
 ```
----
-## **Get post:**
+</br>
+
+### **Get post:**
 Route:
 ```
 /api/post/:id        -(id) mean id of post that wanted
@@ -288,22 +309,9 @@ Method:
 ```
 get
 ```
----
-## **Create post:**
-Route:
-```
-/api/post/:id        -(id) mean id of post that wanted
-```
-Method:
-```
-get
-```
-Form:
-| input name | Type | validate | nullable |
-|--------|------|-------|--------|
-| content | text | must be between 10-1000 characters | false |
----
-## **Update post:**
+</br>
+
+### **Create post:**
 Route:
 ```
 /api/post/:id        -(id) mean id of post that wanted
@@ -316,8 +324,24 @@ Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
 | content | text | must be between 10-1000 characters | false |
----
-## **Delete post:**
+</br>
+
+### **Update post:**
+Route:
+```
+/api/post/:id        -(id) mean id of post that wanted
+```
+Method:
+```
+get
+```
+Form:
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
+| content | text | must be between 10-1000 characters | false |
+</br>
+
+### **Delete post:**
 Route:
 ```
 /api/post/:id        -(id) mean id of post that wanted
@@ -326,3 +350,82 @@ Method:
 ```
 delete
 ```
+---
+## **Comment Routes:**
+### **Get comment:**
+Route:
+```
+/api/comment/:id        -(id) mean id of comment that wanted
+```
+Method:
+```
+get
+```
+</br>
+
+### **Get comments of specific post:**
+Route:
+```
+/api/comment/postcomments/:id        -(id) mean id of post that wanted to get its comments
+```
+Method:
+```
+get
+```
+</br>
+
+### **Create comment on post:**
+Route:
+```
+/api/comment/onpost/:id        -(id) mean id of post that wanted to comment on it
+```
+Method:
+```
+post
+```
+Form:
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
+| content | text | must be between 10-1000 characters | false |
+</br>
+
+### **Create comment on comment:**
+Route:
+```
+/api/comment/oncomment/:id        -(id) mean id of comment that wanted to comment on it
+```
+Method:
+```
+post
+```
+Form:
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
+| content | text | must be between 10-1000 characters | false |
+</br>
+
+### **Update comment:**
+Route:
+```
+/api/comment/:id        -(id) mean id of comment that wanted update
+```
+Method:
+```
+put
+```
+Form:
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
+| content | text | must be between 10-1000 characters | false |
+</br>
+
+### **Delete comment:**
+Route:
+```
+/api/comment/:id        -(id) mean id of comment that wanted to deleted
+```
+Method:
+```
+delete
+```
+---

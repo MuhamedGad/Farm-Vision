@@ -1,4 +1,3 @@
-const userModel = require("../models/User")
 const postModel = require("../models/Post")
 
 let getPostByID = async (req, res) => {
@@ -29,9 +28,9 @@ let getAllPosts = async (req, res) => {
 
 let getPostsForUser = async(req, res)=>{
     try {
-        let token = req.token,
+        let user = req.user,
             posts = await postModel.findAndCountAll({
-                where:{UserId:token.UserId},
+                where:{UserId:user.id},
                 order:[["points", "DESC"]]
             })
         if (posts.length !== 0) return res.status(200).json({
@@ -42,7 +41,6 @@ let getPostsForUser = async(req, res)=>{
         else return res.status(400).json({
             message: "Not found any posts :("
         })
-        
     } catch (err) {
         return res.status(500).json({
             message: "Get posts Error: " + err
@@ -59,7 +57,7 @@ let createPost = async(req, res)=>{
         let post = await postModel.create(postData)
         return res.status(200).json({
             message: "Post created successfully :)",
-            post_id: post.id
+            id: post.id
         })
     }catch(err){
         return res.status(500).json({
@@ -70,10 +68,8 @@ let createPost = async(req, res)=>{
 
 let updatePost = async(req, res)=>{
     let postData = {},
-        token = req.token,
         post = req.post
     postData["content"] = req.body.content
-    postData["UserId"] = token.UserId
     try{
         await postModel.update(postData, {where:{id:post.id}})
         return res.status(200).json({
@@ -81,7 +77,7 @@ let updatePost = async(req, res)=>{
         })
     }catch(err){
         return res.status(500).json({
-            message: "Create Post Error: " + err
+            message: "Update Post Error: " + err
         })
     }
 }
