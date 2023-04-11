@@ -222,18 +222,16 @@ let updateUser = async (req, res) => {
 let deleteUser = async (req, res) => {
     try {
         let user = req.user
-        await sequelize.transaction(async (t) => {
-            await userModel.destroy({ where: { id: user.id }, transaction: t })
-            await tokenModel.destroy({ where: { UserId: user.id }, transaction: t })
-            if (user.image !== "logo.jpg") {
-                let directoryPath = __dirname.replace("controllers", "public/images/")
-                fs.unlink(directoryPath + user.image, (err) => {
-                    if (err) return res.status(500).json({
-                        message: "Delete logo from server error: " + err
-                    })
+
+        await userModel.destroy({where: { id: user.id }})
+        if (user.image !== "logo.jpg") {
+            let directoryPath = __dirname.replace("controllers", "public/images/")
+            fs.unlink(directoryPath + user.image, (err) => {
+                if (err) return res.status(500).json({
+                    message: "Delete logo from server error: " + err
                 })
-            }
-        })
+            })
+        }
 
         return res.status(200).json({
             message: "User Deleted Successfully :)"

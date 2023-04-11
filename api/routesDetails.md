@@ -174,7 +174,7 @@ Route:
 ```
 Method:
 ```
-get
+GET
 ```
 </br>
 
@@ -185,7 +185,7 @@ Route:
 ```
 Method:
 ```
-get
+GET
 ```
 </br>
 
@@ -196,7 +196,7 @@ Route:
 ```
 Method:
 ```
-delete
+DELETE
 ```
 ---
 ## **Admin Only Routes:**
@@ -263,7 +263,7 @@ Route:
 ```
 Method:
 ```
-get
+GET
 ```
 </br>
 
@@ -274,7 +274,7 @@ Route:
 ```
 Method:
 ```
-get
+GET
 ```
 ---
 ## **Post Routes:**
@@ -285,7 +285,7 @@ Route:
 ```
 Method:
 ```
-get
+GET
 ```
 </br>
 
@@ -296,7 +296,7 @@ Route:
 ```
 Method:
 ```
-get
+GET
 ```
 </br>
 
@@ -307,18 +307,18 @@ Route:
 ```
 Method:
 ```
-get
+GET
 ```
 </br>
 
 ### **Create post:**
 Route:
 ```
-/api/post/:id        -(id) mean id of post that wanted
+/api/post
 ```
 Method:
 ```
-get
+POST
 ```
 Form:
 | input name | Type | validate | nullable |
@@ -333,7 +333,7 @@ Route:
 ```
 Method:
 ```
-get
+PUT
 ```
 Form:
 | input name | Type | validate | nullable |
@@ -348,7 +348,18 @@ Route:
 ```
 Method:
 ```
-delete
+DELETE
+```
+</br>
+
+### **Like or Unlike post:**
+Route:
+```
+/api/post/like/:id        -(id) mean id of post that wanted to like or unlike
+```
+Method:
+```
+POST
 ```
 ---
 ## **Comment Routes:**
@@ -359,7 +370,7 @@ Route:
 ```
 Method:
 ```
-get
+GET
 ```
 </br>
 
@@ -370,7 +381,7 @@ Route:
 ```
 Method:
 ```
-get
+GET
 ```
 </br>
 
@@ -381,7 +392,7 @@ Route:
 ```
 Method:
 ```
-post
+POST
 ```
 Form:
 | input name | Type | validate | nullable |
@@ -396,7 +407,7 @@ Route:
 ```
 Method:
 ```
-post
+POST
 ```
 Form:
 | input name | Type | validate | nullable |
@@ -411,7 +422,7 @@ Route:
 ```
 Method:
 ```
-put
+PUT
 ```
 Form:
 | input name | Type | validate | nullable |
@@ -426,6 +437,17 @@ Route:
 ```
 Method:
 ```
-delete
+DELETE
+```
+</br>
+
+### **Like or Unlike comment:**
+Route:
+```
+/api/comment/like/:id        -(id) mean id of comment that wanted to like or unlike
+```
+Method:
+```
+POST
 ```
 ---

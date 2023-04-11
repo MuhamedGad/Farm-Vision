@@ -1,5 +1,6 @@
 const commentModel = require("../models/Comment")
 const postModel = require("../models/Post")
+const commentLikeModel = require("../models/CommentLike")
 const sequelize = require("../models/sequelize")
 const { Op } = require("sequelize")
 
@@ -123,10 +124,46 @@ let deleteComment = async(req, res)=>{
     }
 }
 
+let like = async(req, res)=>{
+    try {
+        let token = req.token,
+            comment = req.comment,
+            liked
+        await sequelize.transaction(async(t)=>{
+            let likeInfo = await commentLikeModel.findOne({where: {
+                [Op.and]: [{UserId: token.UserId}, {CommentId: comment.id}]
+            }})
+            if(likeInfo) {
+                await commentLikeModel.destroy({where: {
+                    [Op.and]: [{UserId: token.UserId}, {CommentId: comment.id}]
+                }, transaction: t})
+                await commentModel.update({numberOfLikes: comment.numberOfLikes-1}, {where:{id: comment.id}, transaction: t})
+                liked = false
+            }else{
+                let likeData = {}
+                likeData["UserId"] = token.UserId
+                likeData["CommentId"] = comment.id
+                await commentLikeModel.create(likeData, {transaction: t})
+                await commentModel.update({numberOfLikes: comment.numberOfLikes+1}, {where:{id: comment.id}, transaction: t})
+                liked = true
+            }
+        })
+        return res.status(200).json({
+            message: (liked)?"Liked :)":"Unliked :(",
+            liked
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message: "Comment like Error: " + err
+        })
+    }
+}
+
 module.exports = {
     getCommentById,
     getCommentsOfPost,
     creatComment,
     updateComment,
-    deleteComment
+    deleteComment,
+    like
 }

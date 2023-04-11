@@ -9,6 +9,8 @@ const createCommentValidator = require("../middlewares/createCommentValidatorMW"
 const validID = require("../middlewares/checkValidIDMW")
 
 router.get("/postcomments/:id", validID, authrization, checkPostFound, commentController.getCommentsOfPost)
+router.post("/like/:id", validID, authrization, checkCommentFound, commentController.like)
+
 router.get("/:id", validID, authrization, checkCommentFound, commentController.getCommentById)
 router.post("/onpost/:id", validID, authrization, checkPostFound, createCommentValidator, commentController.creatComment)
 router.post("/oncomment/:id", validID, authrization, checkCommentFound, createCommentValidator, commentController.creatComment)

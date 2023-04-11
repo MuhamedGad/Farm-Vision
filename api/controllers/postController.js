@@ -1,4 +1,7 @@
 const postModel = require("../models/Post")
+const postLikeModel = require("../models/PostLike")
+const sequelize = require("../models/sequelize")
+const { Op } = require("sequelize")
 
 let getPostByID = async (req, res) => {
     let post = req.post
@@ -96,11 +99,47 @@ let deletePost = async(req, res)=>{
     }
 }
 
+let like = async(req, res)=>{
+    try {
+        let token = req.token,
+            post = req.post,
+            liked
+        await sequelize.transaction(async(t)=>{
+            let likeInfo = await postLikeModel.findOne({where: {
+                [Op.and]: [{UserId: token.UserId}, {PostId: post.id}]
+            }})
+            if(likeInfo) {
+                await postLikeModel.destroy({where: {
+                    [Op.and]: [{UserId: token.UserId}, {PostId: post.id}]
+                }, transaction: t})
+                await postModel.update({numberOfLikes: post.numberOfLikes-1, points: post.points-1}, {where:{id: post.id}, transaction: t})
+                liked = false
+            }else{
+                let likeData = {}
+                likeData["UserId"] = token.UserId
+                likeData["PostId"] = post.id
+                await postLikeModel.create(likeData, {transaction: t})
+                await postModel.update({numberOfLikes: post.numberOfLikes+1, points: post.points+1}, {where:{id: post.id}, transaction: t})
+                liked = true
+            }
+        })
+        return res.status(200).json({
+            message: (liked)?"Liked :)":"Unliked :(",
+            liked
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message: "Post like Error: " + err
+        })
+    }
+}
+
 module.exports = {
     getPostByID,
     getAllPosts,
     getPostsForUser,
     createPost,
     updatePost,
-    deletePost
+    deletePost,
+    like
 }
