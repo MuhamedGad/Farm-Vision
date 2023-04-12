@@ -3,7 +3,6 @@ const sequelize = require("./sequelize")
 const User = require("./User")
 
 const Post = sequelize.define('Post', {
-    // Model attributes are defined here
     content:{
         type:DataTypes.STRING,
         allowNull:false
@@ -23,11 +22,8 @@ const Post = sequelize.define('Post', {
         allowNull:false,
         defaultValue:0
     },
-}, {
-    // Other model options go here
 });
 
-// Relation Between User and Post
 User.hasMany(Post, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE'

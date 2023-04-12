@@ -12,25 +12,23 @@ const schema = {
             "type":"string",
             "nullable": false,
         },
+        "userName":{
+            "type":"string",
+            "nullable": false,
+            "minLength":8,
+            "pattern":"[a-z]+[1-9]*"
+        },
         "email":{
             "type":"string",
             "pattern":".+\@.+\..+"
-        },
-        "password":{
-            "type":"string",
-            "minLength":8
-        },
-        "confirmPassword":{
-            "type":"string",
-            "minLength":8
-        },
-        "role":{
-            enum:["farmer", "engineer"]
         },
         "phoneNumber":{
             "type":"string",
             "nullable": false,
             "minLength":11
+        },
+        "role":{
+            enum:["farmer", "engineer"]
         },
         "workField":{
             "type":"string",

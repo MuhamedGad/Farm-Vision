@@ -12,6 +12,12 @@ const schema = {
             "type":"string",
             "nullable": false,
         },
+        "userName":{
+            "type":"string",
+            "nullable": false,
+            "minLength":8,
+            "pattern":"[a-z]+[1-9]*"
+        },
         "email":{
             "type":"string",
             "pattern":".+\@.+\..+"
@@ -61,7 +67,7 @@ const schema = {
             "nullable": false
         }
     },
-    "required":["firstName", "lastName", "email", "password", "confirmPassword", "role", "phoneNumber", "workField", "usageTarget", "streetName", "city", "state", "country", "postCode"]
+    "required":["firstName", "lastName", "userName", "email", "password", "confirmPassword", "role", "phoneNumber", "workField", "usageTarget", "streetName", "city", "state", "country", "postCode"]
 }
 
 module.exports = ajv.compile(schema)

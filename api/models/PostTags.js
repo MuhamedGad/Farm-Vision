@@ -1,23 +1,27 @@
 const { DataTypes } = require("sequelize")
 const sequelize = require("./sequelize")
 const Post = require("./Post")
+const Tag = require("./Tag")
 
 const PostTags = sequelize.define('PostTags', {
-    // Model attributes are defined here
-    tag:{
-        type:DataTypes.STRING,
-        allowNull:false
+    PostId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Post,
+            key: 'id'
+        }
+    },
+    TagId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Tag,
+            key: 'id'
+        }
     }
-}, {
-    // Other model options go here
 });
 
-// Relation Between Post and PostTags
-Post.hasMany(PostTags, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE'
-})
-PostTags.belongsTo(Post);
+Post.belongsToMany(Tag, { through: PostTags });
+Tag.belongsToMany(Post, { through: PostTags });
 
 (async () => {
     await PostTags.sync(/* {alter:true} */);

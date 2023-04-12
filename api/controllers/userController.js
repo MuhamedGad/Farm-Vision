@@ -43,11 +43,10 @@ let createUserData = (req)=>{
     let userData = {}
     userData["firstName"] = req.body.firstName
     userData["lastName"] = req.body.lastName
+    userData["userName"] = req.body.userName
     userData["email"] = req.body.email
     userData["password"] = req.body.password
-    userData["devicesNumber"] = parseInt(req.body.devicesNumber) || 5
     userData["phoneNumber"] = req.body.phoneNumber
-    userData["loginDevices"] = 1
     userData["workField"] = req.body.workField
     userData["usageTarget"] = req.body.usageTarget
     userData["streetName"] = req.body.streetName
@@ -81,30 +80,27 @@ let createUser = async (req, res) => {
         let user = await userModel.findOne({ where: {
                 [Op.or]: [
                     { email: req.body.email },
-                    { phoneNumber: req.body.phoneNumber }
+                    { phoneNumber: req.body.phoneNumber },
+                    { userName: req.body.userName }
                 ]
             }}),
             token,
             userData = createUserData(req),
             tokenData = createTokenData(req),
-            features = req.body.features
+            featuresIds = req.featuresIds
 
         if (user !== null) return res.status(400).json({
-            message: "Email or phone number is actually exist :("
-        })
-
-        if (!req.body.phoneNumber) return res.status(400).json({
-            message: "please enter phone number :("
+            message: "Email, phoneNumber or userName is actually exist :("
         })
 
         userData["role"] = req.body.role
+        userData["loginDevices"] = 1
 
         await sequelize.transaction(async (t) => {
             user = await userModel.create(userData, { transaction: t })
             if(req.featuresValid){
-                for (let i = 0; i < features.length; i++) {
-                    const e = features[i]
-                    await userFeaturesModel.create({feature: e, UserId: user.id}, { transaction: t })
+                for (let i = 0; i < featuresIds.length; i++) {
+                    await userFeaturesModel.create({FeatureId: featuresIds[i], UserId: user.id}, { transaction: t })
                 }
             }
             token = jwt.sign({ user_id: user.id, role: user.role }, config.get("seckey"))
@@ -131,19 +127,16 @@ let addUserByAdmin = async (req, res) => {
         let user = await userModel.findOne({ where: {
                 [Op.or]: [
                     { email: req.body.email },
-                    { phoneNumber: req.body.phoneNumber }
+                    { phoneNumber: req.body.phoneNumber },
+                    { userName: req.body.userName }
                 ]
             }}),
             userData = createUserData(req),
-            features = req.body.features,
+            featuresIds = req.featuresIds,
             token = req.token
 
         if (user !== null) return res.status(400).json({
-            message: "Email or phone number is actually exist :("
-        })
-        
-        if (!req.body.phoneNumber) return res.status(400).json({
-            message: "please enter phone number :(",
+            message: "Email, phoneNumber or userName is actually exist :("
         })
         
         if(token.role === "admin" && req.body.role === "superAdmin") return res.status(401).json({
@@ -154,9 +147,8 @@ let addUserByAdmin = async (req, res) => {
         await sequelize.transaction(async (t) => {
             user = await userModel.create(userData, { transaction: t })
             if(req.featuresValid){
-                for (let i = 0; i < features.length; i++) {
-                    const e = features[i]
-                    await userFeaturesModel.create({feature: e, UserId: user.id}, { transaction: t })
+                for (let i = 0; i < featuresIds.length; i++) {
+                    await userFeaturesModel.create({FeatureId: featuresIds[i], UserId: user.id}, { transaction: t })
                 }
             }
         })
@@ -176,21 +168,25 @@ let updateUser = async (req, res) => {
     try {
         let user = req.user,
             userData = {},
-            features = req.body.features
+            featuresIds = req.featuresIds
             
         let testUser = await userModel.findOne({ where: {
-            [Op.or]: [{ email: req.body.email }, { phoneNumber: req.body.phoneNumber }]
+            [Op.or]: [
+                { email: req.body.email },
+                { phoneNumber: req.body.phoneNumber },
+                { userName: req.body.userName }
+            ]
         }})
 
         if (testUser !== null && user.id !== testUser.id) return res.status(400).json({
-            message: "Email or phone number is actually exist :(",
+            message: "Email, phoneNumber or userName is actually exist :(",
         })
 
         userData["firstName"] = req.body.firstName || user.firstName
         userData["lastName"] = req.body.lastName || user.lastName
+        userData["userName"] = req.body.userName || user.userName
         userData["email"] = req.body.email || user.email
         userData["role"] = req.body.role || user.role
-        userData["devicesNumber"] = parseInt(req.body.devicesNumber) || user.devicesNumber
         userData["phoneNumber"] = req.body.phoneNumber || user.phoneNumber
         userData["workField"] = req.body.workField || user.workField
         userData["usageTarget"] = req.body.usageTarget || user.usageTarget
@@ -203,9 +199,9 @@ let updateUser = async (req, res) => {
         await sequelize.transaction(async (t) => {
             if(req.featuresValid){
                 await userFeaturesModel.destroy({ where: { UserId: user.id }, transaction: t })
-                features.forEach(async e => {
-                    await userFeaturesModel.create({feature: e, UserId: user.id}, {transaction: t})
-                })
+                for (let i = 0; i < featuresIds.length; i++) {
+                    await userFeaturesModel.create({FeatureId: featuresIds[i], UserId: user.id}, { transaction: t })
+                }
             }
             await userModel.update(userData, { where: { id: user.id }, transaction: t })
         })

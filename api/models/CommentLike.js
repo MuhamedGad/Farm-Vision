@@ -7,22 +7,19 @@ const CommentLike = sequelize.define('CommentLike', {
     UserId: {
         type: DataTypes.INTEGER,
         references: {
-            model: User, // 'Movies' would also work
+            model: User,
             key: 'id'
         }
     },
     CommentId: {
         type: DataTypes.INTEGER,
         references: {
-            model: Comment, // 'Actors' would also work
+            model: Comment,
             key: 'id'
         }
     }
-}, {
-    // Other model options go here
 });
 
-// Like Relation Between User and Post
 User.belongsToMany(Comment, { through: CommentLike });
 Comment.belongsToMany(User, { through: CommentLike });
 

@@ -2,7 +2,6 @@ const { DataTypes } = require("sequelize")
 const sequelize = require("./sequelize")
 
 const User = sequelize.define('User', {
-  // Model attributes are defined here
   firstName: {
     type: DataTypes.STRING,
     allowNull: false
@@ -10,6 +9,11 @@ const User = sequelize.define('User', {
   lastName: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  userName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
   },
   email: {
     type: DataTypes.STRING,
@@ -37,7 +41,7 @@ const User = sequelize.define('User', {
   devicesNumber: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: 5
+    defaultValue: 50
   },
   loginDevices: {
     type: DataTypes.INTEGER,
@@ -72,8 +76,6 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false
   }
-}, {
-  // Other model options go here
 });
 
 (async () => {

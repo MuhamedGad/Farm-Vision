@@ -19,11 +19,8 @@ const Details = sequelize.define('Details', {
         type: DataTypes.FLOAT,
         allowNull:false
     }
-},{
-    // Other model options go here
 })
 
-// Relation Between User and Token
 User.hasMany(Details, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE'

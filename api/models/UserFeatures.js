@@ -1,23 +1,27 @@
 const { DataTypes } = require("sequelize")
 const sequelize = require("./sequelize")
 const User = require("./User")
+const Feature = require("./Feature")
 
 const UserFeatures = sequelize.define('UserFeatures', {
-    // Model attributes are defined here
-    feature:{
-        type:DataTypes.STRING,
-        allowNull:false
+    UserId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: User,
+            key: 'id'
+        }
+    },
+    FeatureId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Feature,
+            key: 'id'
+        }
     }
-}, {
-    // Other model options go here
 });
 
-// Relation Between User and UserFeatures
-User.hasMany(UserFeatures, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE'
-})
-UserFeatures.belongsTo(User);
+User.belongsToMany(Feature, { through: UserFeatures });
+Feature.belongsToMany(User, { through: UserFeatures });
 
 (async () => {
     await UserFeatures.sync(/* {alter:true} */);

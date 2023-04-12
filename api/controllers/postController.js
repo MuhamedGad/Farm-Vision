@@ -1,9 +1,11 @@
 const postModel = require("../models/Post")
 const postLikeModel = require("../models/PostLike")
+const postTagsModel = require("../models/PostTags")
+const tagModel = require("../models/Tag")
 const sequelize = require("../models/sequelize")
 const { Op } = require("sequelize")
 
-let getPostByID = async (req, res) => {
+let getPostById = async (req, res) => {
     let post = req.post
     return res.status(200).json({
         message: "Post Found :)",
@@ -53,11 +55,20 @@ let getPostsForUser = async(req, res)=>{
 
 let createPost = async(req, res)=>{
     let postData = {},
-        token = req.token
+        token = req.token,
+        tags = req.tags,
+        post
     postData["content"] = req.body.content
     postData["UserId"] = token.UserId
     try{
-        let post = await postModel.create(postData)
+        await sequelize.transaction(async (t) => {
+            post = await postModel.create(postData, { transaction: t })
+            for (let i = 0; i < tags.length; i++) {
+                await postTagsModel.create({TagId: tags[i].id, PostId: post.id}, { transaction: t })
+                await tagModel.update({numberOfPosts: tags[i].numberOfPosts + 1}, {where:{id: tags[i].id}, transaction: t})
+            }
+        })
+
         return res.status(200).json({
             message: "Post created successfully :)",
             id: post.id
@@ -71,10 +82,26 @@ let createPost = async(req, res)=>{
 
 let updatePost = async(req, res)=>{
     let postData = {},
-        post = req.post
+        post = req.post,
+        tags = req.tags
     postData["content"] = req.body.content
     try{
-        await postModel.update(postData, {where:{id:post.id}})
+        await sequelize.transaction(async (t) => {
+            let postTags = await postTagsModel.findAll({where:{PostId: post.id}, transaction: t})
+            for (let i = 0; i < postTags.length; i++) {
+                let tag = await tagModel.findOne({where: {id: postTags[i].TagId}, transaction: t})
+                await tagModel.update({numberOfPosts: tag.numberOfPosts - 1}, {where: {id: tag.id}, transaction: t})
+            }
+            await postTagsModel.destroy({ where: { PostId: post.id }, transaction: t })
+            for (let i = 0; i < tags.length; i++) {
+                let postTag = await postTagsModel.create({TagId: tags[i].id, PostId: post.id}, { transaction: t })
+                let tag = await tagModel.findOne({where: {id: tags[i].id}, transaction: t})
+                await tagModel.update({numberOfPosts: tag.numberOfPosts + 1}, {where:{id: tags[i].id}, transaction: t})
+            }
+            // console.log(postData)
+            await postModel.update(postData, {where:{id:post.id}, transaction: t})
+        })
+        
         return res.status(200).json({
             message: "Post updated successfully :)"
         })
@@ -88,7 +115,14 @@ let updatePost = async(req, res)=>{
 let deletePost = async(req, res)=>{
     try {
         let post = req.post
-        await postModel.destroy({where: { id: post.id }})
+        await sequelize.transaction(async (t) => {
+            let postTags = await postTagsModel.findAll({where:{PostId: post.id}, transaction: t})
+            for (let i = 0; i < postTags.length; i++) {
+                let tag = await tagModel.findOne({where: {id: postTags[i].TagId}, transaction: t})
+                await tagModel.update({numberOfPosts: tag.numberOfPosts-1}, {where:{id:tag.id}, transaction: t})
+            }
+            await postModel.destroy({where: { id: post.id }, transaction: t})
+        })
         return res.status(200).json({
             message: "Post Deleted Successfully :)"
         })
@@ -135,7 +169,7 @@ let like = async(req, res)=>{
 }
 
 module.exports = {
-    getPostByID,
+    getPostById,
     getAllPosts,
     getPostsForUser,
     createPost,

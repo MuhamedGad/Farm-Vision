@@ -49,12 +49,12 @@ Form:
 |--------|------|-------|--------|
 | firstName | text | must be string | false |
 | lastName | text | must be string | false |
+| userName | text | must be string with only small characters and must larger than 8 characters | false |
 | email | email | must be string | false |
 | password | password | must not be less than 8 and must be string | false |
 | confirmPassword | password | must not be less than 8 and must be string | false |
 | role | text | must be one of this (farmer, engineer) | false |
 | phoneNumber | number | must be number and less than 11 | false |
-| devicesNumber | number | must be number and default=5 | true |
 | workField | text | must be string | false |
 | usageTarget | text | must be string | false |
 | streetName | text | must be string | false |
@@ -90,10 +90,10 @@ Form:
 |--------|------|-------|--------|
 | firstName | text | must be string | false |
 | lastName | text | must be string | false |
+| userName | text | must be string with only small characters and must larger than 8 characters | false |
 | email | email | must be string | false |
 | role | text | must be one of this (farmer, engineer) | false |
 | phoneNumber | number | must be number must be number and less than 11 | false |
-| devicesNumber | number | must be number and default=5 | true |
 | workField | text | must be string | false |
 | usageTarget | text | must be string | false |
 | streetName | text | must be string | false |
@@ -181,7 +181,7 @@ GET
 ### **Get Devices logined by my account:**
 Route:
 ```
-/api/token/
+/api/token
 ```
 Method:
 ```
@@ -225,12 +225,12 @@ Form:
 |--------|------|-------|--------|
 | firstName | text | must be string | false |
 | lastName | text | must be string | false |
+| userName | text | must be string with only small characters and larger than 8 characters | false |
 | email | email | must be string | false |
 | password | password | must not be less than 8 and must be string | false |
 | confirmPassword | password | must not be less than 8 and must be string | false |
 | role | text | must be one of this (admin, superAdmin, farmer, engineer) | false |
 | phoneNumber | number | must be number must be number and less than 11 | false |
-| devicesNumber | number | must be number and default=5 | true |
 | workField | text | must be string | false |
 | usageTarget | text | must be string | false |
 | streetName | text | must be string | false |
@@ -275,6 +275,94 @@ Route:
 Method:
 ```
 GET
+```
+</br>
+
+### **Add feature:**
+Route:
+```
+/api/feature
+```
+Method:
+```
+POST
+```
+Form:
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
+| feature | text | minimum length 3 characters and must be small chars with no spaces | false |
+| describtion | text | minimum length 10 characters | false |
+| price | number | must be number | false |
+</br>
+
+### **update feature:**
+Route:
+```
+/api/feature/:id        -(id) mean id of feature that wanted
+```
+Method:
+```
+PUT
+```
+Form:
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
+| feature | text | minimum length 3 characters and must be small chars with no spaces | false |
+| describtion | text | minimum length 10 characters | false |
+| price | number | must be number | false |
+</br>
+
+### **Delete feature:**
+Route:
+```
+/api/feature/:id        -(id) mean id of feature that wanted
+```
+Method:
+```
+DELETE
+```
+</br>
+
+### **Add tag:**
+Route:
+```
+/api/tag
+```
+Method:
+```
+POST
+```
+Form:
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
+| tag | text | minimum length 3 characters and must be small chars with no spaces | false |
+| describtion | text | minimum length 10 characters | false |
+</br>
+
+### **update tag:**
+Route:
+```
+/api/tag/:id        -(id) mean id of tag that wanted
+```
+Method:
+```
+PUT
+```
+Form:
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
+| tag | text | minimum length 3 characters and must be small chars with no spaces | false |
+| describtion | text | minimum length 10 characters | false |
+</br>
+
+### **Delete tag:**
+Route:
+```
+/api/tag/:id        -(id) mean id of tag that wanted
+```
+Method:
+```
+DELETE
 ```
 ---
 ## **Post Routes:**
@@ -449,5 +537,49 @@ Route:
 Method:
 ```
 POST
+```
+---
+## **Feature Routes:**
+### **Get all features:**
+Route:
+```
+/api/feature
+```
+Method:
+```
+GET
+```
+</br>
+
+### **Get feature:**
+Route:
+```
+/api/feature/:id        -(id) mean id of feature that wanted
+```
+Method:
+```
+GET
+```
+---
+## **Tag Routes:**
+### **Get all Tags:**
+Route:
+```
+/api/tag
+```
+Method:
+```
+GET
+```
+</br>
+
+### **Get feature:**
+Route:
+```
+/api/tag/:id        -(id) mean id of tag that wanted
+```
+Method:
+```
+GET
 ```
 ---

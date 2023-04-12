@@ -44,11 +44,8 @@ const Token = sequelize.define('Token', {
     bot: {
         type: DataTypes.STRING
     },
-}, {
-    // Other model options go here
 })
 
-// Relation Between User and Token
 User.hasMany(Token, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE'
