@@ -92,8 +92,13 @@ let createUser = async (req, res) => {
         if (user !== null) return res.status(400).json({
             message: "Email, phoneNumber or userName is actually exist :("
         })
+        
+        if(req.body.role == "farmer" || req.body.role == "engineer"){
+            userData["role"] = req.body.role
+        }else return res.status(403).json({
+            message: "forbidden command"
+        })
 
-        userData["role"] = req.body.role
         userData["loginDevices"] = 1
 
         await sequelize.transaction(async (t) => {

@@ -1,5 +1,5 @@
-const updateValidator = require("../util/updatePasswordValidator")
-const resetValidator = require("../util/resetPasswordValidator")
+const updateValidator = require("../../util/updatePasswordValidator")
+const resetValidator = require("../../util/resetPasswordValidator")
 module.exports = (req, res, next)=>{
     let token = req.token,
         user = req.user

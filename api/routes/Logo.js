@@ -2,11 +2,11 @@ const express = require("express")
 const router = express.Router()
 const userModel = require("../models/User")
 const upload = require("../middlewares/uploadImageMW")
-const validID = require("../middlewares/checkValidIDMW")
+const validID = require("../middlewares/validators/checkValidIDMW")
 const fs = require("fs")
-const authrization = require("../middlewares/authrizationMW")
-const checkUserFound = require("../middlewares/checkUserFoundMW")
-const checkPermission = require("../middlewares/checkPermissionOnUserMW")
+const authrization = require("../middlewares/checkPermission/authrizationMW")
+const checkUserFound = require("../middlewares/checkFound/checkUserFoundMW")
+const checkPermission = require("../middlewares/checkPermission/checkPermissionOnUserMW")
 
 router.get("/:id", validID, authrization, checkUserFound, checkPermission, (req, res) => {
     let options = {

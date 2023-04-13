@@ -1,4 +1,4 @@
-const tokenModel = require("../models/Token")
+const tokenModel = require("../../models/Token")
 
 module.exports = async (req, res, next) => {
     let token = req.header("x-auth-token")

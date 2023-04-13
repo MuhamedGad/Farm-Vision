@@ -1,4 +1,4 @@
-const validator = require("../util/roleValidator")
+const validator = require("../../util/createFeaturevallidator")
 module.exports = (req, res, next)=>{
     if(validator(req.body)){
         req.valid = 1

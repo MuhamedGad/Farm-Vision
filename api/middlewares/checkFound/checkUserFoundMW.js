@@ -1,5 +1,5 @@
-const userModel = require("../models/User")
-const userFeaturesModel = require("../models/UserFeatures")
+const userModel = require("../../models/User")
+const userFeaturesModel = require("../../models/UserFeatures")
 
 module.exports = async (req, res, next) => {
     try {

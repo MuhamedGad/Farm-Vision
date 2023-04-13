@@ -1,4 +1,4 @@
-const featureModel = require("../models/Feature")
+const featureModel = require("../../models/Feature")
 
 module.exports = async (req, res, next) => {
     try {

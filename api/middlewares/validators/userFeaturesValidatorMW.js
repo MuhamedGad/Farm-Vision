@@ -1,4 +1,4 @@
-const featuresModel = require("../models/Feature")
+const featuresModel = require("../../models/Feature")
 
 module.exports = async(req, res, next)=>{
     let valid = true,

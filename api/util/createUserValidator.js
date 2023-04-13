@@ -16,7 +16,7 @@ const schema = {
             "type":"string",
             "nullable": false,
             "minLength":8,
-            "pattern":"[a-z]+[1-9]*"
+            "pattern":"^[a-z][a-z1-9]*$"
         },
         "email":{
             "type":"string",
@@ -31,7 +31,7 @@ const schema = {
             "minLength":8
         },
         "role":{
-            enum:["farmer", "engineer"]
+            enum:["farmer", "engineer", "admin", "superAdmin"]
         },
         "phoneNumber":{
             "type":"string",

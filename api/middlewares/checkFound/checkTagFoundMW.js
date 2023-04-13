@@ -1,4 +1,4 @@
-const tagModel = require("../models/Tag")
+const tagModel = require("../../models/Tag")
 
 module.exports = async (req, res, next) => {
     try {
