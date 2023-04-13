@@ -26,13 +26,10 @@ let getUserByID = async (req, res) => {
 let getAllUsers = async (req, res) => {
     try {
         let users = await userModel.findAndCountAll()
-        if (users.length !== 0) return res.status(200).json({
+        return res.status(200).json({
             message: "Found users :)",
             length: users.count,
             data: users.rows
-        })
-        else return res.status(400).json({
-            message: "Not found any users :("
         })
     } catch (err) {
         catchFunc(res, "Get All", err)

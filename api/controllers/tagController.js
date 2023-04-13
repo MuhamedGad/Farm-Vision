@@ -11,13 +11,10 @@ let getTagById = (req, res)=>{
 let getAllTags = async (req, res) => {
     try {
         let tags = await tagModel.findAndCountAll({order:[["numberOfPosts", "DESC"]]})
-        if (tags.length !== 0) return res.status(200).json({
+        return res.status(200).json({
             message: "Found tags :)",
             length: tags.count,
             data: tags.rows
-        })
-        else return res.status(400).json({
-            message: "Not found any tags :("
         })
     } catch (err) {
         return res.status(500).json({

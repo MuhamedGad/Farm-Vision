@@ -11,13 +11,10 @@ let getFeatureById = (req, res)=>{
 let getAllFeatures = async (req, res) => {
     try {
         let features = await featureModel.findAndCountAll()
-        if (features.length !== 0) return res.status(200).json({
+        return res.status(200).json({
             message: "Found features :)",
             length: features.count,
             data: features.rows
-        })
-        else return res.status(400).json({
-            message: "Not found any features :("
         })
     } catch (err) {
         return res.status(500).json({

@@ -24,7 +24,7 @@ User.belongsToMany(Comment, { through: CommentDisLike });
 Comment.belongsToMany(User, { through: CommentDisLike });
 
 (async () => {
-    await CommentDisLike.sync({alter:true});
+    await CommentDisLike.sync(/* {alter:true} */);
 })();
 
 module.exports = CommentDisLike

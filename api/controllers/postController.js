@@ -17,13 +17,10 @@ let getPostById = async (req, res) => {
 let getAllPosts = async (req, res) => {
     try {
         let posts = await postModel.findAndCountAll({order:[["points", "DESC"]]})
-        if (posts.length !== 0) return res.status(200).json({
+        return res.status(200).json({
             message: "Found posts :)",
             length: posts.count,
             data: posts.rows
-        })
-        else return res.status(400).json({
-            message: "Not found any posts :("
         })
     } catch (err) {
         return res.status(500).json({
@@ -39,13 +36,10 @@ let getPostsForUser = async(req, res)=>{
                 where:{UserId:user.id},
                 order:[["points", "DESC"]]
             })
-        if (posts.length !== 0) return res.status(200).json({
+        return res.status(200).json({
             message: "Found posts :)",
             length: posts.count,
             data: posts.rows
-        })
-        else return res.status(400).json({
-            message: "Not found any posts :("
         })
     } catch (err) {
         return res.status(500).json({

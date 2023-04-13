@@ -24,7 +24,7 @@ User.belongsToMany(Feature, { through: UserFeatures });
 Feature.belongsToMany(User, { through: UserFeatures });
 
 (async () => {
-    await UserFeatures.sync({alter:true});
+    await UserFeatures.sync(/* {alter:true} */);
 })();
 
 module.exports = UserFeatures
