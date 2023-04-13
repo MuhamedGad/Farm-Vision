@@ -1,5 +1,6 @@
 const postModel = require("../models/Post")
 const postLikeModel = require("../models/PostLike")
+const postDisLikeModel = require("../models/PostDisLike")
 const postTagsModel = require("../models/PostTags")
 const tagModel = require("../models/Tag")
 const sequelize = require("../models/sequelize")
@@ -168,6 +169,41 @@ let like = async(req, res)=>{
     }
 }
 
+let disLike = async(req, res)=>{
+    try {
+        let token = req.token,
+            post = req.post,
+            disLiked
+        await sequelize.transaction(async(t)=>{
+            let dislikeInfo = await postDisLikeModel.findOne({where: {
+                [Op.and]: [{UserId: token.UserId}, {PostId: post.id}]
+            }})
+            if(dislikeInfo) {
+                await postDisLikeModel.destroy({where: {
+                    [Op.and]: [{UserId: token.UserId}, {PostId: post.id}]
+                }, transaction: t})
+                await postModel.update({numberOfDisLikes: post.numberOfDisLikes-1, points: post.points+1}, {where:{id: post.id}, transaction: t})
+                disLiked = false
+            }else{
+                let disLikeData = {}
+                disLikeData["UserId"] = token.UserId
+                disLikeData["PostId"] = post.id
+                await postDisLikeModel.create(disLikeData, {transaction: t})
+                await postModel.update({numberOfDisLikes: post.numberOfDisLikes+1, points: post.points-1}, {where:{id: post.id}, transaction: t})
+                disLiked = true
+            }
+        })
+        return res.status(200).json({
+            message: (disLiked)?"DisLiked :)":"UnDisLiked :(",
+            disLiked
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message: "Post dislike Error: " + err
+        })
+    }
+}
+
 module.exports = {
     getPostById,
     getAllPosts,
@@ -175,5 +211,6 @@ module.exports = {
     createPost,
     updatePost,
     deletePost,
-    like
+    like,
+    disLike
 }

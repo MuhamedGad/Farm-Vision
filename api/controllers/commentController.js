@@ -1,6 +1,7 @@
 const commentModel = require("../models/Comment")
 const postModel = require("../models/Post")
 const commentLikeModel = require("../models/CommentLike")
+const commentDisLikeModel = require("../models/CommentDisLike")
 const sequelize = require("../models/sequelize")
 const { Op } = require("sequelize")
 
@@ -49,7 +50,7 @@ let creatComment = async(req, res)=>{
         if(req.post) await sequelize.transaction(async (t) => {
             comment = await commentModel.create(commentData, {transaction: t})
             
-            await postModel.update({numberOfComments: parent.numberOfComments + 1, points: parent.points + 5}, {where: {id: comment.PostId}, transaction: t})
+            await postModel.update({numberOfComments: parent.numberOfComments + 1}, {where: {id: comment.PostId}, transaction: t})
         })
 
         else await sequelize.transaction(async (t) => {
@@ -58,7 +59,7 @@ let creatComment = async(req, res)=>{
             await commentModel.update({numberOfComments: parent.numberOfComments + 1}, {where: {id: parent.id}, transaction: t})
 
             let post = await postModel.findByPk(comment.PostId, {transaction: t})
-            await postModel.update({numberOfComments: post.numberOfComments + 1, points: post.points + 5}, {where: {id: post.id}, transaction: t})
+            await postModel.update({numberOfComments: post.numberOfComments + 1}, {where: {id: post.id}, transaction: t})
         })
 
         return res.status(200).json({
@@ -102,7 +103,7 @@ let deleteComment = async(req, res)=>{
             await commentModel.update({numberOfComments: parentComment.numberOfComments - (1*(comment.numberOfComments+1))}, {where: {id: parentComment.id}, transaction: t})
 
             let post = await postModel.findByPk(comment.PostId)
-            await postModel.update({numberOfComments: post.numberOfComments - (1*(comment.numberOfComments+1)), points: post.points - (5*(comment.numberOfComments+1))}, {where: {id: post.id}, transaction: t})
+            await postModel.update({numberOfComments: post.numberOfComments - (1*(comment.numberOfComments+1))}, {where: {id: post.id}, transaction: t})
         })
 
         else await sequelize.transaction(async (t) => {
@@ -111,7 +112,7 @@ let deleteComment = async(req, res)=>{
             }, transaction: t})
 
             let post = await postModel.findByPk(comment.PostId)
-            await postModel.update({numberOfComments: post.numberOfComments - (1*(comment.numberOfComments+1)), points: post.points - (5*(comment.numberOfComments+1))}, {where: {id: post.id}, transaction: t})
+            await postModel.update({numberOfComments: post.numberOfComments - (1*(comment.numberOfComments+1))}, {where: {id: post.id}, transaction: t})
         })
         
         return res.status(200).json({
@@ -137,14 +138,14 @@ let like = async(req, res)=>{
                 await commentLikeModel.destroy({where: {
                     [Op.and]: [{UserId: token.UserId}, {CommentId: comment.id}]
                 }, transaction: t})
-                await commentModel.update({numberOfLikes: comment.numberOfLikes-1}, {where:{id: comment.id}, transaction: t})
+                await commentModel.update({numberOfLikes: comment.numberOfLikes-1, points: comment.points-1}, {where:{id: comment.id}, transaction: t})
                 liked = false
             }else{
                 let likeData = {}
                 likeData["UserId"] = token.UserId
                 likeData["CommentId"] = comment.id
                 await commentLikeModel.create(likeData, {transaction: t})
-                await commentModel.update({numberOfLikes: comment.numberOfLikes+1}, {where:{id: comment.id}, transaction: t})
+                await commentModel.update({numberOfLikes: comment.numberOfLikes+1, points: comment.points+1}, {where:{id: comment.id}, transaction: t})
                 liked = true
             }
         })
@@ -159,11 +160,47 @@ let like = async(req, res)=>{
     }
 }
 
+let disLike = async(req, res)=>{
+    try {
+        let token = req.token,
+            comment = req.comment,
+            disLiked
+        await sequelize.transaction(async(t)=>{
+            let disLikeInfo = await commentDisLikeModel.findOne({where: {
+                [Op.and]: [{UserId: token.UserId}, {CommentId: comment.id}]
+            }})
+            if(disLikeInfo) {
+                await commentDisLikeModel.destroy({where: {
+                    [Op.and]: [{UserId: token.UserId}, {CommentId: comment.id}]
+                }, transaction: t})
+                await commentModel.update({numberOfDisLikes: comment.numberOfDisLikes-1, points: comment.points+1}, {where:{id: comment.id}, transaction: t})
+                disLiked = false
+            }else{
+                let likeData = {}
+                likeData["UserId"] = token.UserId
+                likeData["CommentId"] = comment.id
+                await commentDisLikeModel.create(likeData, {transaction: t})
+                await commentModel.update({numberOfDisLikes: comment.numberOfDisLikes+1, points: comment.points-1}, {where:{id: comment.id}, transaction: t})
+                disLiked = true
+            }
+        })
+        return res.status(200).json({
+            message: (disLiked)?"disLiked :)":"UndisLiked :(",
+            disLiked
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message: "Comment disLike Error: " + err
+        })
+    }
+}
+
 module.exports = {
     getCommentById,
     getCommentsOfPost,
     creatComment,
     updateComment,
     deleteComment,
-    like
+    like,
+    disLike
 }

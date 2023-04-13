@@ -17,6 +17,11 @@ const Post = sequelize.define('Post', {
         allowNull:false,
         defaultValue:0
     },
+    numberOfDisLikes:{
+        type:DataTypes.INTEGER,
+        allowNull:false,
+        defaultValue:0
+    },
     points:{
         type:DataTypes.INTEGER,
         allowNull:false,
@@ -31,7 +36,7 @@ User.hasMany(Post, {
 Post.belongsTo(User);
 
 (async () => {
-    await Post.sync(/* {alter:true} */);
+    await Post.sync({alter:true});
 })();
 
 module.exports = Post

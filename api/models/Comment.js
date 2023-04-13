@@ -17,6 +17,16 @@ const Comment = sequelize.define('Comment', {
         type:DataTypes.INTEGER,
         allowNull:false,
         defaultValue:0
+    },
+    numberOfDisLikes:{
+        type:DataTypes.INTEGER,
+        allowNull:false,
+        defaultValue:0
+    },
+    points:{
+        type:DataTypes.INTEGER,
+        allowNull:false,
+        defaultValue:0
     }
 });
 
@@ -39,7 +49,7 @@ Comment.hasMany(Comment, {
 Comment.belongsTo(Comment);
 
 (async () => {
-    await Comment.sync(/* {alter:true} */);
+    await Comment.sync({alter:true});
 })();
 
 module.exports = Comment

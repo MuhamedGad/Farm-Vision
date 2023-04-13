@@ -412,6 +412,7 @@ Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
 | content | text | must be between 10-1000 characters | false |
+| tags | checkboxes | must be array of valid tags that saved | false |
 </br>
 
 ### **Update post:**
@@ -427,6 +428,7 @@ Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
 | content | text | must be between 10-1000 characters | false |
+| tags | checkboxes | must be array of valid tags that saved | false |
 </br>
 
 ### **Delete post:**
@@ -443,7 +445,18 @@ DELETE
 ### **Like or Unlike post:**
 Route:
 ```
-/api/post/like/:id        -(id) mean id of post that wanted to like or unlike
+/api/post/like/:id        -(id) mean id of post that wanted
+```
+Method:
+```
+POST
+```
+</br>
+
+### **DisLike or UnDislike post:**
+Route:
+```
+/api/post/dislike/:id        -(id) mean id of post that wanted
 ```
 Method:
 ```
@@ -533,6 +546,17 @@ DELETE
 Route:
 ```
 /api/comment/like/:id        -(id) mean id of comment that wanted to like or unlike
+```
+Method:
+```
+POST
+```
+</br>
+
+### **DisLike or UnDislike comment:**
+Route:
+```
+/api/comment/dislike/:id        -(id) mean id of comment that wanted to like or unlike
 ```
 Method:
 ```

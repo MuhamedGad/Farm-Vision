@@ -1,9 +1,9 @@
 const { DataTypes } = require("sequelize")
 const sequelize = require("./sequelize")
 const User = require("./User")
-const Feature = require("./Feature")
+const Comment = require("./Comment")
 
-const UserFeatures = sequelize.define('UserFeatures', {
+const CommentDisLike = sequelize.define('CommentDisLike', {
     UserId: {
         type: DataTypes.INTEGER,
         references: {
@@ -11,20 +11,20 @@ const UserFeatures = sequelize.define('UserFeatures', {
             key: 'id'
         }
     },
-    FeatureId: {
+    CommentId: {
         type: DataTypes.INTEGER,
         references: {
-            model: Feature,
+            model: Comment,
             key: 'id'
         }
     }
 });
 
-User.belongsToMany(Feature, { through: UserFeatures });
-Feature.belongsToMany(User, { through: UserFeatures });
+User.belongsToMany(Comment, { through: CommentDisLike });
+Comment.belongsToMany(User, { through: CommentDisLike });
 
 (async () => {
-    await UserFeatures.sync({alter:true});
+    await CommentDisLike.sync({alter:true});
 })();
 
-module.exports = UserFeatures
+module.exports = CommentDisLike
