@@ -36,7 +36,7 @@ User.hasMany(Post, {
 Post.belongsTo(User);
 
 (async () => {
-    await Post.sync(/* {alter:true} */);
+    await Post.sync({alter:true});
 })();
 
 module.exports = Post

@@ -24,7 +24,7 @@ User.belongsToMany(Post, { through: PostDisLike });
 Post.belongsToMany(User, { through: PostDisLike });
 
 (async () => {
-    await PostDisLike.sync(/* {alter:true} */);
+    await PostDisLike.sync({alter:true});
 })();
 
 module.exports = PostDisLike

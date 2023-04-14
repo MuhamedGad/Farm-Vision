@@ -16,7 +16,7 @@ Comment.hasMany(CommentImage, {
 CommentImage.belongsTo(Comment);
 
 (async () => {
-    await CommentImage.sync(/* {alter:true} */);
+    await CommentImage.sync({alter:true});
 })();
 
 module.exports = CommentImage

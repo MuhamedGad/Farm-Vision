@@ -49,7 +49,7 @@ Comment.hasMany(Comment, {
 Comment.belongsTo(Comment);
 
 (async () => {
-    await Comment.sync(/* {alter:true} */);
+    await Comment.sync({alter:true});
 })();
 
 module.exports = Comment

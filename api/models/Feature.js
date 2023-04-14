@@ -22,7 +22,7 @@ User.hasMany(Feature)
 Feature.belongsTo(User);
 
 (async () => {
-    await Feature.sync(/* {alter:true} */);
+    await Feature.sync({alter:true});
 })();
 
 module.exports = Feature

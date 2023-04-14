@@ -1,5 +1,5 @@
-const tokenModel = require("../models/Token")
 const userModel = require("../models/User")
+const tokenModel = require("../models/Token")
 const sequelize = require("../models/sequelize")
 
 let getAllTokens = async(req, res)=>{
