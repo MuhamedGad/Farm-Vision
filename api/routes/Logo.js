@@ -8,11 +8,11 @@ const authrization = require("../middlewares/checkPermission/authrizationMW")
 const checkUserFound = require("../middlewares/checkFound/checkUserFoundMW")
 const checkPermission = require("../middlewares/checkPermission/checkPermissionOnUserMW")
 
-router.get("/:id", validID, authrization, checkUserFound, checkPermission, (req, res) => {
+router.get("/:imagename", authrization, (req, res) => {
     let options = {
         root: __dirname.replace("routes", "public"),
     },
-        fileName = "images/" + req.user.image
+        fileName = "images/" + req.params.imagename
     return res.sendFile(fileName, options, function (err) {
         if (err) return res.status(500).json({
             message: "Send logo error: " + err

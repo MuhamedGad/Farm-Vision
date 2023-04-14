@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser")
 const helmet = require("helmet")
 const port = process.env.PORT || 8888
 const cors = require("cors")
+// const upload = require("./middlewares/uploadImageMW")
 
 const user = require("./routes/User")
 const token = require("./routes/Token")
@@ -38,6 +39,13 @@ app.use("/api/comment", comment)
 app.use("/api/feature", feature)
 app.use("/api/tag", tag)
 app.use("/api/predict", aiModel)
+
+// app.post("/", upload.array("images"), (req, res)=>{
+//     req.files.forEach(e=>{
+//         console.log(e.filename)
+//     })
+//     return res.json(req.files)
+// })
 
 app.use((req, res)=>{res.status(400).json({message:"Not Found This endpoint :("})})
 

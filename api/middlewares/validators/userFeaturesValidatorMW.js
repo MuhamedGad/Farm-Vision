@@ -10,7 +10,7 @@ module.exports = async(req, res, next)=>{
         if(Array.isArray(features)){
             for(let i = 0; i < features.length; i++){
                 feature = await featuresModel.findOne({where:{feature: features[i]}})
-                if (feature === null) return res.status(400).json({
+                if (feature === null) return res.status(401).json({
                     message: "Invalid Features :("
                 })
                 featuresIds.add(feature.id)

@@ -3,6 +3,10 @@ const postLikeModel = require("../models/PostLike")
 const postDisLikeModel = require("../models/PostDisLike")
 const postTagsModel = require("../models/PostTags")
 const tagModel = require("../models/Tag")
+const postImageModel = require("../models/PostImage")
+const commentModel = require("../models/Comment")
+const commentImageModel = require("../models/CommentImage")
+const fs = require("fs")
 const sequelize = require("../models/sequelize")
 const { Op } = require("sequelize")
 
@@ -52,16 +56,28 @@ let createPost = async(req, res)=>{
     let postData = {},
         token = req.token,
         tags = req.tags,
-        post
+        post,
+        files = req.files,
+        filesnames = []
+
     postData["content"] = req.body.content
     postData["UserId"] = token.UserId
+    if(files){
+        files.forEach(e => {
+            filesnames.push(e.filename)
+        })
+    }
+
     try{
         await sequelize.transaction(async (t) => {
             post = await postModel.create(postData, { transaction: t })
-            for (let i = 0; i < tags.length; i++) {
-                await postTagsModel.create({TagId: tags[i].id, PostId: post.id}, { transaction: t })
-                await tagModel.update({numberOfPosts: tags[i].numberOfPosts + 1}, {where:{id: tags[i].id}, transaction: t})
-            }
+            // for (let i = 0; i < tags.length; i++) {
+            //     await postTagsModel.create({TagId: tags[i].id, PostId: post.id}, { transaction: t })
+            //     await tagModel.update({numberOfPosts: tags[i].numberOfPosts + 1}, {where:{id: tags[i].id}, transaction: t})
+            // }
+            filesnames.forEach(async e=>{
+                await postImageModel.create({image: e, PostId: post.id})
+            })
         })
 
         return res.status(200).json({
@@ -78,22 +94,42 @@ let createPost = async(req, res)=>{
 let updatePost = async(req, res)=>{
     let postData = {},
         post = req.post,
-        tags = req.tags
+        tags = req.tags,
+        files = req.files,
+        filesnames = []
+
     postData["content"] = req.body.content
+    if(files){
+        files.forEach(e => {
+            filesnames.push(e.filename)
+        })
+    }
     try{
         await sequelize.transaction(async (t) => {
-            let postTags = await postTagsModel.findAll({where:{PostId: post.id}, transaction: t})
-            for (let i = 0; i < postTags.length; i++) {
-                let tag = await tagModel.findOne({where: {id: postTags[i].TagId}, transaction: t})
-                await tagModel.update({numberOfPosts: tag.numberOfPosts - 1}, {where: {id: tag.id}, transaction: t})
+            // let postTags = await postTagsModel.findAll({where:{PostId: post.id}, transaction: t})
+            // for (let i = 0; i < postTags.length; i++) {
+            //     let tag = await tagModel.findOne({where: {id: postTags[i].TagId}, transaction: t})
+            //     await tagModel.update({numberOfPosts: tag.numberOfPosts - 1}, {where: {id: tag.id}, transaction: t})
+            // }
+            // await postTagsModel.destroy({ where: { PostId: post.id }, transaction: t })
+            // for (let i = 0; i < tags.length; i++) {
+            //     let postTag = await postTagsModel.create({TagId: tags[i].id, PostId: post.id}, { transaction: t })
+            //     let tag = await tagModel.findOne({where: {id: tags[i].id}, transaction: t})
+            //     await tagModel.update({numberOfPosts: tag.numberOfPosts + 1}, {where:{id: tags[i].id}, transaction: t})
+            // }
+            let oldFiles = await  postImageModel.findAndCountAll({where:{PostId: post.id}, transaction: t})
+            for (let i = 0; i < oldFiles.count; i++) {
+                let directoryPath = __dirname.replace("controllers", "public/images/")
+                fs.unlink(directoryPath + oldFiles.rows[i].image, (err) => {
+                    if (err) return res.status(500).json({
+                        message: "Delete logo from server error: " + err
+                    })
+                })
             }
-            await postTagsModel.destroy({ where: { PostId: post.id }, transaction: t })
-            for (let i = 0; i < tags.length; i++) {
-                let postTag = await postTagsModel.create({TagId: tags[i].id, PostId: post.id}, { transaction: t })
-                let tag = await tagModel.findOne({where: {id: tags[i].id}, transaction: t})
-                await tagModel.update({numberOfPosts: tag.numberOfPosts + 1}, {where:{id: tags[i].id}, transaction: t})
-            }
-            // console.log(postData)
+            await postImageModel.destroy({where:{PostId: post.id}, transaction: t})
+            filesnames.forEach(async e=>{
+                await postImageModel.create({image: e, PostId: post.id}, {transaction: t})
+            })
             await postModel.update(postData, {where:{id:post.id}, transaction: t})
         })
         
@@ -111,10 +147,27 @@ let deletePost = async(req, res)=>{
     try {
         let post = req.post
         await sequelize.transaction(async (t) => {
-            let postTags = await postTagsModel.findAll({where:{PostId: post.id}, transaction: t})
-            for (let i = 0; i < postTags.length; i++) {
-                let tag = await tagModel.findOne({where: {id: postTags[i].TagId}, transaction: t})
-                await tagModel.update({numberOfPosts: tag.numberOfPosts-1}, {where:{id:tag.id}, transaction: t})
+            // let postTags = await postTagsModel.findAll({where:{PostId: post.id}, transaction: t})
+            // for (let i = 0; i < postTags.length; i++) {
+            //     let tag = await tagModel.findOne({where: {id: postTags[i].TagId}, transaction: t})
+            //     await tagModel.update({numberOfPosts: tag.numberOfPosts-1}, {where:{id:tag.id}, transaction: t})
+            // }
+            let oldFilesOfPost = await  postImageModel.findAndCountAll({where:{PostId: post.id}, transaction: t})
+            let comments = await  commentModel.findAndCountAll({where:{PostId: post.id}, transaction: t}),
+                oldFilesOfComment = []
+            for (let i = 0; i < comments.count; i++) {
+                let comment = comments.rows[i]
+                let commentImages = await  commentImageModel.findAndCountAll({where:{CommentId: comment.id}, transaction: t})
+                oldFilesOfComment.push(...commentImages.rows)
+            }
+            let oldFiles = [...oldFilesOfPost.rows, ...oldFilesOfComment]
+            for (let i = 0; i < oldFiles.length; i++) {
+                let directoryPath = __dirname.replace("controllers", "public/images/")
+                fs.unlink(directoryPath + oldFiles[i].image, (err) => {
+                    if (err) return res.status(500).json({
+                        message: "Delete logo from server error: " + err
+                    })
+                })
             }
             await postModel.destroy({where: { id: post.id }, transaction: t})
         })

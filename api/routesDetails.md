@@ -22,6 +22,7 @@ Form:
 |--------|------|--------|-------|
 | email | email | must be string | false |
 | password | password | must not be less than 8 and must be string | false |
+
 </br>
 
 ### **Sign Out:**
@@ -33,6 +34,7 @@ Method:
 ```
 POST
 ```
+
 </br>
 
 ### **Sign Up:**
@@ -54,7 +56,7 @@ Form:
 | password | password | must not be less than 8 and must be string | false |
 | confirmPassword | password | must not be less than 8 and must be string | false |
 | role | text | must be one of this (farmer, engineer) | false |
-| phoneNumber | number | must be number and less than 11 | false |
+| phoneNumber | number | must be number in string datatype | false |
 | workField | text | must be string | false |
 | usageTarget | text | must be string | false |
 | streetName | text | must be string | false |
@@ -63,6 +65,7 @@ Form:
 | country | text | must be string | false |
 | postCode | text | must be string | false |
 | features | checkboxes | must be an array of our project features selected by user | true |
+
 </br>
 
 ### **Get User:**
@@ -74,6 +77,7 @@ Method:
 ```
 GET
 ```
+
 </br>
 
 ### **Update User:**
@@ -93,7 +97,7 @@ Form:
 | userName | text | must be string with only small characters and must larger than 8 characters | false |
 | email | email | must be string | false |
 | role | text | must be one of this (farmer, engineer) | false |
-| phoneNumber | number | must be number must be number and less than 11 | false |
+| phoneNumber | number | must be number in string datatype  | false |
 | workField | text | must be string | false |
 | usageTarget | text | must be string | false |
 | streetName | text | must be string | false |
@@ -102,6 +106,7 @@ Form:
 | country | text | must be string | false |
 | postCode | text | must be string | false |
 | features | checkboxes | must be an array of our project features selected by user | true |
+
 </br>
 
 ### **Delete User:**
@@ -113,12 +118,13 @@ Method:
 ```
 DELETE
 ```
+
 </br>
 
-### **Get Profile Image:**
+### **Get Image:**
 Route:
 ```
-/api/logo/:id       - (:id) means id of user that is owner of image
+/api/logo/:imagename       - (:imagename) means name of image that wanted
 ```
 Method:
 ```
@@ -230,7 +236,7 @@ Form:
 | password | password | must not be less than 8 and must be string | false |
 | confirmPassword | password | must not be less than 8 and must be string | false |
 | role | text | must be one of this (admin, superAdmin, farmer, engineer) | false |
-| phoneNumber | number | must be number must be number and less than 11 | false |
+| phoneNumber | number | must be number in string datatype | false |
 | workField | text | must be string | false |
 | usageTarget | text | must be string | false |
 | streetName | text | must be string | false |

@@ -2,6 +2,8 @@ const commentModel = require("../models/Comment")
 const postModel = require("../models/Post")
 const commentLikeModel = require("../models/CommentLike")
 const commentDisLikeModel = require("../models/CommentDisLike")
+const commentImageModel = require("../models/CommentImage")
+const fs = require("fs")
 const sequelize = require("../models/sequelize")
 const { Op } = require("sequelize")
 
@@ -37,17 +39,29 @@ let creatComment = async(req, res)=>{
         let commentData = {},
             token = req.token,
             parent = (req.post)?req.post:req.comment,
-            comment
+            comment,
+            files = req.files,
+            filesnames = []
 
         commentData["content"] = req.body.content
         commentData["CommentId"] = (req.post)?null:parent.id
         commentData["PostId"] = (req.post)?parent.id:parent.PostId
         commentData["UserId"] = token.UserId
 
+        if(files){
+            files.forEach(e => {
+                filesnames.push(e.filename)
+            })
+        }
+
         if(req.post) await sequelize.transaction(async (t) => {
             comment = await commentModel.create(commentData, {transaction: t})
             
             await postModel.update({numberOfComments: parent.numberOfComments + 1}, {where: {id: comment.PostId}, transaction: t})
+
+            filesnames.forEach(async e=>{
+                await commentImageModel.create({image: e, CommentId: comment.id})
+            })
         })
 
         else await sequelize.transaction(async (t) => {
@@ -57,6 +71,9 @@ let creatComment = async(req, res)=>{
 
             let post = await postModel.findByPk(comment.PostId, {transaction: t})
             await postModel.update({numberOfComments: post.numberOfComments + 1}, {where: {id: post.id}, transaction: t})
+            filesnames.forEach(async e=>{
+                await commentImageModel.create({image: e, CommentId: comment.id})
+            })
         })
 
         return res.status(200).json({
@@ -72,11 +89,35 @@ let creatComment = async(req, res)=>{
 
 let updateComment = async(req, res)=>{
     let commentData = {},
-        comment = req.comment
-    
+        comment = req.comment,
+        files = req.files,
+        filesnames = []
+        
     commentData["content"] = req.body.content
+    if(files){
+        files.forEach(e => {
+            filesnames.push(e.filename)
+        })
+    }
+
     try{
-        await commentModel.update(commentData, {where:{id: comment.id}})
+        await sequelize.transaction(async (t) => {
+            let oldFiles = await  commentImageModel.findAndCountAll({where:{CommentId: comment.id}, transaction: t})
+            for (let i = 0; i < oldFiles.count; i++) {
+                let directoryPath = __dirname.replace("controllers", "public/images/")
+                fs.unlink(directoryPath + oldFiles.rows[i].image, (err) => {
+                    if (err) return res.status(500).json({
+                        message: "Delete logo from server error: " + err
+                    })
+                })
+            }
+            await commentImageModel.destroy({where:{CommentId: comment.id}, transaction: t})
+            filesnames.forEach(async e=>{
+                await commentImageModel.create({image: e, CommentId: comment.id}, {transaction: t})
+            })
+            await commentModel.update(commentData, {where:{id: comment.id}})
+        })
+
         return res.status(200).json({
             message: "Comment updated successfully :)"
         })
@@ -92,6 +133,15 @@ let deleteComment = async(req, res)=>{
         let comment = req.comment
 
         if(comment.CommentId) await sequelize.transaction(async (t) => {
+            let oldFiles = await  commentImageModel.findAndCountAll({where:{CommentId: comment.id}, transaction: t})
+            for (let i = 0; i < oldFiles.count; i++) {
+                let directoryPath = __dirname.replace("controllers", "public/images/")
+                fs.unlink(directoryPath + oldFiles.rows[i].image, (err) => {
+                    if (err) return res.status(500).json({
+                        message: "Delete logo from server error: " + err
+                    })
+                })
+            }
             await commentModel.destroy({where: {
                 [Op.or]: [{id: comment.id}, {CommentId: comment.id}]
             }, transaction: t})
@@ -104,6 +154,15 @@ let deleteComment = async(req, res)=>{
         })
 
         else await sequelize.transaction(async (t) => {
+            let oldFiles = await  commentImageModel.findAndCountAll({where:{CommentId: comment.id}, transaction: t})
+            for (let i = 0; i < oldFiles.count; i++) {
+                let directoryPath = __dirname.replace("controllers", "public/images/")
+                fs.unlink(directoryPath + oldFiles.rows[i].image, (err) => {
+                    if (err) return res.status(500).json({
+                        message: "Delete logo from server error: " + err
+                    })
+                })
+            }
             await commentModel.destroy({where: {
                 [Op.or]: [{id: comment.id}, {CommentId: comment.id}]
             }, transaction: t})

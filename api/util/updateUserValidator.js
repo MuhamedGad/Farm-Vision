@@ -24,8 +24,7 @@ const schema = {
         },
         "phoneNumber":{
             "type":"string",
-            "nullable": false,
-            "minLength":11
+            "nullable": false
         },
         "role":{
             enum:["farmer", "engineer"]
