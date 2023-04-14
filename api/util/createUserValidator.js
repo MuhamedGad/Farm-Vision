@@ -16,7 +16,7 @@ const schema = {
             "type":"string",
             "nullable": false,
             "minLength":8,
-            "pattern":"^[a-z][a-z1-9]*$"
+            "pattern":"^[a-z][a-z0-9]*$"
         },
         "email":{
             "type":"string",
