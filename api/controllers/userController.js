@@ -202,30 +202,29 @@ let updateUser = async (req, res) => {
             
         let testUser = await userModel.findOne({ where: {
             [Op.or]: [
-                { email: req.body.email },
-                { phoneNumber: req.body.phoneNumber },
-                { userName: req.body.userName }
+                { email: req.body.email || user.email },
+                { phoneNumber: req.body.phoneNumber || user.phoneNumber },
+                { userName: req.body.userName || user.userName }
             ]
         }})
 
         if (testUser !== null && user.id !== testUser.id) return res.status(400).json({
             message: "Email, phoneNumber or userName is actually exist :(",
         })
-
-        userData["firstName"] = req.body.firstName || user.firstName
-        userData["lastName"] = req.body.lastName || user.lastName
-        userData["userName"] = req.body.userName || user.userName
-        userData["email"] = req.body.email || user.email
-        userData["role"] = req.body.role || user.role
-        userData["phoneNumber"] = req.body.phoneNumber || user.phoneNumber
-        userData["workField"] = req.body.workField || user.workField
-        userData["usageTarget"] = req.body.usageTarget || user.usageTarget
-        userData["streetName"] = req.body.streetName || user.streetName
-        userData["city"] = req.body.city || user.city
-        userData["state"] = req.body.state || user.state
-        userData["country"] = req.body.country || user.country
-        userData["postCode"] = req.body.postCode || user.postCode
-
+        userData["firstName"] = (req.body.firstName)?req.body.firstName:user.firstName
+        userData["lastName"] = (req.body.lastName)?req.body.lastName:user.lastName
+        userData["userName"] = (req.body.userName)?req.body.userName:user.userName
+        userData["email"] = (req.body.email)?req.body.email:user.email
+        userData["role"] = (req.body.role)?req.body.role:user.role
+        userData["phoneNumber"] = (req.body.phoneNumber)?req.body.phoneNumber:user.phoneNumber
+        userData["workField"] = (req.body.workField)?req.body.workField:user.workField
+        userData["usageTarget"] = (req.body.usageTarget)?req.body.usageTarget:user.usageTarget
+        userData["streetName"] = (req.body.streetName)?req.body.streetName:user.streetName
+        userData["city"] = (req.body.city)?req.body.city:user.city
+        userData["state"] = (req.body.state)?req.body.state:user.state
+        userData["country"] = (req.body.country)?req.body.country:user.country
+        userData["postCode"] = (req.body.postCode)?req.body.postCode:user.postCode
+        
         await sequelize.transaction(async (t) => {
             if(req.featuresValid){
                 await userFeaturesModel.destroy({ where: { UserId: user.id }, transaction: t })
