@@ -66,7 +66,7 @@ const schema = {
             "nullable": false
         }
     },
-    "required":["firstName", "lastName", "userName", "email", "password", "confirmPassword", "role", "phoneNumber", "workField", "usageTarget", "streetName", "city", "state", "country", "postCode"]
+    "required":["firstName", "lastName", "userName", "email", "password", "confirmPassword", "role", "phoneNumber", "workField", "usageTarget", "country"]
 }
 
 module.exports = ajv.compile(schema)

@@ -8,12 +8,6 @@ module.exports = async (req, res, next) => {
             message: "User Not Found :("
         })
         else {
-            let features = await userFeaturesModel.findAll({where:{UserId: user.id}})
-            let userFeatures = []
-            features.forEach(e=>{
-                userFeatures.push(e.feature)
-            })
-            user.features = userFeatures
             req.user = user
             next()
         }

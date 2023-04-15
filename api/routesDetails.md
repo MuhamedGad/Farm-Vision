@@ -100,11 +100,11 @@ Form:
 | phoneNumber | number | must be number in string datatype  | false |
 | workField | text | must be string | false |
 | usageTarget | text | must be string | false |
-| streetName | text | must be string | false |
-| city | text | must be string | false |
-| state | text | must be string | false |
+| streetName | text | must be string | true |
+| city | text | must be string | true |
+| state | text | must be string | true |
 | country | text | must be string | false |
-| postCode | text | must be string | false |
+| postCode | text | must be string | true |
 | features | checkboxes | must be an array of our project features selected by user | true |
 
 </br>

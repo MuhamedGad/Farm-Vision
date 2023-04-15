@@ -11,20 +11,41 @@ const sequelize = require("../models/sequelize")
 const { Op } = require("sequelize")
 
 let getPostById = async (req, res) => {
-    let post = req.post
-    return res.status(200).json({
-        message: "Post Found :)",
-        data: post
-    })
+    try {
+        let post = req.post,
+            postImages = await postImageModel.findAndCountAll({where:{PostId: post.id}}),
+            imagesNames = []
+        postImages.rows.forEach(e=>{
+            imagesNames.push(e.image)
+        })
+        return res.status(200).json({
+            message: "Post Found :)",
+            data: {post, images: imagesNames}
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message: "Get post Error: " + err
+        })
+    }
 }
 
 let getAllPosts = async (req, res) => {
     try {
-        let posts = await postModel.findAndCountAll({order:[["points", "DESC"]]})
+        let posts = await postModel.findAndCountAll({order:[["points", "DESC"]]}),
+            postsData = []
+        for (let i = 0; i < posts.count; i++) {
+            let post = posts.rows[i]
+            let postImages = await postImageModel.findAndCountAll({where:{PostId: post.id}}),
+                imagesNames = []
+            for (let j = 0; j < postImages.count; j++) {
+                imagesNames.push(postImages.rows[j].image)
+            }
+            postsData.push({post: post, images: imagesNames})
+        }
         return res.status(200).json({
             message: "Found posts :)",
             length: posts.count,
-            data: posts.rows
+            data: postsData
         })
     } catch (err) {
         return res.status(500).json({
@@ -39,11 +60,22 @@ let getPostsForUser = async(req, res)=>{
             posts = await postModel.findAndCountAll({
                 where:{UserId:user.id},
                 order:[["points", "DESC"]]
-            })
+            }),
+            postsData = []
+        
+        for (let i = 0; i < posts.count; i++) {
+            let post = posts.rows[i]
+            let postImages = await postImageModel.findAndCountAll({where:{PostId: post.id}}),
+                imagesNames = []
+            for (let j = 0; j < postImages.count; j++) {
+                imagesNames.push(postImages.rows[j].image)
+            }
+            postsData.push({post: post, images: imagesNames})
+        }
         return res.status(200).json({
             message: "Found posts :)",
             length: posts.count,
-            data: posts.rows
+            data: postsData
         })
     } catch (err) {
         return res.status(500).json({

@@ -1,5 +1,6 @@
 const userModel = require("../models/User")
 const tokenModel = require("../models/Token")
+const featureModel = require("../models/Feature")
 const userFeaturesModel = require("../models/UserFeatures")
 const fs = require("fs")
 const jwt = require("jsonwebtoken")
@@ -16,20 +17,47 @@ let catchFunc = (res, type, err) => {
 }
 
 let getUserByID = async (req, res) => {
-    let user = req.user
-    return res.status(200).json({
-        message: "User Found :)",
-        data: {user, features: user.features}
-    })
+    try {
+        let user = req.user,
+            userFeatures = await userFeaturesModel.findAndCountAll({where:{UserId: user.id}}),
+            features = []
+        for (let i = 0; i < userFeatures.count; i++) {
+            const feature = userFeatures.rows[i];
+            let featureData = await featureModel.findByPk(feature.FeatureId)
+            features.push(featureData.feature)
+        }
+        return res.status(200).json({
+            message: "User Found :)",
+            data: {user, features}
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message:"Get User Error: " + err
+        })
+    }
 }
 
 let getAllUsers = async (req, res) => {
     try {
-        let users = await userModel.findAndCountAll()
+        let users = await userModel.findAndCountAll(),
+            usersData = []
+        for (let i = 0; i < users.count; i++) {
+            let user = users.rows[i],
+                userFeatures = await userFeaturesModel.findAndCountAll({where:{UserId: user.id}}),
+                features = []
+            if(userFeatures){
+                for (let j = 0; j < userFeatures.count; j++) {
+                    let feature = userFeatures.rows[j],
+                        featureData = await featureModel.findByPk(feature.FeatureId)
+                    features.push(featureData.feature)
+                }
+            }
+            usersData.push({user, features})
+        }
         return res.status(200).json({
             message: "Found users :)",
             length: users.count,
-            data: users.rows
+            data: usersData
         })
     } catch (err) {
         catchFunc(res, "Get All", err)

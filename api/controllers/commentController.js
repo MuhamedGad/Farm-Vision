@@ -7,12 +7,21 @@ const fs = require("fs")
 const sequelize = require("../models/sequelize")
 const { Op } = require("sequelize")
 
-let getCommentById = (req, res)=>{
-    let comment = req.comment
-    return res.status(200).json({
-        message: "Comment Found :)",
-        data: comment
-    })
+let getCommentById = async(req, res)=>{
+    try {
+        let comment = req.comment,
+            commentImages = await commentImageModel.findAndCountAll({where:{CommentId: comment.id}}),
+            imagesNames = []
+        commentImages.rows.forEach(e=>{
+            imagesNames.push(e.image)
+        })
+        return res.status(200).json({
+            message: "Comment Found :)",
+            data: {comment, images: imagesNames}
+        })
+    } catch (err) {
+        
+    }
 }
 
 let getCommentsOfPost = async(req, res)=>{
@@ -21,11 +30,21 @@ let getCommentsOfPost = async(req, res)=>{
             comments = await commentModel.findAndCountAll({
                 where:{PostId:post.id},
                 order:[["createdAt", "DESC"]]
-            })
+            }),
+            commentsData = []
+        for (let i = 0; i < comments.count; i++) {
+            let comment = comments.rows[i],
+                commentImages = await commentImageModel.findAndCountAll({where:{CommentId: comment.id}}),
+                imagesNames = []
+            for (let j = 0; j < commentImages.count; j++) {
+                imagesNames.push(commentImages.rows[j].image)
+            }
+            commentsData.push({comment: comment, images: imagesNames})
+        }
         return res.status(200).json({
             message: "Found Comments :)",
             length: comments.count,
-            data: comments.rows
+            data: commentsData
         })
     } catch (err) {
         return res.status(500).json({
@@ -38,7 +57,7 @@ let creatComment = async(req, res)=>{
     try{
         let commentData = {},
             token = req.token,
-            parent = (req.post)?req.post:req.comment,
+            parent = (req.comment)?req.post:req.comment,
             comment,
             files = req.files,
             filesnames = []
