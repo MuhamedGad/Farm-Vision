@@ -3,6 +3,7 @@ const router = express.Router()
 const postController = require("../controllers/postController")
 const authrization = require("../middlewares/checkPermission/authrizationMW")
 const checkPermissionOnPost = require("../middlewares/checkPermission/checkPermissionOnPostMW")
+const checkOwner = require("../middlewares/checkPermission/checkOwnerMW")
 const checkPostFound = require("../middlewares/checkFound/checkPostFoundMW")
 const checkUserFound = require("../middlewares/checkFound/checkUserFoundMW")
 const createPostValidator = require("../middlewares/validators/createPostValidatorMW")
@@ -17,7 +18,7 @@ router.post("/dislike/:id", validID, authrization, checkPostFound, postControlle
 router.get("/", authrization, postController.getAllPosts)
 router.get("/:id", validID, authrization, checkPostFound, postController.getPostById)
 router.post("/", authrization, /* postTagsValidator, */ upload.array("images"), createPostValidator, postController.createPost)
-router.put("/:id", validID, authrization, checkPostFound, checkPermissionOnPost, upload.array("images"), createPostValidator,/*  postTagsValidator, */ postController.updatePost)
+router.put("/:id", validID, authrization, checkPostFound, checkOwner, upload.array("images"), createPostValidator,/*  postTagsValidator, */ postController.updatePost)
 router.delete("/:id", validID, authrization, checkPostFound, checkPermissionOnPost, postController.deletePost)
 
 

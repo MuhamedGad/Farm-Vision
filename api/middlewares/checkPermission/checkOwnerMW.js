@@ -3,11 +3,12 @@ const config = require("config")
 
 module.exports = (req, res, next)=>{
     let token = req.token
+    let thing = req.post || req.comment
     jwt.verify(token, config.get("seckey"), function(err, decoded) {
         if(err) return res.status(500).json({
             message: "JWT verify error: " + err
         })
-        else if(decoded.user_id == req.params.id) {
+        else if(decoded.user_id == thing.UserId) {
             req.token.role = decoded.role
             next()
         }

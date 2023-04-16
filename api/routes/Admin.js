@@ -19,11 +19,6 @@ router.post("/user", authrization, checkAdmin, createUserValidator, checkValidUs
 router.put("/user/:id", validId, authrization, checkAdmin, checkUserFound, checkPermissionOnUser, roleValidator, userController.updateRole)
 
 router.get("/token", authrization, checkAdmin, tokenController.getAllTokens)
-router.get("/token/:id", validId, authrization, checkAdmin,
-// to use the same function of normal user
-(req, res, next)=>{
-    req.token.UserId = req.params.id;next()
-},
-tokenController.getTokensForUser)
+router.get("/token/:id", validId, authrization, checkAdmin, (req, res, next)=>{req.token.UserId = req.params.id;next()}, tokenController.getTokensForUser)
 
 module.exports = router

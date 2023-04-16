@@ -313,9 +313,9 @@ PUT
 Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
-| feature | text | minimum length 3 characters and must be small chars with no spaces | false |
-| describtion | text | minimum length 10 characters | false |
-| price | number | must be number | false |
+| feature | text | minimum length 3 characters and must be small chars with no spaces | true |
+| describtion | text | minimum length 10 characters | true |
+| price | number | must be number | true |
 </br>
 
 ### **Delete feature:**
@@ -357,8 +357,8 @@ PUT
 Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
-| tag | text | minimum length 3 characters and must be small chars with no spaces | false |
-| describtion | text | minimum length 10 characters | false |
+| tag | text | minimum length 3 characters and must be small chars with no spaces | true |
+| describtion | text | minimum length 10 characters | true |
 </br>
 
 ### **Delete tag:**
@@ -419,6 +419,7 @@ Form:
 |--------|------|-------|--------|
 | content | text | must be between 10-1000 characters | false |
 | tags | checkboxes | must be array of valid tags that saved | false |
+| images | file | images of post | true |
 </br>
 
 ### **Update post:**
@@ -434,7 +435,8 @@ Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
 | content | text | must be between 10-1000 characters | false |
-| tags | checkboxes | must be array of valid tags that saved | false |
+| tags | checkboxes | must be array of valid tags that saved | true |
+| images | file | images of post | true |
 </br>
 
 ### **Delete post:**
@@ -505,6 +507,7 @@ Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
 | content | text | must be between 10-1000 characters | false |
+| images | file | images of comment | true |
 </br>
 
 ### **Create comment on comment:**
@@ -520,6 +523,7 @@ Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
 | content | text | must be between 10-1000 characters | false |
+| images | file | images of comment | true |
 </br>
 
 ### **Update comment:**
@@ -534,7 +538,8 @@ PUT
 Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
-| content | text | must be between 10-1000 characters | false |
+| content | text | must be between 10-1000 characters | true |
+| images | file | images of comment | true |
 </br>
 
 ### **Delete comment:**
