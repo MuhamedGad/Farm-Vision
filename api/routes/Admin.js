@@ -15,8 +15,8 @@ const checkValidUserFeatures = require("../middlewares/validators/userFeaturesVa
 
 router.get("/user", authrization, checkAdmin, userController.getAllUsers)
 router.post("/user", authrization, checkAdmin, createUserValidator, checkValidUserFeatures, confirmPassword, encryptPassword, userController.addUserByAdmin)
-// router.post("/:password", adminController.checkPassOfCreateAdmin, createUserValidator, confirmPassword, encryptPassword, adminController.addAdmin)
 router.put("/user/:id", validId, authrization, checkAdmin, checkUserFound, checkPermissionOnUser, roleValidator, userController.updateRole)
+// router.post("/:password", adminController.checkPassOfCreateAdmin, createUserValidator, confirmPassword, encryptPassword, adminController.addAdmin)
 
 router.get("/token", authrization, checkAdmin, tokenController.getAllTokens)
 router.get("/token/:id", validId, authrization, checkAdmin, (req, res, next)=>{req.token.UserId = req.params.id;next()}, tokenController.getTokensForUser)

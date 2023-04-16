@@ -75,6 +75,10 @@ const User = sequelize.define('User', {
   postCode: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  lastUpdatedUserName: {
+    type: DataTypes.STRING,
+    allowNull: false,
   }
 });
 
