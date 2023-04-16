@@ -13,14 +13,21 @@ const { Op } = require("sequelize")
 let getPostById = async (req, res) => {
     try {
         let post = req.post,
+            postTags = await postTagsModel.findAndCountAll({where:{PostId: post.id}}),
             postImages = await postImageModel.findAndCountAll({where:{PostId: post.id}}),
-            imagesNames = []
+            images = [],
+            tags = []
         postImages.rows.forEach(e=>{
-            imagesNames.push(e.image)
+            images.push(e.image)
         })
+        for (let i = 0; i < postTags.count; i++) {
+            let tagData = await tagModel.findByPk(postTags.rows[i].TagId)
+            tags.push(tagData.tag)
+        }
+
         return res.status(200).json({
             message: "Post Found :)",
-            data: {post, images: imagesNames}
+            data: {post, images, tags}
         })
     } catch (err) {
         return res.status(500).json({
@@ -34,13 +41,20 @@ let getAllPosts = async (req, res) => {
         let posts = await postModel.findAndCountAll({order:[["points", "DESC"]]}),
             postsData = []
         for (let i = 0; i < posts.count; i++) {
-            let post = posts.rows[i]
-            let postImages = await postImageModel.findAndCountAll({where:{PostId: post.id}}),
-                imagesNames = []
+            let post = posts.rows[i],
+                postImages = await postImageModel.findAndCountAll({where:{PostId: post.id}}),
+                postTags = await postTagsModel.findAndCountAll({where:{PostId: post.id}}),
+                images = [],
+                tags = []
             for (let j = 0; j < postImages.count; j++) {
-                imagesNames.push(postImages.rows[j].image)
+                images.push(postImages.rows[j].image)
             }
-            postsData.push({post: post, images: imagesNames})
+            for (let k = 0; k < postTags.count; k++) {
+                let postTag = postTags.rows[k],
+                    tag = await tagModel.findByPk(postTag.TagId)
+                tags.push(tag.tag)
+            }
+            postsData.push({post, images, tags})
         }
         return res.status(200).json({
             message: "Found posts :)",
@@ -64,13 +78,20 @@ let getPostsForUser = async(req, res)=>{
             postsData = []
         
         for (let i = 0; i < posts.count; i++) {
-            let post = posts.rows[i]
-            let postImages = await postImageModel.findAndCountAll({where:{PostId: post.id}}),
-                imagesNames = []
+            let post = posts.rows[i],
+                postImages = await postImageModel.findAndCountAll({where:{PostId: post.id}}),
+                postTags = await postTagsModel.findAndCountAll({where:{PostId: post.id}}),
+                images = [],
+                tags = []
             for (let j = 0; j < postImages.count; j++) {
-                imagesNames.push(postImages.rows[j].image)
+                images.push(postImages.rows[j].image)
             }
-            postsData.push({post: post, images: imagesNames})
+            for (let k = 0; k < postTags.count; k++) {
+                let postTag = postTags.rows[k],
+                    tag = await tagModel.findByPk(postTag.TagId)
+                tags.push(tag.tag)
+            }
+            postsData.push({post, images, tags})
         }
         return res.status(200).json({
             message: "Found posts :)",
@@ -88,9 +109,9 @@ let createPost = async(req, res)=>{
     let postData = {},
         token = req.token,
         tags = req.tags,
-        post,
         files = req.files,
-        filesnames = []
+        filesnames = [],
+        post
 
     postData["content"] = req.body.content
     postData["UserId"] = token.UserId
@@ -103,13 +124,13 @@ let createPost = async(req, res)=>{
     try{
         await sequelize.transaction(async (t) => {
             post = await postModel.create(postData, { transaction: t })
-            // for (let i = 0; i < tags.length; i++) {
-            //     await postTagsModel.create({TagId: tags[i].id, PostId: post.id}, { transaction: t })
-            //     await tagModel.update({numberOfPosts: tags[i].numberOfPosts + 1}, {where:{id: tags[i].id}, transaction: t})
-            // }
-            filesnames.forEach(async e=>{
-                await postImageModel.create({image: e, PostId: post.id})
-            })
+            for (let i = 0; i < tags.length; i++) {
+                await postTagsModel.create({TagId: tags[i].id, PostId: post.id}, { transaction: t })
+                await tagModel.update({numberOfPosts: tags[i].numberOfPosts + 1}, {where:{id: tags[i].id}, transaction: t})
+            }
+            for (let j = 0; j < filesnames.length; j++) {
+                await postImageModel.create({image: filesnames[j], PostId: post.id})
+            }
         })
 
         return res.status(200).json({
@@ -136,19 +157,22 @@ let updatePost = async(req, res)=>{
             filesnames.push(e.filename)
         })
     }
+
     try{
         await sequelize.transaction(async (t) => {
-            // let postTags = await postTagsModel.findAll({where:{PostId: post.id}, transaction: t})
-            // for (let i = 0; i < postTags.length; i++) {
-            //     let tag = await tagModel.findOne({where: {id: postTags[i].TagId}, transaction: t})
-            //     await tagModel.update({numberOfPosts: tag.numberOfPosts - 1}, {where: {id: tag.id}, transaction: t})
-            // }
-            // await postTagsModel.destroy({ where: { PostId: post.id }, transaction: t })
-            // for (let i = 0; i < tags.length; i++) {
-            //     let postTag = await postTagsModel.create({TagId: tags[i].id, PostId: post.id}, { transaction: t })
-            //     let tag = await tagModel.findOne({where: {id: tags[i].id}, transaction: t})
-            //     await tagModel.update({numberOfPosts: tag.numberOfPosts + 1}, {where:{id: tags[i].id}, transaction: t})
-            // }
+            let postTags = await postTagsModel.findAll({where:{PostId: post.id}, transaction: t})
+            for (let i = 0; i < postTags.length; i++) {
+                let tag = await tagModel.findOne({where: {id: postTags[i].TagId}, transaction: t})
+                await tagModel.update({numberOfPosts: tag.numberOfPosts - 1}, {where: {id: tag.id}, transaction: t})
+            }
+            await postTagsModel.destroy({ where: { PostId: post.id }, transaction: t })
+
+            for (let i = 0; i < tags.length; i++) {
+                await postTagsModel.create({TagId: tags[i].id, PostId: post.id}, { transaction: t })
+                let tag = await tagModel.findOne({where: {id: tags[i].id}, transaction: t})
+                await tagModel.update({numberOfPosts: tag.numberOfPosts + 1}, {where:{id: tags[i].id}, transaction: t})
+            }
+
             let oldFiles = await  postImageModel.findAndCountAll({where:{PostId: post.id}, transaction: t})
             for (let i = 0; i < oldFiles.count; i++) {
                 let directoryPath = __dirname.replace("controllers", "public/images/")
@@ -159,6 +183,7 @@ let updatePost = async(req, res)=>{
                 })
             }
             await postImageModel.destroy({where:{PostId: post.id}, transaction: t})
+
             filesnames.forEach(async e=>{
                 await postImageModel.create({image: e, PostId: post.id}, {transaction: t})
             })
@@ -179,12 +204,13 @@ let deletePost = async(req, res)=>{
     try {
         let post = req.post
         await sequelize.transaction(async (t) => {
-            // let postTags = await postTagsModel.findAll({where:{PostId: post.id}, transaction: t})
-            // for (let i = 0; i < postTags.length; i++) {
-            //     let tag = await tagModel.findOne({where: {id: postTags[i].TagId}, transaction: t})
-            //     await tagModel.update({numberOfPosts: tag.numberOfPosts-1}, {where:{id:tag.id}, transaction: t})
-            // }
-            let oldFilesOfPost = await  postImageModel.findAndCountAll({where:{PostId: post.id}, transaction: t})
+            let postTags = await postTagsModel.findAll({where:{PostId: post.id}, transaction: t})
+            for (let i = 0; i < postTags.length; i++) {
+                let tag = await tagModel.findOne({where: {id: postTags[i].TagId}, transaction: t})
+                await tagModel.update({numberOfPosts: tag.numberOfPosts-1}, {where:{id:tag.id}, transaction: t})
+            }
+
+            let oldFilesOfPost = await postImageModel.findAndCountAll({where:{PostId: post.id}, transaction: t})
             let comments = await  commentModel.findAndCountAll({where:{PostId: post.id}, transaction: t}),
                 oldFilesOfComment = []
             for (let i = 0; i < comments.count; i++) {

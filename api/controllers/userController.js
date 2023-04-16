@@ -11,12 +11,6 @@ const deviceDetector = require("device-detector-js")
 const detector = new deviceDetector()
 const bcrypt = require("bcrypt")
 
-let catchFunc = (res, type, err) => {
-    return res.status(500).json({
-        message: type + " User Error: " + err
-    })
-}
-
 let getUserByID = async (req, res) => {
     try {
         let user = req.user,
@@ -61,7 +55,9 @@ let getAllUsers = async (req, res) => {
             data: usersData
         })
     } catch (err) {
-        catchFunc(res, "Get All", err)
+        return res.status(500).json({
+            message:"Get All Users Error: " + err
+        })
     }
 }
 
@@ -248,7 +244,9 @@ let updateUser = async (req, res) => {
             message: "User Updated Successfully :)"
         })
     } catch (err) {
-        return catchFunc(res, "Update", err)
+        return res.status(500).json({
+            message:"Update User Error: " + err
+        })
     }
 }
 
@@ -271,7 +269,9 @@ let deleteUser = async (req, res) => {
         })
 
     } catch (err) {
-        return catchFunc(res, "Delete", err)
+        return res.status(500).json({
+            message:"Delete User Error: " + err
+        })
     }
 }
 

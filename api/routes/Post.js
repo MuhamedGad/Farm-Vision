@@ -17,8 +17,8 @@ router.post("/dislike/:id", validID, authrization, checkPostFound, postControlle
 
 router.get("/", authrization, postController.getAllPosts)
 router.get("/:id", validID, authrization, checkPostFound, postController.getPostById)
-router.post("/", authrization, /* postTagsValidator, */ upload.array("images"), createPostValidator, postController.createPost)
-router.put("/:id", validID, authrization, checkPostFound, checkOwner, upload.array("images"), createPostValidator,/*  postTagsValidator, */ postController.updatePost)
+router.post("/", authrization, upload.array("images"), createPostValidator, postTagsValidator, postController.createPost)
+router.put("/:id", validID, authrization, checkPostFound, checkOwner, upload.array("images"), createPostValidator, postTagsValidator, postController.updatePost)
 router.delete("/:id", validID, authrization, checkPostFound, checkPermissionOnPost, postController.deletePost)
 
 
