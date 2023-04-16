@@ -51,7 +51,7 @@ Form:
 |--------|------|-------|--------|
 | firstName | text | must be string | false |
 | lastName | text | must be string | false |
-| userName | text | must be string with only small characters and must larger than 8 characters | false |
+| userName | text | must be string with only small characters and starting with character | false |
 | email | email | must be string | false |
 | password | password | must not be less than 8 and must be string | false |
 | confirmPassword | password | must not be less than 8 and must be string | false |
@@ -92,18 +92,18 @@ PUT
 Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
-| firstName | text | must be string | false |
-| lastName | text | must be string | false |
-| userName | text | must be string with only small characters and must larger than 8 characters | false |
-| email | email | must be string | false |
-| role | text | must be one of this (farmer, engineer) | false |
-| phoneNumber | number | must be number in string datatype  | false |
-| workField | text | must be string | false |
-| usageTarget | text | must be string | false |
+| firstName | text | must be string | true |
+| lastName | text | must be string | true |
+| userName | text | must be string with only small characters and must larger than 8 characters | true |
+| email | email | must be string | true |
+| role | text | must be one of this (farmer, engineer) | true |
+| phoneNumber | number | must be number in string datatype  | true |
+| workField | text | must be string | true |
+| usageTarget | text | must be string | true |
 | streetName | text | must be string | true |
 | city | text | must be string | true |
 | state | text | must be string | true |
-| country | text | must be string | false |
+| country | text | must be string | true |
 | postCode | text | must be string | true |
 | features | checkboxes | must be an array of our project features selected by user | true |
 

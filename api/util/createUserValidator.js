@@ -15,7 +15,7 @@ const schema = {
         "userName":{
             "type":"string",
             "nullable": false,
-            "minLength":8,
+            // "minLength":8,
             "pattern":"^[a-z][a-z0-9]*$"
         },
         "email":{
