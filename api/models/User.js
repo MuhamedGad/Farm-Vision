@@ -78,12 +78,12 @@ const User = sequelize.define('User', {
   },
   lastUpdatedUserName: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   }
 });
 
 (async () => {
-  await User.sync({ alter: true });
+  await User.sync(/* { alter: true } */);
 })();
 
 module.exports = User
