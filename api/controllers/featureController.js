@@ -30,7 +30,7 @@ let createFeature = async(req, res)=>{
     featureData["UserId"] = token.UserId
     featureData["feature"] = req.body.feature
     featureData["describtion"] = req.body.describtion
-    featureData["price"] = parseInt(req.body.describtion)
+    featureData["price"] = parseInt(req.body.price)
 
     try{
         let checkFeatureFound = await featureModel.findOne({where:{feature:featureData.feature}})

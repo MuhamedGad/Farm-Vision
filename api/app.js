@@ -5,7 +5,9 @@ const cookieParser = require("cookie-parser")
 const helmet = require("helmet")
 const port = process.env.PORT || 8888
 const cors = require("cors")
+const nodeSchedual = require("node-schedule")
 // const upload = require("./middlewares/uploadImageMW")
+// const upload = require("./middlewares/uploadFileMW")
 
 const user = require("./routes/User")
 const token = require("./routes/Token")
@@ -19,6 +21,7 @@ const comment = require("./routes/Comment")
 const feature = require("./routes/Feature")
 const tag = require("./routes/Tag")
 const aiModel = require("./routes/AIModel")
+// const nodeMail = require("./util/nodeMail")
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
@@ -40,11 +43,16 @@ app.use("/api/feature", feature)
 app.use("/api/tag", tag)
 app.use("/api/predict", aiModel)
 
-// app.post("/", upload.array("images"), (req, res)=>{
+// app.post("/", upload.array("file"), (req, res)=>{
 //     req.files.forEach(e=>{
 //         console.log(e.filename)
 //     })
 //     return res.json(req.files)
+// })
+
+// const confirmAccount = nodeSchedual.scheduleJob("0 41 * * * *", ()=>{
+//     console.log(new Date())
+//     nodeMail("mohamedtwfik910@gmail.com", "test", "test mail", "https://google.com")
 // })
 
 app.use((req, res)=>{res.status(400).json({message:"Not Found This endpoint :("})})
