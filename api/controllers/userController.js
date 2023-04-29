@@ -63,19 +63,19 @@ let getAllUsers = async (req, res) => {
 
 let createUserData = (req)=>{
     let userData = {}
-    userData["firstName"] = req.body.firstName
-    userData["lastName"] = req.body.lastName
+    userData["firstName"] = req.body.firstName || ""
+    userData["lastName"] = req.body.lastName || ""
     userData["userName"] = req.body.userName
     userData["email"] = req.body.email
     userData["password"] = req.body.password
     userData["phoneNumber"] = req.body.phoneNumber
-    userData["workField"] = req.body.workField
-    userData["usageTarget"] = req.body.usageTarget
-    userData["streetName"] = req.body.streetName
-    userData["city"] = req.body.city
-    userData["state"] = req.body.state
+    userData["workField"] = req.body.workField || ""
+    userData["usageTarget"] = req.body.usageTarget || ""
+    userData["streetName"] = req.body.streetName || ""
+    userData["city"] = req.body.city || ""
+    userData["state"] = req.body.state || ""
     userData["country"] = req.body.country
-    userData["postCode"] = req.body.postCode
+    userData["postCode"] = req.body.postCode || ""
     return userData
 }
 
@@ -370,23 +370,9 @@ let login = async (req, res) => {
 
             const token = jwt.sign({ user_id: user.id, role: user.role }, config.get("seckey"))
 
-            // const device = detector.parse(req.header("user-agent"));
-
             tokenData = createTokenData(req)
             tokenData["token"] = token
             tokenData["UserId"] = user.id
-            // tokenData["clientName"] = (device.client)?device.client.name:device.client
-            // tokenData["clientType"] = (device.client)?device.client.type:device.client
-            // tokenData["clientVersion"] = (device.client)?device.client.version:device.client
-            // tokenData["clientEngine"] = (device.client)?device.client.engine:device.client
-            // tokenData["clientEngineVersion"] = (device.client)?device.client.engineVersion:device.client
-            // tokenData["osName"] = (device.os)?device.os.name:device.os
-            // tokenData["osVersion"] = (device.os)?device.os.version:device.os
-            // tokenData["osPlatform"] = (device.os)?device.os.platform:device.os
-            // tokenData["deviceType"] = (device.device)?device.device.type:device.device
-            // tokenData["deviceBrand"] = (device.device)?device.device.brand:device.device
-            // tokenData["deviceModel"] = (device.device)?device.device.model:device.device
-            // tokenData["bot"] = device.bot
 
             await sequelize.transaction(async (t) => {
                 await tokenModel.create(tokenData, { transaction: t })

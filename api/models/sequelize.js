@@ -1,14 +1,14 @@
 const { Sequelize } = require("sequelize")
 const config = require("config")
-const dbConfig = config.get("dbConfig")
-// let dbConfig= {
-//   host    : "localhost",
-//   user    : "root",
-//   password: "",
-//   database: "farmVision",
-//   port    : "",
-//   dialect : "mysql"
-// }
+// const dbConfig = config.get("dbConfig")
+let dbConfig= {
+  host    : "localhost",
+  user    : "root",
+  password: "",
+  database: "farmVision",
+  port    : "",
+  dialect : "mysql"
+}
 // let dbConfig= {
 //   host    : "localhost",
 //   user    : "postgres",
