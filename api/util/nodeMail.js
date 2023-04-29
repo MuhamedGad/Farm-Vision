@@ -1,23 +1,23 @@
 const nodemailer = require("nodemailer");
 
-const sendEmail = async (email, subject, text, link) => {
+const sendEmail = async (from, to, subject, text, link) => {
     let testAccount = await nodemailer.createTestAccount();
     const transporter = nodemailer.createTransport({
-        host: 'smtp.ethereal.email',   // in real come from process.env.HOST
+        host: process.env.HOST,   // in real come from process.env.HOST
         // service: process.env.SERVICE,
         port: 587,
         secure: false,
         auth: {
-            user: testAccount.user,      // in real come from process.env.USER
-            pass: testAccount.pass,      // in real come from process.env.PASS
+            user: from,      // in real come from process.env.USER
+            pass: "mohamed910",      // in real come from process.env.PASS
         },
     })
     
     try {
         // send mail with defined transport object
         let info = await transporter.sendMail({
-            from: testAccount.user,    // in real come from process.env.USER
-            to: email,
+            from: from,    // in real come from process.env.USER
+            to: to,
             subject: subject,
             text: text,
             html: "<a href='" + link + "'>Please Click Here To Verify<a>"
@@ -25,7 +25,7 @@ const sendEmail = async (email, subject, text, link) => {
         console.log("email sent sucessfully")
 
         // Preview only available when sending through an Ethereal account
-        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info))
+        // console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info))
         // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou..
     } catch (error) {
         console.log("email not sent")
