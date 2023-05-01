@@ -21,7 +21,7 @@ const comment = require("./routes/Comment")
 const feature = require("./routes/Feature")
 const tag = require("./routes/Tag")
 const aiModel = require("./routes/AIModel")
-const nodeMail = require("./util/nodeMail")
+// const nodeMail = require("./util/nodeMail")
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
@@ -43,10 +43,10 @@ app.use("/api/feature", feature)
 app.use("/api/tag", tag)
 app.use("/api/predict", aiModel)
 
-const confirmAccount = nodeSchedual.scheduleJob("0 45 * * * *", ()=>{
-    console.log(new Date())
-    nodeMail("mohamedtwfik910@gmail.com", "mohamedtwfik0910@gmail.com", "test", "test mail", "https://google.com")
-})
+// const confirmAccount = nodeSchedual.scheduleJob("0 45 * * * *", ()=>{
+//     console.log(new Date())
+//     nodeMail("mohamedtwfik910@gmail.com", "mohamedtwfik0910@gmail.com", "test", "test mail", "https://google.com")
+// })
 
 app.use((req, res)=>{res.status(400).json({message:"Not Found This endpoint :("})})
 
