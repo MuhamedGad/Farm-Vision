@@ -6,8 +6,6 @@ const helmet = require("helmet")
 const port = process.env.PORT || 8888
 const cors = require("cors")
 const nodeSchedual = require("node-schedule")
-// const upload = require("./middlewares/uploadImageMW")
-// const upload = require("./middlewares/uploadFileMW")
 
 const user = require("./routes/User")
 const token = require("./routes/Token")

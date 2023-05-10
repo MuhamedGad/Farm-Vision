@@ -11,6 +11,46 @@ const deviceDetector = require("device-detector-js")
 const detector = new deviceDetector()
 const bcrypt = require("bcrypt")
 
+let confirmAccountLastDay = async(userId)=>{
+    let user = await userModel.findByPk(userId)
+    if(!user.premium){
+        // here i will send mail
+        console.log(user.email + " => after 2 weeks with out register")
+        console.log("premium field => " + user.premium)
+    }
+}
+
+let confirmAccountSecondWeekSecond3Days = async(userId)=>{
+    let user = await userModel.findByPk(userId)
+    if(!user.premium){
+        // here i will send mail
+        console.log(user.email + " => after 13 days without register")
+        console.log("premium field => " + user.premium)
+        setTimeout(confirmAccountLastDay, 60000, user.id)
+    }
+}
+
+let confirmAccountSecondWeekFirst3Days = async(userId)=>{
+    let user = await userModel.findByPk(userId)
+    if(!user.premium){
+        // here i will send mail
+        console.log(user.email + " => after 10 days without register")
+        console.log("premium field => " + user.premium)
+        setTimeout(confirmAccountSecondWeekSecond3Days, 180000, user.id)
+    }
+}
+
+let confirmAccountFirstWeek = async(userId)=>{
+    let user = await userModel.findByPk(userId)
+    if(!user.premium){
+        // here i will send mail
+        console.log(user.email + " => after 1 week without register")
+        console.log("premium field => " + user.premium)
+        setTimeout(confirmAccountSecondWeekFirst3Days, 180000, user.id)
+    }
+}
+
+
 let getUserByID = async (req, res) => {
     try {
         let user = req.user,
@@ -135,6 +175,11 @@ let createUser = async (req, res) => {
             tokenData["UserId"] = user.id
             await tokenModel.create(tokenData, { transaction: t })
         })
+
+        // 604800000ms for 1 week
+        // 259200000ms for 3 days
+        // 86400000ms for 1 day
+        // setTimeout(confirmAccountFirstWeek, 420000, user.id)
 
         return res.status(200).json({
             message: "User Created Successfully :)",

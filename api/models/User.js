@@ -33,6 +33,11 @@ const User = sequelize.define('User', {
     type: DataTypes.ENUM("admin", "superAdmin", "farmer", "engineer"),
     allowNull: false
   },
+  premium:{
+    type: DataTypes.BOOLEAN,
+    allowNull:false,
+    defaultValue: false
+  },
   phoneNumber: {
     type: DataTypes.STRING,
     allowNull: false,
