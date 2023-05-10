@@ -394,6 +394,17 @@ GET
 ```
 </br>
 
+### **Get posts of specific tag:**
+Route:
+```
+/api/post/tagposts/:id         -(id) mean id of tag that wanted its posts
+```
+Method:
+```
+GET
+```
+</br>
+
 ### **Get post:**
 Route:
 ```

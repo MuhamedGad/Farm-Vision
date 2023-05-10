@@ -6,12 +6,14 @@ const checkPermissionOnPost = require("../middlewares/checkPermission/checkPermi
 const checkOwner = require("../middlewares/checkPermission/checkOwnerMW")
 const checkPostFound = require("../middlewares/checkFound/checkPostFoundMW")
 const checkUserFound = require("../middlewares/checkFound/checkUserFoundMW")
+const checkTagFound = require("../middlewares/checkFound/checkTagFoundMW")
 const createPostValidator = require("../middlewares/validators/createPostValidatorMW")
 const postTagsValidator = require("../middlewares/validators/postTagsValidatorMW")
 const validID = require("../middlewares/validators/checkValidIDMW")
 const upload = require("../middlewares/uploadImageMW")
 
-router.get("/userposts/:id", authrization, checkUserFound, postController.getPostsForUser)
+router.get("/userposts/:id", validID, authrization, checkUserFound, postController.getPostsForUser)
+router.get("/tagposts/:id", validID, authrization, checkTagFound, postController.getPostsForTag)
 router.post("/like/:id", validID, authrization, checkPostFound, postController.like)
 router.post("/dislike/:id", validID, authrization, checkPostFound, postController.disLike)
 

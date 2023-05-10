@@ -105,6 +105,48 @@ let getPostsForUser = async(req, res)=>{
     }
 }
 
+let getPostsForTag = async(req, res)=>{
+    try {
+        let tag = req.tag,
+            postTags = await postTagsModel.findAndCountAll({attributes:['PostId']}, {where:{TagId: tag.id}}),
+            posts = [],
+            postsData = []
+
+        for (let i = 0; i < postTags.count; i++) {
+            let e = postTags.rows[i]
+            let post = await postModel.findByPk(e.PostId)
+            posts.push(post)
+        }
+        console.log(posts[0].id)
+
+        for (let i = 0; i < posts.length; i++) {
+            let post = posts[i],
+                postImages = await postImageModel.findAndCountAll({where:{PostId: post.id}}),
+                postTags = await postTagsModel.findAndCountAll({where:{PostId: post.id}}),
+                images = [],
+                tags = []
+            for (let j = 0; j < postImages.count; j++) {
+                images.push(postImages.rows[j].image)
+            }
+            for (let k = 0; k < postTags.count; k++) {
+                let postTag = postTags.rows[k],
+                    tag = await tagModel.findByPk(postTag.TagId)
+                tags.push(tag.tag)
+            }
+            postsData.push({post, images, tags})
+        }
+        return res.status(200).json({
+            message: "Found posts :)",
+            length: posts.length,
+            data: postsData
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message: "Get posts Error: " + err
+        })
+    }
+}
+
 let createPost = async(req, res)=>{
     let postData = {},
         token = req.token,
@@ -313,6 +355,7 @@ module.exports = {
     getPostById,
     getAllPosts,
     getPostsForUser,
+    getPostsForTag,
     createPost,
     updatePost,
     deletePost,
