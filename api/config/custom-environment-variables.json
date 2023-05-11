@@ -1,5 +1,6 @@
 {
     "seckey": "seckeyvariable",
+    "ourEmail":"ouremail",
     "dbConfig": {
         "host": "host",
         "user": "user",

@@ -1,36 +1,41 @@
 const nodemailer = require("nodemailer");
+const config = require("config")
+const ourEmail = config.get("ourEmail")
 
-const sendEmail = async (from, to, subject, text, link) => {
-    // let testAccount = await nodemailer.createTestAccount();
-    const transporter = nodemailer.createTransport({
-        // host: process.env.HOST,   // in real come from process.env.HOST
-        service: "gmail",
-        // port: 587,
-        // secure: false,
+const sendEmail = async (to, subject, html) => {
+    const transport = {
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true, // use TLS
         auth: {
-            user: from,      // in real come from process.env.USER
-            pass: "mohamed910",      // in real come from process.env.PASS
+            user: ourEmail,
+            pass: "ztajaxxwlixtzgay",
         },
-    })
-    
-    try {
-        // send mail with defined transport object
-        let info = await transporter.sendMail({
-            from: from,    // in real come from process.env.USER
-            to: to,
-            subject: subject,
-            text: text,
-            html: "<a href='" + link + "'>Please Click Here To Verify<a>"
-        })
-        console.log("email sent: " + info.response)
-
-        // Preview only available when sending through an Ethereal account
-        // console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info))
-        // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou..
-    } catch (error) {
-        console.log("email not sent")
-        console.log(error)
     }
-};
+    const mail = {
+        from: ourEmail,
+        to: to,
+        subject: subject,
+        html: html
+    }
+
+    const transporter = nodemailer.createTransport(transport)
+    transporter.verify((error, success) => {
+        if (error) {
+            //if error happened code ends here
+            console.error(error)
+        } else {
+            //this means success
+            console.log('Ready to send mail!')
+            transporter.sendMail(mail, (err, data) => {
+                if (err) {
+                    console.log("fail")
+                } else {
+                    console.log("success")
+                }
+            })
+        }
+    })
+}
 
 module.exports = sendEmail;

@@ -10,46 +10,51 @@ const { Op } = require("sequelize")
 const deviceDetector = require("device-detector-js")
 const detector = new deviceDetector()
 const bcrypt = require("bcrypt")
+const nodeMail = require("../util/nodeMail")
+const registerFormLink = "http://google.com"
 
-let confirmAccountLastDay = async(userId)=>{
+let deleteAccountEmail = async(userId)=>{
     let user = await userModel.findByPk(userId)
     if(!user.premium){
-        // here i will send mail
-        console.log(user.email + " => after 2 weeks with out register")
-        console.log("premium field => " + user.premium)
+        let html = `
+                <h1>Hello ${user.firstName}</h1>
+                <p>
+                    We would like to inform you that you have completed seven of the seven days of your free trial to use our site. So, unfortunately, we have deleted your account, thank you.
+                </p>
+            `,
+            email = user.email,
+            subject = "Delete your account"
+
+        nodeMail(email, subject, html)
     }
 }
 
-let confirmAccountSecondWeekSecond3Days = async(userId)=>{
+let after5DaysEmail = async(userId)=>{
     let user = await userModel.findByPk(userId)
     if(!user.premium){
-        // here i will send mail
-        console.log(user.email + " => after 13 days without register")
-        console.log("premium field => " + user.premium)
-        setTimeout(confirmAccountLastDay, 60000, user.id)
+        let date = new Date(user.createdAt)
+        date.setDate(date.getDate() + 7)
+
+        let day = date.getDate(),
+            month = date.getMonth()+1,
+            year = date.getFullYear()
+
+        let html = `
+                <h1>Hello ${user.firstName}</h1>
+                <p>
+                    We would like to inform you that you have completed five of the seven days of your free trial to use our site. Therefore, we ask you to subscribe before (${day}-${month}-${year}) to avoid deletion of your account, thank you.
+                </p>
+                <button>
+                    <a href="${registerFormLink}">To subscribe, click here</a>
+                </button>
+            `,
+            email = user.email,
+            subject = "End of trial week"
+
+        nodeMail(email, subject, html)
+        setTimeout(deleteAccountEmail, 120000, user.id)
     }
 }
-
-let confirmAccountSecondWeekFirst3Days = async(userId)=>{
-    let user = await userModel.findByPk(userId)
-    if(!user.premium){
-        // here i will send mail
-        console.log(user.email + " => after 10 days without register")
-        console.log("premium field => " + user.premium)
-        setTimeout(confirmAccountSecondWeekSecond3Days, 180000, user.id)
-    }
-}
-
-let confirmAccountFirstWeek = async(userId)=>{
-    let user = await userModel.findByPk(userId)
-    if(!user.premium){
-        // here i will send mail
-        console.log(user.email + " => after 1 week without register")
-        console.log("premium field => " + user.premium)
-        setTimeout(confirmAccountSecondWeekFirst3Days, 180000, user.id)
-    }
-}
-
 
 let getUserByID = async (req, res) => {
     try {
@@ -176,10 +181,11 @@ let createUser = async (req, res) => {
             await tokenModel.create(tokenData, { transaction: t })
         })
 
-        // 604800000ms for 1 week
-        // 259200000ms for 3 days
-        // 86400000ms for 1 day
-        // setTimeout(confirmAccountFirstWeek, 420000, user.id)
+        // 432000000ms for 5 days
+        // 172800000ms for 2 day
+        // 300000ms for 5 min
+        // 120000ms for 2 min
+        // setTimeout(after5DaysEmail, 300000, user.id)
 
         return res.status(200).json({
             message: "User Created Successfully :)",
