@@ -2,57 +2,67 @@ const userModel = require("../models/User")
 const tokenModel = require("../models/Token")
 const featureModel = require("../models/Feature")
 const userFeaturesModel = require("../models/UserFeatures")
+const emailsDeletedModel = require("../models/EmailsDeleted")
 const fs = require("fs")
 const jwt = require("jsonwebtoken")
 const config = require("config")
 const sequelize = require("../models/sequelize")
-const { Op } = require("sequelize")
+const { Op, where } = require("sequelize")
 const deviceDetector = require("device-detector-js")
 const detector = new deviceDetector()
 const bcrypt = require("bcrypt")
 const nodeMail = require("../util/nodeMail")
 const registerFormLink = "http://google.com"
 
-let deleteAccountEmail = async(userId)=>{
-    let user = await userModel.findByPk(userId)
-    if(!user.premium){
-        let html = `
-                <h1>Hello ${user.firstName}</h1>
-                <p>
-                    We would like to inform you that you have completed seven of the seven days of your free trial to use our site. So, unfortunately, we have deleted your account, thank you.
-                </p>
-            `,
-            email = user.email,
-            subject = "Delete your account"
-
-        nodeMail(email, subject, html)
+let endFreeTrialEmail = async(userId)=>{
+    try{
+        let user = await userModel.findByPk(userId)
+        if(!user.premium){
+            let html = `
+                    <h1>Hello ${user.firstName}</h1>
+                    <p>
+                        We would like to inform you that you have completed seven of the seven days of your free trial to use our site. So, unfortunately, you can't still use our features, thank you.
+                    </p>
+                    <a href="${registerFormLink}">To subscribe, click here</a>
+                `,
+                email = user.email,
+                subject = "Delete your account"
+            await userModel.update({haveFreeTrial:false}, {where:{id:user.id}})
+            nodeMail(email, subject, html)
+        }
+    }catch(err){
+        console.error("After 7 days Error: "+err)
     }
 }
 
 let after5DaysEmail = async(userId)=>{
-    let user = await userModel.findByPk(userId)
-    if(!user.premium){
-        let date = new Date(user.createdAt)
-        date.setDate(date.getDate() + 7)
-
-        let day = date.getDate(),
-            month = date.getMonth()+1,
-            year = date.getFullYear()
-
-        let html = `
-                <h1>Hello ${user.firstName}</h1>
-                <p>
-                    We would like to inform you that you have completed five of the seven days of your free trial to use our site. Therefore, we ask you to subscribe before (${day}-${month}-${year}) to avoid deletion of your account, thank you.
-                </p>
-                <button>
+    try{
+        let user = await userModel.findByPk(userId)
+        if(!user.premium){
+            let date = new Date(user.createdAt)
+            date.setDate(date.getDate() + 7)
+    
+            let day = date.getDate(),
+                month = date.getMonth()+1,
+                year = date.getFullYear()
+    
+            let html = `
+                    <h1>Hello ${user.firstName}</h1>
+                    <p>
+                        We would like to inform you that you have completed five of the seven days of your free trial to use our site. Therefore, we ask you to subscribe before (${day}-${month}-${year}) to can still use our features, thank you.
+                    </p>
                     <a href="${registerFormLink}">To subscribe, click here</a>
-                </button>
-            `,
-            email = user.email,
-            subject = "End of trial week"
-
-        nodeMail(email, subject, html)
-        setTimeout(deleteAccountEmail, 120000, user.id)
+                `,
+                email = user.email,
+                subject = "Five days of trial week"
+    
+            nodeMail(email, subject, html)
+            // 172800000ms for 2 day
+            // 120000ms for 2 min
+            setTimeout(endFreeTrialEmail, 120000, user.id)
+        }
+    }catch(err){
+        console.error("After 5 days Error: " + err)
     }
 }
 
@@ -154,17 +164,24 @@ let createUser = async (req, res) => {
             token,
             userData = createUserData(req),
             tokenData = createTokenData(req),
-            featuresIds = req.featuresIds
+            featuresIds = req.featuresIds,
+            deletedEmail = emailsDeletedModel.findOne({where:{email: req.body.email}})
 
         if (user !== null) return res.status(400).json({
             message: "Email, phoneNumber or userName is actually exist :("
         })
         
+        if(deletedEmail !== null){
+            userData["haveFreeTrial"] = false
+            await emailsDeletedModel.destroy({where:{email: req.body.email}})
+        }
+
         if(req.body.role == "farmer" || req.body.role == "engineer"){
             userData["role"] = req.body.role
         }else return res.status(403).json({
             message: "forbidden command"
         })
+
         userData["loginDevices"] = 1
         userData["lastUpdatedUserName"] = req.body.userName
 
@@ -182,10 +199,8 @@ let createUser = async (req, res) => {
         })
 
         // 432000000ms for 5 days
-        // 172800000ms for 2 day
         // 300000ms for 5 min
-        // 120000ms for 2 min
-        // setTimeout(after5DaysEmail, 300000, user.id)
+        setTimeout(after5DaysEmail, 300000, user.id)
 
         return res.status(200).json({
             message: "User Created Successfully :)",
@@ -211,12 +226,18 @@ let addUserByAdmin = async (req, res) => {
             }}),
             userData = createUserData(req),
             featuresIds = req.featuresIds,
-            token = req.token
+            token = req.token,
+            deletedEmail = emailsDeletedModel.findOne({where:{email: req.body.email}})
 
         if (user !== null) return res.status(400).json({
             message: "Email, phoneNumber or userName is actually exist :("
         })
-        
+
+        if(deletedEmail !== null){
+            userData["haveFreeTrial"] = false
+            await emailsDeletedModel.destroy({where:{email: req.body.email}})
+        }
+
         if(token.role === "admin" && req.body.role === "superAdmin") return res.status(401).json({
             message: "Access Denied :("
         })
@@ -305,15 +326,18 @@ let deleteUser = async (req, res) => {
     try {
         let user = req.user
 
-        await userModel.destroy({where: { id: user.id }})
-        if (user.image !== "logo.jpg") {
-            let directoryPath = __dirname.replace("controllers", "public/images/")
-            fs.unlink(directoryPath + user.image, (err) => {
-                if (err) return res.status(500).json({
-                    message: "Delete logo from server error: " + err
+        await sequelize.transaction(async (t) => {
+            emailsDeletedModel.create({email:user.email}, {transaction: t})
+            await userModel.destroy({where: { id: user.id }, transaction: t})
+            if (user.image !== "logo.jpg") {
+                let directoryPath = __dirname.replace("controllers", "public/images/")
+                fs.unlink(directoryPath + user.image, (err) => {
+                    if (err) return res.status(500).json({
+                        message: "Delete logo from server error: " + err
+                    })
                 })
-            })
-        }
+            }
+        })
 
         return res.status(200).json({
             message: "User Deleted Successfully :)"

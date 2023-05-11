@@ -38,6 +38,11 @@ const User = sequelize.define('User', {
     allowNull:false,
     defaultValue: false
   },
+  haveFreeTrial:{
+    type: DataTypes.BOOLEAN,
+    allowNull:false,
+    defaultValue: true
+  },
   phoneNumber: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -88,7 +93,7 @@ const User = sequelize.define('User', {
 });
 
 (async () => {
-  await User.sync(/* { alter: true } */);
+  await User.sync({ alter: true });
 })();
 
 module.exports = User
