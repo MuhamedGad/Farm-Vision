@@ -1,19 +1,19 @@
 const nodemailer = require("nodemailer");
 const config = require("config")
-const ourEmail = config.get("ourEmail")
+const mailConfig = config.get("mailConfig")
 
 const sendEmail = async (to, subject, html) => {
     const transport = {
-        host: 'smtp.gmail.com',
-        port: 465,
+        host: mailConfig.host,
+        port: mailConfig.port,
         secure: true, // use TLS
         auth: {
-            user: ourEmail,
-            pass: "ztajaxxwlixtzgay",
+            user: mailConfig.user,
+            pass: mailConfig.password,
         },
     }
     const mail = {
-        from: ourEmail,
+        from: mailConfig.user,
         to: to,
         subject: subject,
         html: html
@@ -22,10 +22,8 @@ const sendEmail = async (to, subject, html) => {
     const transporter = nodemailer.createTransport(transport)
     transporter.verify((error, success) => {
         if (error) {
-            //if error happened code ends here
             console.error(error)
         } else {
-            //this means success
             console.log('Ready to send mail!')
             transporter.sendMail(mail, (err, data) => {
                 if (err) {

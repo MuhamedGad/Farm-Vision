@@ -200,7 +200,7 @@ let createUser = async (req, res) => {
 
         // 432000000ms for 5 days
         // 300000ms for 5 min
-        setTimeout(after5DaysEmail, 300000, user.id)
+        // setTimeout(after5DaysEmail, 300000, user.id)
 
         return res.status(200).json({
             message: "User Created Successfully :)",

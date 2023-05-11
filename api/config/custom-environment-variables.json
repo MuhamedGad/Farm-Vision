@@ -1,12 +1,17 @@
 {
     "seckey": "seckeyvariable",
-    "ourEmail":"ouremail",
+    "mailConfig":{
+        "host":"mailhost",
+        "port":"mailport",
+        "user":"mailuser",
+        "password":"mailpassword"
+    },
     "dbConfig": {
-        "host": "host",
-        "user": "user",
-        "password": "password",
+        "host": "dbhost",
+        "user": "dbuser",
+        "password": "dbpassword",
         "database": "database",
-        "port": "port",
-        "dialect": "dialect"
+        "port": "dbport",
+        "dialect": "dbdialect"
     }
 }
