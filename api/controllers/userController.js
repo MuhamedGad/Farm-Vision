@@ -3,32 +3,33 @@ const tokenModel = require("../models/Token")
 const featureModel = require("../models/Feature")
 const userFeaturesModel = require("../models/UserFeatures")
 const emailsDeletedModel = require("../models/EmailsDeleted")
+const verifiedEmailTokenModel = require("../models/VerifiedEmailToken")
+const crypto = require('crypto');
 const fs = require("fs")
 const jwt = require("jsonwebtoken")
 const config = require("config")
 const sequelize = require("../models/sequelize")
-const { Op, where } = require("sequelize")
+const { Op } = require("sequelize")
 const deviceDetector = require("device-detector-js")
 const detector = new deviceDetector()
 const bcrypt = require("bcrypt")
 const nodeMail = require("../util/nodeMail")
-const registerFormLink = "http://google.com"
+const subscribeFormLink = "http://google.com"
+const verifiedEmailLink = "http://localhost:8888/api/user/verifyemail"
 
 let endFreeTrialEmail = async(userId)=>{
     try{
         let user = await userModel.findByPk(userId)
         if(!user.premium){
-            let html = `
-                    <h1>Hello ${user.firstName}</h1>
-                    <p>
-                        We would like to inform you that you have completed seven of the seven days of your free trial to use our site. So, unfortunately, you can't still use our features, thank you.
-                    </p>
-                    <a href="${registerFormLink}">To subscribe, click here</a>
-                `,
+            let message = `Hello ${user.firstName}, We would like to inform you that you have completed seven of the seven days of your free trial to use our site. So, unfortunately, you can't still use our features.`,
                 email = user.email,
-                subject = "Delete your account"
+                subject = "End free trial",
+                link = {
+                    url: subscribeFormLink,
+                    describtion: "Subscribe"
+                }
             await userModel.update({haveFreeTrial:false}, {where:{id:user.id}})
-            nodeMail(email, subject, html)
+            nodeMail(email, subject, message, link)
         }
     }catch(err){
         console.error("After 7 days Error: "+err)
@@ -45,18 +46,19 @@ let after5DaysEmail = async(userId)=>{
             let day = date.getDate(),
                 month = date.getMonth()+1,
                 year = date.getFullYear()
-    
-            let html = `
-                    <h1>Hello ${user.firstName}</h1>
-                    <p>
-                        We would like to inform you that you have completed five of the seven days of your free trial to use our site. Therefore, we ask you to subscribe before (${day}-${month}-${year}) to can still use our features, thank you.
-                    </p>
-                    <a href="${registerFormLink}">To subscribe, click here</a>
-                `,
+                
+            day = ("0" + day).slice(-2);
+            month = ("0" + month).slice(-2);
+
+            let message = `Hello ${user.firstName}, We would like to inform you that you have completed five of the seven days of your free trial to use our site. So, please subscribe before (${year}-${month}-${day}) to can still use our features.`,
                 email = user.email,
-                subject = "Five days of trial week"
+                subject = "End five days of free trial",
+                link = {
+                    url: subscribeFormLink,
+                    describtion: "Subscribe"
+                }
     
-            nodeMail(email, subject, html)
+            nodeMail(email, subject, message, link)
             // 172800000ms for 2 day
             // 120000ms for 2 min
             setTimeout(endFreeTrialEmail, 120000, user.id)
@@ -165,12 +167,12 @@ let createUser = async (req, res) => {
             userData = createUserData(req),
             tokenData = createTokenData(req),
             featuresIds = req.featuresIds,
-            deletedEmail = emailsDeletedModel.findOne({where:{email: req.body.email}})
+            deletedEmail = await emailsDeletedModel.findOne({where:{email: req.body.email}})
 
         if (user !== null) return res.status(400).json({
             message: "Email, phoneNumber or userName is actually exist :("
         })
-        
+
         if(deletedEmail !== null){
             userData["haveFreeTrial"] = false
             await emailsDeletedModel.destroy({where:{email: req.body.email}})
@@ -192,15 +194,25 @@ let createUser = async (req, res) => {
                     await userFeaturesModel.create({FeatureId: featuresIds[i], UserId: user.id}, { transaction: t })
                 }
             }
+
             token = jwt.sign({ user_id: user.id, role: user.role }, config.get("seckey"))
             tokenData["token"] = token
             tokenData["UserId"] = user.id
             await tokenModel.create(tokenData, { transaction: t })
-        })
 
-        // 432000000ms for 5 days
-        // 300000ms for 5 min
-        // setTimeout(after5DaysEmail, 300000, user.id)
+            /* // ---------- Verification Email ----------------
+            let verificationEmailToken = crypto.createHash('sha256').update(crypto.randomBytes(32).toString('hex')).digest('hex');
+            await verifiedEmailTokenModel.create({UserId:user.id, token: verificationEmailToken}, { transaction: t })
+            let to = user.email,
+                subject = "Verification Email",
+                message = `Hello ${user.firstName}, Verify your email address so we know it's really you, and so we can send you important information about your Farm Vision account.`,
+                link = {
+                    url: verifiedEmailLink + `/${user.id}/${verificationEmailToken}`,
+                    describtion: "Verify email address"
+                }
+            await nodeMail(to, subject, message, link)
+            // ---------------------------------------------- */
+        })
 
         return res.status(200).json({
             message: "User Created Successfully :)",
@@ -208,9 +220,51 @@ let createUser = async (req, res) => {
             id: user.id,
             role: user.role
         })
+        // return res.status(200).json({
+        //     message: "Please check your email to verify."
+        // })
     } catch (err) {
         return res.status(500).json({
             message: "Create User Error: " + err
+        })
+    }
+}
+
+let verifyEmail = async(req, res)=>{
+    try{
+        let userId = req.params.id,
+            user,
+            emailToken = req.params.token,
+            verifiedEmailToken = await verifiedEmailTokenModel.findOne({ where: {
+                [Op.and]: [
+                    { UserId: userId },
+                    { token: emailToken }
+                ]
+            }})
+    
+        if (verifiedEmailToken !== null) {
+            await sequelize.transaction(async (t) => {
+                user = await userModel.findByPk(userId)
+                await verifiedEmailTokenModel.destroy({where: {id: verifiedEmailToken.id}, transaction: t})
+                await userModel.update({verified: true}, {where:{id: user.id}, transaction: t})
+            })
+
+            // 432000000ms for 5 days
+            // 300000ms for 5 min
+            if(user.haveFreeTrial){
+                console.log("start timer")
+                setTimeout(after5DaysEmail, 300000, user.id)
+            }
+
+            return res.status(200).json({
+                message: "User Created Successfully you can login now :)"
+            })
+        }else return res.status(400).json({
+            message: "soory..! Not found verify token to this email :("
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message: "Verify Email Error: " + err
         })
     }
 }
@@ -253,12 +307,28 @@ let addUserByAdmin = async (req, res) => {
                     await userFeaturesModel.create({FeatureId: featuresIds[i], UserId: user.id}, { transaction: t })
                 }
             }
+            /* // ---------- Verification Email ----------------
+            let verificationEmailToken = crypto.createHash('sha256').update(crypto.randomBytes(32).toString('hex')).digest('hex');
+            await verifiedEmailTokenModel.create({UserId:user.id, token: verificationEmailToken}, { transaction: t })
+            let to = user.email,
+                subject = "Verification Email",
+                message = `Hello ${user.firstName}, Verify your email address so we know it's really you, and so we can send you important information about your Farm Vision account.`,
+                link = {
+                    url: verifiedEmailLink + `/${user.id}/${verificationEmailToken}`,
+                    describtion: "Verify email address"
+                }
+            await nodeMail(to, subject, message, link)
+            // ---------------------------------------------- */
         })
 
         return res.status(200).json({
             message: "User Created Successfully :)",
             id: user.id
         })
+        // return res.status(200).json({
+        //     message: "User Created Successfully but not verified so please check this emails to verify then he can login :)",
+        //     id: user.id
+        // })
     } catch (err) {
         return res.status(500).json({
             message: "Create User Error: " + err
@@ -327,7 +397,7 @@ let deleteUser = async (req, res) => {
         let user = req.user
 
         await sequelize.transaction(async (t) => {
-            emailsDeletedModel.create({email:user.email}, {transaction: t})
+            await emailsDeletedModel.create({email:user.email}, {transaction: t})
             await userModel.destroy({where: { id: user.id }, transaction: t})
             if (user.image !== "logo.jpg") {
                 let directoryPath = __dirname.replace("controllers", "public/images/")
@@ -438,6 +508,10 @@ let login = async (req, res) => {
                 message: "Invalid email or password..!"
             })
 
+            // if(!user.verified) return res.status(401).json({
+            //     message: "Please check your email to verify email first..!"
+            // })
+
             let tokensOfUser = await tokenModel.findAndCountAll({ where: { UserId: user.id } })
             if (tokensOfUser.count >= user.devicesNumber) return res.status(400).json({
                 message: "Sorry..! The allowed number of devices has been exceeded"
@@ -521,5 +595,6 @@ module.exports = {
     updatePassword,
     login,
     getLogo,
-    updateLogo
+    updateLogo,
+    verifyEmail
 }
