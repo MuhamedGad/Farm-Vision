@@ -6,6 +6,10 @@ const helmet = require("helmet")
 const port = process.env.PORT || 8888
 const cors = require("cors")
 
+const ModelsVideo = require("./models/ModelsVideo")
+const ModelsImage = require("./models/ModelsImage")
+const DetectDiseaseResult = require("./models/DetectDiseaseResult")
+
 const user = require("./routes/User")
 const token = require("./routes/Token")
 const logo = require("./routes/Logo")
@@ -17,7 +21,10 @@ const post = require("./routes/Post")
 const comment = require("./routes/Comment")
 const feature = require("./routes/Feature")
 const tag = require("./routes/Tag")
-const aiModel = require("./routes/AIModel")
+// const subscribe = require("./routes/Subscribe")
+// const aiModel = require("./routes/AIModel")
+
+app.set('view engine', 'ejs')
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
@@ -37,7 +44,8 @@ app.use("/api/post", post)
 app.use("/api/comment", comment)
 app.use("/api/feature", feature)
 app.use("/api/tag", tag)
-app.use("/api/predict", aiModel)
+// app.use("/api/predict", aiModel)
+// app.use("/api/subscribe", subscribe)
 
 app.use((req, res)=>{res.status(400).json({message:"Not Found This endpoint :("})})
 
