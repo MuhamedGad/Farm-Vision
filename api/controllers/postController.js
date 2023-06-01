@@ -10,7 +10,7 @@ const fs = require("fs")
 const sequelize = require("../models/sequelize")
 const { Op } = require("sequelize")
 
-let getPostById = async (req, res) => {
+const getPostById = async (req, res) => {
     try {
         let post = req.post,
             postTags = await postTagsModel.findAndCountAll({where:{PostId: post.id}}),
@@ -36,7 +36,7 @@ let getPostById = async (req, res) => {
     }
 }
 
-let getAllPosts = async (req, res) => {
+const getAllPosts = async (req, res) => {
     try {
         let posts = await postModel.findAndCountAll({order:[["points", "DESC"]]}),
             postsData = []
@@ -68,7 +68,7 @@ let getAllPosts = async (req, res) => {
     }
 }
 
-let getPostsForUser = async(req, res)=>{
+const getPostsForUser = async(req, res)=>{
     try {
         let user = req.user,
             posts = await postModel.findAndCountAll({
@@ -105,7 +105,7 @@ let getPostsForUser = async(req, res)=>{
     }
 }
 
-let getPostsForTag = async(req, res)=>{
+const getPostsForTag = async(req, res)=>{
     try {
         let tag = req.tag,
             postTags = await postTagsModel.findAndCountAll({attributes:['PostId']}, {where:{TagId: tag.id}}),
@@ -147,7 +147,7 @@ let getPostsForTag = async(req, res)=>{
     }
 }
 
-let createPost = async(req, res)=>{
+const createPost = async(req, res)=>{
     let postData = {},
         token = req.token,
         tags = req.tags,
@@ -186,7 +186,7 @@ let createPost = async(req, res)=>{
     }
 }
 
-let updatePost = async(req, res)=>{
+const updatePost = async(req, res)=>{
     let postData = {},
         post = req.post,
         tags = req.tags,
@@ -242,7 +242,7 @@ let updatePost = async(req, res)=>{
     }
 }
 
-let deletePost = async(req, res)=>{
+const deletePost = async(req, res)=>{
     try {
         let post = req.post
         await sequelize.transaction(async (t) => {
@@ -281,7 +281,7 @@ let deletePost = async(req, res)=>{
     }
 }
 
-let like = async(req, res)=>{
+const like = async(req, res)=>{
     try {
         let token = req.token,
             post = req.post,
@@ -316,7 +316,7 @@ let like = async(req, res)=>{
     }
 }
 
-let disLike = async(req, res)=>{
+const disLike = async(req, res)=>{
     try {
         let token = req.token,
             post = req.post,

@@ -22,12 +22,11 @@ const comment = require("./routes/Comment")
 const feature = require("./routes/Feature")
 const tag = require("./routes/Tag")
 // const subscribe = require("./routes/Subscribe")
-// const aiModel = require("./routes/AIModel")
 
 app.set('view engine', 'ejs')
 
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended:true}))
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(helmet())
 app.use(express.static("./public"))
@@ -44,9 +43,8 @@ app.use("/api/post", post)
 app.use("/api/comment", comment)
 app.use("/api/feature", feature)
 app.use("/api/tag", tag)
-// app.use("/api/predict", aiModel)
 // app.use("/api/subscribe", subscribe)
 
-app.use((req, res)=>{res.status(400).json({message:"Not Found This endpoint :("})})
+app.use((req, res) => { res.status(400).json({ message: "Not Found This endpoint :(" }) })
 
-app.listen(port, () => console.log(`Server listening on port ${port}!`));
+app.listen(port, () => console.log(`Server listening on URL: http://localhost:${port}!`));

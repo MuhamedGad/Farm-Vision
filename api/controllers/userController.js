@@ -17,7 +17,7 @@ const nodeMail = require("../util/nodeMail")
 const subscribeFormLink = "http://google.com"
 const verifiedEmailLink = "http://localhost:8888/api/user/verifyemail"
 
-let endFreeTrialEmail = async(userId)=>{
+const endFreeTrialEmail = async(userId)=>{
     try{
         let user = await userModel.findByPk(userId)
         if(!user.premium){
@@ -36,7 +36,7 @@ let endFreeTrialEmail = async(userId)=>{
     }
 }
 
-let after5DaysEmail = async(userId)=>{
+const after5DaysEmail = async(userId)=>{
     try{
         let user = await userModel.findByPk(userId)
         if(!user.premium){
@@ -68,7 +68,7 @@ let after5DaysEmail = async(userId)=>{
     }
 }
 
-let getUserByID = async (req, res) => {
+const getUserByID = async (req, res) => {
     try {
         let user = req.user,
             userFeatures = await userFeaturesModel.findAndCountAll({where:{UserId: user.id}}),
@@ -89,7 +89,7 @@ let getUserByID = async (req, res) => {
     }
 }
 
-let getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
     try {
         let users = await userModel.findAndCountAll(),
             usersData = []
@@ -118,7 +118,7 @@ let getAllUsers = async (req, res) => {
     }
 }
 
-let createUserData = (req)=>{
+const createUserData = (req)=>{
     let userData = {}
     userData["firstName"] = req.body.firstName || ""
     userData["lastName"] = req.body.lastName || ""
@@ -136,7 +136,7 @@ let createUserData = (req)=>{
     return userData
 }
 
-let createTokenData = (req)=>{
+const createTokenData = (req)=>{
     const device = detector.parse(req.header("user-agent"))
     let tokenData = {}
     tokenData["clientName"] = (device.client)?device.client.name:device.client
@@ -154,7 +154,7 @@ let createTokenData = (req)=>{
     return tokenData
 }
 
-let createUser = async (req, res) => {
+const createUser = async (req, res) => {
     try {
         let user = await userModel.findOne({ where: {
                 [Op.or]: [
@@ -230,7 +230,7 @@ let createUser = async (req, res) => {
     }
 }
 
-let verifyEmail = async(req, res)=>{
+const verifyEmail = async(req, res)=>{
     try{
         let userId = req.params.id,
             user,
@@ -269,7 +269,7 @@ let verifyEmail = async(req, res)=>{
     }
 }
 
-let addUserByAdmin = async (req, res) => {
+const addUserByAdmin = async (req, res) => {
     try {
         let user = await userModel.findOne({ where: {
                 [Op.or]: [
@@ -336,7 +336,7 @@ let addUserByAdmin = async (req, res) => {
     }
 }
 
-let updateUser = async (req, res) => {
+const updateUser = async (req, res) => {
     try {
         let user = req.user,
             token = req.token,
@@ -392,7 +392,7 @@ let updateUser = async (req, res) => {
     }
 }
 
-let deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
     try {
         let user = req.user
 
@@ -420,7 +420,7 @@ let deleteUser = async (req, res) => {
     }
 }
 
-let updateRole = async (req, res) => {
+const updateRole = async (req, res) => {
     let token = req.token,
         user = req.user,
         role = req.body.role
@@ -449,7 +449,7 @@ let updateRole = async (req, res) => {
     }
 }
 
-let updatePassword = async (req, res) => {
+const updatePassword = async (req, res) => {
     let token = req.token,
         user = req.user,
         tokenUser
@@ -491,7 +491,7 @@ let updatePassword = async (req, res) => {
     }
 }
 
-let login = async (req, res) => {
+const login = async (req, res) => {
     try {
         let user = await userModel.findOne({ where: { email: req.body.email } }),
             tokenData = {}
@@ -542,7 +542,7 @@ let login = async (req, res) => {
     }
 }
 
-let getLogo = (req, res) => {
+const getLogo = (req, res) => {
     let options = {
             root: __dirname.replace("controllers", "public"),
         },
@@ -554,7 +554,7 @@ let getLogo = (req, res) => {
     })
 }
 
-let updateLogo = async (req, res) => {
+const updateLogo = async (req, res) => {
     let user = req.user
     if (!req.file) {
         return res.status(403).json({

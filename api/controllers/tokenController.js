@@ -2,7 +2,7 @@ const userModel = require("../models/User")
 const tokenModel = require("../models/Token")
 const sequelize = require("../models/sequelize")
 
-let getAllTokens = async(req, res)=>{
+const getAllTokens = async(req, res)=>{
     try {
         let tokens = await tokenModel.findAndCountAll()
         return res.status(200).json({
@@ -17,7 +17,7 @@ let getAllTokens = async(req, res)=>{
     }
 }
 
-let getTokenByID = async(req, res)=>{
+const getTokenByID = async(req, res)=>{
     let token = req.tokenFound
     return res.status(200).json({
         message: "User Found :)",
@@ -25,7 +25,7 @@ let getTokenByID = async(req, res)=>{
     })
 }
 
-let getTokensForUser = async(req, res)=>{
+const getTokensForUser = async(req, res)=>{
     try {
         let token = req.token,
             tokens = await tokenModel.findAndCountAll({where:{UserId:token.UserId}})
@@ -43,7 +43,7 @@ let getTokensForUser = async(req, res)=>{
 
 }
 
-let deleteToken = async(token, res)=>{
+const deleteToken = async(token, res)=>{
     try {
         let user
         await sequelize.transaction(async (t) => {
@@ -62,11 +62,11 @@ let deleteToken = async(token, res)=>{
     }
 }
 
-let logout = (req, res)=>{
+const logout = (req, res)=>{
     deleteToken(req.token, res)
 }
 
-let logoutFromOtherDevice = async(req, res)=>{
+const logoutFromOtherDevice = async(req, res)=>{
     deleteToken(req.tokenFound, res)
 }
 

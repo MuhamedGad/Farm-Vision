@@ -1,6 +1,6 @@
 const featureModel = require("../models/Feature")
 
-let getFeatureById = (req, res)=>{
+const getFeatureById = (req, res)=>{
     let feature = req.feature
     return res.status(200).json({
         message: "Feature Found :)",
@@ -8,7 +8,7 @@ let getFeatureById = (req, res)=>{
     })
 }
 
-let getAllFeatures = async (req, res) => {
+const getAllFeatures = async (req, res) => {
     try {
         let features = await featureModel.findAndCountAll()
         return res.status(200).json({
@@ -23,7 +23,7 @@ let getAllFeatures = async (req, res) => {
     }
 }
 
-let createFeature = async(req, res)=>{
+const createFeature = async(req, res)=>{
     let featureData = {},
         token = req.token
 
@@ -50,7 +50,7 @@ let createFeature = async(req, res)=>{
     }
 }
 
-let updateFeature = async(req, res)=>{
+const updateFeature = async(req, res)=>{
     let featureData = {}
         feature = req.feature
 
@@ -70,7 +70,7 @@ let updateFeature = async(req, res)=>{
     }
 }
 
-let deleteFeature = async(req, res)=>{
+const deleteFeature = async(req, res)=>{
     try {
         let feature = req.feature
         await featureModel.destroy({where: { id: feature.id }})

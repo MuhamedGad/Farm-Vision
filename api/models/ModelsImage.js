@@ -7,9 +7,11 @@ const ModelsImage = sequelize.define('ModelsImage', {
         type:DataTypes.STRING,
         allowNull:false
     },
+    resultImage:{
+        type:DataTypes.STRING
+    },
     type:{
-        type:DataTypes.STRING,
-        allowNull:false
+        type:DataTypes.STRING
     }
 });
 
@@ -20,7 +22,7 @@ User.hasMany(ModelsImage, {
 ModelsImage.belongsTo(User);
 
 (async () => {
-    await ModelsImage.sync(/* {alter:true} */);
+    await ModelsImage.sync({alter:true});
 })();
 
 module.exports = ModelsImage

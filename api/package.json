@@ -11,7 +11,6 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "@tensorflow/tfjs-node": "^4.3.0",
     "ajv": "^8.12.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",

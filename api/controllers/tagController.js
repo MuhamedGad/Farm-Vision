@@ -1,6 +1,6 @@
 const tagModel = require("../models/Tag")
 
-let getTagById = (req, res)=>{
+const getTagById = (req, res)=>{
     let tag = req.tag
     return res.status(200).json({
         message: "Tag Found :)",
@@ -8,7 +8,7 @@ let getTagById = (req, res)=>{
     })
 }
 
-let getAllTags = async (req, res) => {
+const getAllTags = async (req, res) => {
     try {
         let tags = await tagModel.findAndCountAll({order:[["numberOfPosts", "DESC"]]})
         return res.status(200).json({
@@ -23,7 +23,7 @@ let getAllTags = async (req, res) => {
     }
 }
 
-let createTag = async(req, res)=>{
+const createTag = async(req, res)=>{
     let tagData = {},
         token = req.token
 
@@ -44,7 +44,7 @@ let createTag = async(req, res)=>{
     }
 }
 
-let updateTag = async(req, res)=>{
+const updateTag = async(req, res)=>{
     let tagData = {}
         tag = req.tag
 
@@ -63,7 +63,7 @@ let updateTag = async(req, res)=>{
     }
 }
 
-let deleteTag = async(req, res)=>{
+const deleteTag = async(req, res)=>{
     try {
         let tag = req.tag
         await tagModel.destroy({where: { id: tag.id }})

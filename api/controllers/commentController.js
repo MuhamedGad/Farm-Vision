@@ -7,7 +7,7 @@ const fs = require("fs")
 const sequelize = require("../models/sequelize")
 const { Op } = require("sequelize")
 
-let getCommentById = async(req, res)=>{
+const getCommentById = async(req, res)=>{
     try {
         let comment = req.comment,
             commentImages = await commentImageModel.findAndCountAll({where:{CommentId: comment.id}}),
@@ -24,7 +24,7 @@ let getCommentById = async(req, res)=>{
     }
 }
 
-let getCommentsOfPost = async(req, res)=>{
+const getCommentsOfPost = async(req, res)=>{
     try{
         let post = req.post,
             comments = await commentModel.findAndCountAll({
@@ -53,7 +53,7 @@ let getCommentsOfPost = async(req, res)=>{
     }
 }
 
-let creatComment = async(req, res)=>{
+const creatComment = async(req, res)=>{
     try{
         let commentData = {},
             token = req.token,
@@ -106,7 +106,7 @@ let creatComment = async(req, res)=>{
     }
 }
 
-let updateComment = async(req, res)=>{
+const updateComment = async(req, res)=>{
     let commentData = {},
         comment = req.comment,
         files = req.files,
@@ -147,7 +147,7 @@ let updateComment = async(req, res)=>{
     }
 }
 
-let deleteComment = async(req, res)=>{
+const deleteComment = async(req, res)=>{
     try {
         let comment = req.comment
 
@@ -200,7 +200,7 @@ let deleteComment = async(req, res)=>{
     }
 }
 
-let like = async(req, res)=>{
+const like = async(req, res)=>{
     try {
         let token = req.token,
             comment = req.comment,
@@ -235,7 +235,7 @@ let like = async(req, res)=>{
     }
 }
 
-let disLike = async(req, res)=>{
+const disLike = async(req, res)=>{
     try {
         let token = req.token,
             comment = req.comment,
