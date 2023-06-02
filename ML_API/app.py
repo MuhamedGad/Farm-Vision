@@ -211,14 +211,14 @@ def getMyHistoryEndPoint():
         return "Get My History error: " + str(e), 500
 
 
-@app.route("/api/deleteFromHistory/<imageId>", methods=["DELETE"])
-def deleteFromHistoryEndPoint(imageId):
+@app.route("/api/deleteFromHistory/<id>", methods=["DELETE"])
+def deleteFromHistoryEndPoint(id):
     try:
         tokenData = g.tokenData
 
         # get data from database
         getImageData = text('SELECT "ModelsImages"."image", "ModelsImages"."resultImage" FROM public."ModelsImages" WHERE "ModelsImages"."UserId"=:UserId AND "ModelsImages"."id"=:id')
-        image = db.session.execute(getImageData, {"UserId": tokenData["UserId"], "id": imageId})
+        image = db.session.execute(getImageData, {"UserId": tokenData["UserId"], "id": id})
         image = image.mappings().all()
         image = [dict(image) for image in image]
         if len(image) < 1:
@@ -227,7 +227,7 @@ def deleteFromHistoryEndPoint(imageId):
 
         # delete image from database
         deleteImageQuery = text('DELETE FROM public."ModelsImages" WHERE "ModelsImages"."id"=:id')
-        db.session.execute(deleteImageQuery, {"id": imageId})
+        db.session.execute(deleteImageQuery, {"id": id})
         db.session.commit()
 
         # delete image from folder
