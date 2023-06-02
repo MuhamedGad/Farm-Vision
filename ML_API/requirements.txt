@@ -31,7 +31,6 @@ libclang
 Markdown
 MarkupSafe
 matplotlib
-ml-dtypes
 mpmath
 networkx
 numpy
