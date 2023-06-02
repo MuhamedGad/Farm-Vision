@@ -12,9 +12,7 @@ import os
 imagesFolderURL = "files/modelsImages/"
 
 app = Flask(__name__)
-# app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:@localhost/farmvision"
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://farm_vision:Z1Y18QfiqtO92YxVTM0nfl4m3eKZS3d4@dpg-cgoqqsd269v5rjd53ul0-a.frankfurt-postgres.render.com/farm_vision"
-# app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql+psycopg2://postgres:mohamed910@localhost/smart_farm"
 db = SQLAlchemy(app)
 
 
