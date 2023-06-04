@@ -23,7 +23,7 @@ POST
 | image | file |
 
 ### Response Data:
-- result: list of diseases that output from the model
+- diseases: list of diseases that output from the model
 
 - image: name of the origin image
 
@@ -48,9 +48,36 @@ POST
 | image | file |
 
 ### Response Data:
-- result: string of type of the plant in the image
+- type: string of type of the plant in the image
 
 - image: name of the origin image
+
+- Hint: if you want to get image go to this route "/api/getImage/:image"  image => is image name that i sent to you
+
+</br>
+
+## **Disease Detection And Plant Classfication Model:**
+### Route:
+```
+/api/imagesModel/diseaseDetectionAndPlantClassification
+```
+### Method:
+```
+POST
+```
+### Form Send Data:
+| input name | Type |
+|--------|------|
+| image | file |
+
+### Response Data:
+- type: string of type of the plant in the image
+
+- diseases: list of diseases that output from the model
+
+- image: name of the origin image
+
+- resultImage: name of result image
 
 - Hint: if you want to get image go to this route "/api/getImage/:image"  image => is image name that i sent to you
 
