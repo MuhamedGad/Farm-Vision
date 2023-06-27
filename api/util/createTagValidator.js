@@ -7,7 +7,7 @@ const schema = {
         "tag":{
             "type":"string",
             "minLength":3,
-            "pattern":"^[a-z]*$"
+            "pattern":"^[a-z]+[0-9]*$"
         },
         "describtion":{
             "type":"string",
