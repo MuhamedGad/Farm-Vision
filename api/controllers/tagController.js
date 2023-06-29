@@ -77,10 +77,15 @@ const deleteTag = async(req, res)=>{
     }
 }
 
+const addTagRequest = (req, res)=>{
+    
+}
+
 module.exports = {
     getTagById,
     getAllTags,
     createTag,
     updateTag,
-    deleteTag
+    deleteTag,
+    addTagRequest
 }

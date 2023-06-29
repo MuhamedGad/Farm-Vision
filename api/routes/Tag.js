@@ -8,6 +8,7 @@ const checkTagFound = require("../middlewares/checkFound/checkTagFoundMW")
 const createTagValidator = require("../middlewares/validators/createTagValidatorMW")
 const updateTagValidator = require("../middlewares/validators/updateTagValidatorMW")
 
+router.post("/addTagRequest", authrization, createTagValidator, tagController.addTagRequest)
 router.get("/", authrization, tagController.getAllTags)
 router.get("/:id", validID, authrization, checkTagFound, tagController.getTagById)
 router.post("/", authrization, checkAdmin, createTagValidator, tagController.createTag)

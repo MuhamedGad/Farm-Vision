@@ -1,4 +1,5 @@
 const postModel = require("../models/Post")
+const userModel = require("../models/User")
 const commentModel = require("../models/Comment")
 const tagModel = require("../models/Tag")
 const postLikeModel = require("../models/PostLike")
