@@ -404,6 +404,32 @@ Method:
 PUT
 ```
 ---
+<br>
+
+### **Get All Reports**
+Route:
+```
+/api/report
+```
+Method:
+```
+GET
+```
+---
+<br>
+
+### **Repair Report**
+Route:
+```
+/api/report/reportRepaired/:id        -(id) is report id
+```
+Method:
+```
+PUT
+```
+---
+<br>
+
 ## **Post Routes:**
 ### **Get all posts:**
 Route:
@@ -678,3 +704,69 @@ Form:
 | tag | text | minimum length 3 characters and must be small chars with no spaces | false |
 | describtion | text | minimum length 10 characters | false |
 ---
+## **Report Routes:**
+### **Create Report:**
+Route:
+```
+/api/report
+```
+Method:
+```
+POST
+```
+Form:
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
+| title | text | minimum length 5 characters and maxmum length 30 | false |
+| describtion | text | minimum length 10 characters and maxmum length 1000 | false |
+
+<br>
+
+### **Update Report:**
+Route:
+```
+/api/report/:id       -(id) is the report id
+```
+Method:
+```
+PUT
+```
+Form:
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
+| title | text | minimum length 5 characters and maxmum length 30 | true |
+| describtion | text | minimum length 10 characters and maxmum length 1000 | true |
+
+<br>
+
+### **Get my Reports:**
+Route:
+```
+/api/report/getMyReports
+```
+Method:
+```
+GET
+```
+<br>
+
+### **Get Report:**
+Route:
+```
+/api/report/:id       -(id) is the report id
+```
+Method:
+```
+GET
+```
+<br>
+
+### **Delete Report:**
+Route:
+```
+/api/report/:id       -(id) is the report id
+```
+Method:
+```
+DELETE
+```

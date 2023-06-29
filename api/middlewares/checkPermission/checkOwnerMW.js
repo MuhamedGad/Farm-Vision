@@ -3,7 +3,7 @@ const config = require("config")
 
 module.exports = (req, res, next)=>{
     let token = req.token
-    let thing = req.post || req.comment
+    let thing = req.post || req.comment || req.report
     jwt.verify(token.token, config.get("seckey"), function(err, decoded) {
         if(err) return res.status(500).json({
             message: "JWT verify error: " + err

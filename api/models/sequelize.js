@@ -1,6 +1,6 @@
 const { Sequelize } = require("sequelize")
 const config = require("config")
-const dbConfig = config.get("dbConfig")
+// const dbConfig = config.get("dbConfig")
 // let dbConfig= {
 //   host    : "localhost",
 //   user    : "root",
@@ -9,14 +9,14 @@ const dbConfig = config.get("dbConfig")
 //   port    : "",
 //   dialect : "mysql"
 // }
-// let dbConfig= {
-//   host    : "localhost",
-//   user    : "postgres",
-//   password: "mohamed910",
-//   database: "smart_farm",
-//   port    : 5432,
-//   dialect : "postgres"
-// }
+let dbConfig= {
+  host    : "localhost",
+  user    : "postgres",
+  password: "mohamed910",
+  database: "smart_farm",
+  port    : 5432,
+  dialect : "postgres"
+}
 module.exports = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
   host: dbConfig.host,
   port: dbConfig.port,
