@@ -10,7 +10,7 @@ const getTagById = (req, res)=>{
 
 const getAllTags = async (req, res) => {
     try {
-        let tags = await tagModel.findAndCountAll({order:[["numberOfPosts", "DESC"]]})
+        let tags = await tagModel.findAndCountAll({where:{isAccepted: true}, order:[["numberOfPosts", "DESC"]]})
         return res.status(200).json({
             message: "Found tags :)",
             length: tags.count,
@@ -30,6 +30,7 @@ const createTag = async(req, res)=>{
     tagData["UserId"] = token.UserId
     tagData["tag"] = req.body.tag
     tagData["describtion"] = req.body.describtion
+    tagData["isAccepted"] = true
 
     try{
         let tag = await tagModel.create(tagData)
@@ -77,8 +78,73 @@ const deleteTag = async(req, res)=>{
     }
 }
 
-const addTagRequest = (req, res)=>{
-    
+const addTagRequest = async(req, res)=>{
+    let tagData = {},
+        token = req.token
+
+    tagData["UserId"] = token.UserId
+    tagData["tag"] = req.body.tag
+    tagData["describtion"] = req.body.describtion
+    tagData["isAccepted"] = false
+
+    try{
+        let tag = await tagModel.create(tagData)
+        return res.status(200).json({
+            message: "Tag requested successfully :)",
+            id: tag.id
+        })
+    }catch(err){
+        return res.status(500).json({
+            message: "Request Tag Error: " + err
+        })
+    }
+}
+
+const getTagRequests = async(req, res)=>{
+    try {
+        let tags = await tagModel.findAndCountAll({where:{isAccepted:false}})
+        return res.status(200).json({
+            message: "Found tag requests :)",
+            length: tags.count,
+            data: tags.rows
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message: "Get Tag Requests Error: " + err
+        })
+    }
+}
+
+const acceptTagRequest = async(req, res)=>{
+    let tagData = {},
+        tag = req.tag
+
+    tagData["isAccepted"] = true
+
+    try{
+        await tagModel.update(tagData, {where:{id:tag.id}})
+        return res.status(200).json({
+            message: "Tag accepted successfully :)"
+        })
+    }catch(err){
+        return res.status(500).json({
+            message: "Accept Tag Error: " + err
+        })
+    }
+}
+
+const rejectTagRequest = async(req, res)=>{
+    try {
+        let tag = req.tag
+        await tagModel.destroy({where: { id: tag.id }})
+        return res.status(200).json({
+            message: "Tag request rejected successfully :)"
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message: "Reject Tag Error: " + err
+        })
+    }
 }
 
 module.exports = {
@@ -87,5 +153,8 @@ module.exports = {
     createTag,
     updateTag,
     deleteTag,
-    addTagRequest
+    addTagRequest,
+    getTagRequests,
+    acceptTagRequest,
+    rejectTagRequest
 }

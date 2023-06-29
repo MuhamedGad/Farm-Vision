@@ -16,6 +16,11 @@ const Tag = sequelize.define('Tag', {
         type:DataTypes.INTEGER,
         allowNull:false,
         defaultValue: 0
+    },
+    isAccepted:{
+        type:DataTypes.BOOLEAN,
+        allowNull:false,
+        defaultValue: false
     }
 });
 
@@ -23,7 +28,7 @@ User.hasMany(Tag)
 Tag.belongsTo(User);
 
 (async () => {
-    await Tag.sync(/* {alter:true} */);
+    await Tag.sync({alter:true});
 })();
 
 module.exports = Tag

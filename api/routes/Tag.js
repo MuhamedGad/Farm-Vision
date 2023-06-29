@@ -9,6 +9,10 @@ const createTagValidator = require("../middlewares/validators/createTagValidator
 const updateTagValidator = require("../middlewares/validators/updateTagValidatorMW")
 
 router.post("/addTagRequest", authrization, createTagValidator, tagController.addTagRequest)
+router.get("/getTagRequests", authrization, checkAdmin, tagController.getTagRequests)
+router.put("/acceptTagRequest/:id", validID, authrization, checkAdmin, checkTagFound, tagController.acceptTagRequest)
+router.put("/rejectTagRequest/:id", validID, authrization, checkAdmin, checkTagFound, tagController.rejectTagRequest)
+
 router.get("/", authrization, tagController.getAllTags)
 router.get("/:id", validID, authrization, checkTagFound, tagController.getTagById)
 router.post("/", authrization, checkAdmin, createTagValidator, tagController.createTag)
