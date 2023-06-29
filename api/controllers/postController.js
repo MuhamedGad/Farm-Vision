@@ -11,9 +11,22 @@ const fs = require("fs")
 const sequelize = require("../models/sequelize")
 const { Op } = require("sequelize")
 
+const checkUserLike = async(userId, postId) => {
+    try {
+        let userLike = await postLikeModel.findOne({ where: { UserId: userId, PostId: postId } })
+        if (userLike) {
+            return true
+        }
+        return false
+    } catch (err) {
+        return false
+    }
+}
+
 const getPostById = async (req, res) => {
     try {
-        let post = req.post,
+        let token = req.token,
+            post = req.post,
             user = await userModel.findByPk(post.UserId),
             postTags = await postTagsModel.findAndCountAll({where:{PostId: post.id}}),
             postImages = await postImageModel.findAndCountAll({where:{PostId: post.id}}),
@@ -27,10 +40,13 @@ const getPostById = async (req, res) => {
             tags.push(tagData.tag)
         }
 
+        let userLike = await checkUserLike(token.UserId, post.id)
+
         return res.status(200).json({
             message: "Post Found :)",
             data: {post, images, tags},
-            user: {username: user.username, firstName: user.firstName, lastName: user.lastName}
+            user: {username: user.username, firstName: user.firstName, lastName: user.lastName},
+            userLike
         })
     } catch (err) {
         return res.status(500).json({
@@ -58,7 +74,8 @@ const getAllPosts = async (req, res) => {
                     tag = await tagModel.findByPk(postTag.TagId)
                 tags.push(tag.tag)
             }
-            postsData.push({post, images, tags, user: {username: user.username, firstName: user.firstName, lastName: user.lastName}})
+            let userLike = await checkUserLike(token.UserId, post.id)
+            postsData.push({post, images, tags, user: {username: user.username, firstName: user.firstName, lastName: user.lastName}, userLike})
         }
         return res.status(200).json({
             message: "Found posts :)",
@@ -75,6 +92,7 @@ const getAllPosts = async (req, res) => {
 const getPostsForUser = async(req, res)=>{
     try {
         let user = req.user,
+            token = req.token,
             posts = await postModel.findAndCountAll({
                 where:{UserId:user.id},
                 order:[["points", "DESC"]]
@@ -95,7 +113,8 @@ const getPostsForUser = async(req, res)=>{
                     tag = await tagModel.findByPk(postTag.TagId)
                 tags.push(tag.tag)
             }
-            postsData.push({post, images, tags})
+            let userLike = await checkUserLike(token.UserId, post.id)
+            postsData.push({post, images, tags, userLike})
         }
         return res.status(200).json({
             message: "Found posts :)",
@@ -122,7 +141,7 @@ const getPostsForTag = async(req, res)=>{
             let post = await postModel.findByPk(e.PostId)
             posts.push(post)
         }
-        console.log(posts[0].id)
+        // console.log(posts[0].id)
 
         for (let i = 0; i < posts.length; i++) {
             let post = posts[i],
@@ -139,7 +158,8 @@ const getPostsForTag = async(req, res)=>{
                     tag = await tagModel.findByPk(postTag.TagId)
                 tags.push(tag.tag)
             }
-            postsData.push({post, images, tags, user: {username: user.username, firstName: user.firstName, lastName: user.lastName}})
+            let userLike = await checkUserLike(token.UserId, post.id)
+            postsData.push({post, images, tags, user: {username: user.username, firstName: user.firstName, lastName: user.lastName}, userLike})
         }
         return res.status(200).json({
             message: "Found posts :)",
