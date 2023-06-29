@@ -13,6 +13,7 @@ const { Op } = require("sequelize")
 const getPostById = async (req, res) => {
     try {
         let post = req.post,
+            user = await userModel.findByPk(post.UserId),
             postTags = await postTagsModel.findAndCountAll({where:{PostId: post.id}}),
             postImages = await postImageModel.findAndCountAll({where:{PostId: post.id}}),
             images = [],
@@ -27,7 +28,8 @@ const getPostById = async (req, res) => {
 
         return res.status(200).json({
             message: "Post Found :)",
-            data: {post, images, tags}
+            data: {post, images, tags},
+            user: {username: user.username, firstName: user.firstName, lastName: user.lastName}
         })
     } catch (err) {
         return res.status(500).json({
@@ -42,6 +44,7 @@ const getAllPosts = async (req, res) => {
             postsData = []
         for (let i = 0; i < posts.count; i++) {
             let post = posts.rows[i],
+                user = await userModel.findByPk(post.UserId),
                 postImages = await postImageModel.findAndCountAll({where:{PostId: post.id}}),
                 postTags = await postTagsModel.findAndCountAll({where:{PostId: post.id}}),
                 images = [],
@@ -54,7 +57,7 @@ const getAllPosts = async (req, res) => {
                     tag = await tagModel.findByPk(postTag.TagId)
                 tags.push(tag.tag)
             }
-            postsData.push({post, images, tags})
+            postsData.push({post, images, tags, user: {username: user.username, firstName: user.firstName, lastName: user.lastName}})
         }
         return res.status(200).json({
             message: "Found posts :)",
@@ -96,7 +99,8 @@ const getPostsForUser = async(req, res)=>{
         return res.status(200).json({
             message: "Found posts :)",
             length: posts.count,
-            data: postsData
+            data: postsData,
+            user:{username:user.username, firstName:user.firstName, lastName:user.lastName}
         })
     } catch (err) {
         return res.status(500).json({
