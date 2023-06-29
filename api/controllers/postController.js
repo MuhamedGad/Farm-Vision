@@ -125,6 +125,7 @@ const getPostsForTag = async(req, res)=>{
 
         for (let i = 0; i < posts.length; i++) {
             let post = posts[i],
+                user = await userModel.findByPk(post.UserId),
                 postImages = await postImageModel.findAndCountAll({where:{PostId: post.id}}),
                 postTags = await postTagsModel.findAndCountAll({where:{PostId: post.id}}),
                 images = [],
@@ -137,7 +138,7 @@ const getPostsForTag = async(req, res)=>{
                     tag = await tagModel.findByPk(postTag.TagId)
                 tags.push(tag.tag)
             }
-            postsData.push({post, images, tags})
+            postsData.push({post, images, tags, user: {username: user.username, firstName: user.firstName, lastName: user.lastName}})
         }
         return res.status(200).json({
             message: "Found posts :)",
