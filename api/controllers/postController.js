@@ -13,7 +13,9 @@ const { Op } = require("sequelize")
 
 const checkUserLike = async(userId, postId) => {
     try {
-        let userLike = await postLikeModel.findOne({ where: { UserId: userId, PostId: postId } })
+        let userLike = await postLikeModel.findOne({ where: {
+            [Op.and]: [{UserId: token.UserId}, {PostId: post.id}]
+        } })
         if (userLike) {
             return true
         }
@@ -25,7 +27,9 @@ const checkUserLike = async(userId, postId) => {
 
 const checkUserDisLike = async(userId, postId) => {
     try {
-        let userDisLike = await postDisLikeModel.findOne({ where: { UserId: userId, PostId: postId } })
+        let userDisLike = await postDisLikeModel.findOne({ where: {
+            [Op.and]: [{UserId: userId}, {PostId: postId}]
+        } })
         if (userDisLike) {
             return true
         }
@@ -328,10 +332,19 @@ const like = async(req, res)=>{
         let token = req.token,
             post = req.post,
             liked
+        
+        let userDisLike = await checkUserDisLike(token.UserId, post.id)
+        if(userDisLike) {
+            await sequelize.transaction(async(t)=>{
+                await postDisLikeModel.destroy({where: {
+                    [Op.and]: [{UserId: token.UserId}, {PostId: post.id}]
+                }, transaction: t})
+                await postModel.update({numberOfDisLikes: post.numberOfDisLikes-1, points: post.points+1}, {where:{id: post.id}, transaction: t})
+            })
+        }
+
         await sequelize.transaction(async(t)=>{
-            let likeInfo = await postLikeModel.findOne({where: {
-                [Op.and]: [{UserId: token.UserId}, {PostId: post.id}]
-            }})
+            let likeInfo = await checkUserLike(token.UserId, post.id)
             if(likeInfo) {
                 await postLikeModel.destroy({where: {
                     [Op.and]: [{UserId: token.UserId}, {PostId: post.id}]
@@ -363,10 +376,19 @@ const disLike = async(req, res)=>{
         let token = req.token,
             post = req.post,
             disLiked
+
+        let userLike = await checkUserLike(token.UserId, post.id)
+        if(userLike) {
+            await sequelize.transaction(async(t)=>{
+                await postLikeModel.destroy({where: {
+                    [Op.and]: [{UserId: token.UserId}, {PostId: post.id}]
+                }, transaction: t})
+                await postModel.update({numberOfLikes: post.numberOfLikes-1, points: post.points-1}, {where:{id: post.id}, transaction: t})
+            })
+        }
+
         await sequelize.transaction(async(t)=>{
-            let dislikeInfo = await postDisLikeModel.findOne({where: {
-                [Op.and]: [{UserId: token.UserId}, {PostId: post.id}]
-            }})
+            let dislikeInfo = await checkUserDisLike(token.UserId, post.id)
             if(dislikeInfo) {
                 await postDisLikeModel.destroy({where: {
                     [Op.and]: [{UserId: token.UserId}, {PostId: post.id}]
