@@ -13,9 +13,9 @@ module.exports = async(req, res, next)=>{
                 })
                 tagsData.add(tag)
             }
-        }else return res.status(401).json({
-            message: "Please send tags in array format :("
-        })
+        }else {
+            tagsData = []
+        }
     }
 
     req.tagsValid = true
