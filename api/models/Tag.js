@@ -28,7 +28,7 @@ User.hasMany(Tag)
 Tag.belongsTo(User);
 
 (async () => {
-    await Tag.sync({alter:true});
+    await Tag.sync(/* {alter:true} */);
 })();
 
 module.exports = Tag
