@@ -370,6 +370,39 @@ Method:
 ```
 DELETE
 ```
+</br>
+
+### **Get requested tags:**
+Route:
+```
+/api/tag/getTagRequests
+```
+Method:
+```
+GET
+```
+</br>
+
+### **Accept requested tag:**
+Route:
+```
+/api/tag/acceptTagRequest/:id        -(id) mean id of tag that wanted
+```
+Method:
+```
+PUT
+```
+</br>
+
+### **Reject requested tag:**
+Route:
+```
+/api/tag/rejectTagRequest/:id        -(id) mean id of tag that wanted
+```
+Method:
+```
+PUT
+```
 ---
 ## **Post Routes:**
 ### **Get all posts:**
@@ -619,7 +652,7 @@ GET
 ```
 </br>
 
-### **Get feature:**
+### **Get tag:**
 Route:
 ```
 /api/tag/:id        -(id) mean id of tag that wanted
@@ -628,4 +661,20 @@ Method:
 ```
 GET
 ```
+</br>
+
+### **Add tag request:**
+Route:
+```
+/api/tag/addTagRequest
+```
+Method:
+```
+POST
+```
+Form:
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
+| tag | text | minimum length 3 characters and must be small chars with no spaces | false |
+| describtion | text | minimum length 10 characters | false |
 ---
