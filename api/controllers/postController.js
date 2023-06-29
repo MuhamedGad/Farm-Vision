@@ -23,6 +23,18 @@ const checkUserLike = async(userId, postId) => {
     }
 }
 
+const checkUserDisLike = async(userId, postId) => {
+    try {
+        let userDisLike = await postDisLikeModel.findOne({ where: { UserId: userId, PostId: postId } })
+        if (userDisLike) {
+            return true
+        }
+        return false
+    } catch (err) {
+        return false
+    }
+}
+
 const getPostById = async (req, res) => {
     try {
         let token = req.token,
@@ -41,12 +53,14 @@ const getPostById = async (req, res) => {
         }
 
         let userLike = await checkUserLike(token.UserId, post.id)
+        let userDisLike = await checkUserDisLike(token.UserId, post.id)
 
         return res.status(200).json({
             message: "Post Found :)",
             data: {post, images, tags},
             user: {username: user.username, firstName: user.firstName, lastName: user.lastName},
-            userLike
+            userLike,
+            userDisLike
         })
     } catch (err) {
         return res.status(500).json({
@@ -75,7 +89,8 @@ const getAllPosts = async (req, res) => {
                 tags.push(tag.tag)
             }
             let userLike = await checkUserLike(token.UserId, post.id)
-            postsData.push({post, images, tags, user: {username: user.username, firstName: user.firstName, lastName: user.lastName}, userLike})
+            let userDisLike = await checkUserDisLike(token.UserId, post.id)
+            postsData.push({post, images, tags, user: {username: user.username, firstName: user.firstName, lastName: user.lastName}, userLike, userDisLike})
         }
         return res.status(200).json({
             message: "Found posts :)",
@@ -114,7 +129,8 @@ const getPostsForUser = async(req, res)=>{
                 tags.push(tag.tag)
             }
             let userLike = await checkUserLike(token.UserId, post.id)
-            postsData.push({post, images, tags, userLike})
+            let userDisLike = await checkUserDisLike(token.UserId, post.id)
+            postsData.push({post, images, tags, userLike, userDisLike})
         }
         return res.status(200).json({
             message: "Found posts :)",
@@ -141,7 +157,6 @@ const getPostsForTag = async(req, res)=>{
             let post = await postModel.findByPk(e.PostId)
             posts.push(post)
         }
-        // console.log(posts[0].id)
 
         for (let i = 0; i < posts.length; i++) {
             let post = posts[i],
@@ -159,7 +174,8 @@ const getPostsForTag = async(req, res)=>{
                 tags.push(tag.tag)
             }
             let userLike = await checkUserLike(token.UserId, post.id)
-            postsData.push({post, images, tags, user: {username: user.username, firstName: user.firstName, lastName: user.lastName}, userLike})
+            let userDisLike = await checkUserDisLike(token.UserId, post.id)
+            postsData.push({post, images, tags, user: {username: user.username, firstName: user.firstName, lastName: user.lastName}, userLike, userDisLike})
         }
         return res.status(200).json({
             message: "Found posts :)",
