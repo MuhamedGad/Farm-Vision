@@ -75,7 +75,8 @@ const getPostById = async (req, res) => {
 
 const getAllPosts = async (req, res) => {
     try {
-        let posts = await postModel.findAndCountAll({order:[["points", "DESC"]]}),
+        let token = req.token,
+            posts = await postModel.findAndCountAll({order:[["points", "DESC"]]}),
             postsData = []
         for (let i = 0; i < posts.count; i++) {
             let post = posts.rows[i],
@@ -151,7 +152,8 @@ const getPostsForUser = async(req, res)=>{
 
 const getPostsForTag = async(req, res)=>{
     try {
-        let tag = req.tag,
+        let token = req.token,
+            tag = req.tag,
             postTags = await postTagsModel.findAndCountAll({attributes:['PostId']}, {where:{TagId: tag.id}}),
             posts = [],
             postsData = []
