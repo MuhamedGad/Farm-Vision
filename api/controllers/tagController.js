@@ -33,6 +33,9 @@ const createTag = async(req, res)=>{
     tagData["isAccepted"] = true
 
     try{
+        let checkTag = await tagModel.findOne({where:{tag:tagData.tag}})
+        if(checkTag) return res.status(400).json({message: "Tag already exists :("})
+
         let tag = await tagModel.create(tagData)
         return res.status(200).json({
             message: "Tag created successfully :)",
@@ -53,6 +56,11 @@ const updateTag = async(req, res)=>{
     tagData["describtion"] = req.body.describtion || tag.describtion
 
     try{
+        let checkTag = await tagModel.findOne({where:{
+            [Op.and]: [{tag: tagData.tag}, {id: {[Op.not]: tag.id}}]
+        }})
+        if(checkTag) return res.status(400).json({message: "Tag already exists :("})
+        
         await tagModel.update(tagData, {where:{id:tag.id}})
         return res.status(200).json({
             message: "Tag updated successfully :)"
