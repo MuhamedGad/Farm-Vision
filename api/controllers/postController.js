@@ -14,7 +14,7 @@ const { Op } = require("sequelize")
 const checkUserLike = async(userId, postId) => {
     try {
         let userLike = await postLikeModel.findOne({ where: {
-            [Op.and]: [{UserId: token.UserId}, {PostId: post.id}]
+            [Op.and]: [{UserId: userId}, {PostId: postId}]
         } })
         if (userLike) {
             return true
