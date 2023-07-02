@@ -57,11 +57,10 @@ const creatComment = async(req, res)=>{
     try{
         let commentData = {},
             token = req.token,
-            parent = (req.comment)?req.post:req.comment,
+            parent = (!req.comment)?req.post:req.comment,
             comment,
             files = req.files,
             filesnames = []
-
         commentData["content"] = req.body.content
         commentData["CommentId"] = (req.post)?null:parent.id
         commentData["PostId"] = (req.post)?parent.id:parent.PostId
