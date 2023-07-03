@@ -61,10 +61,7 @@ const getPostById = async (req, res) => {
 
         return res.status(200).json({
             message: "Post Found :)",
-            data: {post, images, tags},
-            user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName},
-            userLike,
-            userDisLike
+            data: {post, images, tags, user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName},userLike, userDisLike}
         })
     } catch (err) {
         return res.status(500).json({
