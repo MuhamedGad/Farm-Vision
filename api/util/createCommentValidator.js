@@ -6,7 +6,7 @@ const schema = {
     "properties": {
         "content":{
             "type":"string",
-            "minLength":10,
+            "minLength":1,
             "maxLength":1000
         }
     },

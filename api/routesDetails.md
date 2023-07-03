@@ -576,7 +576,7 @@ POST
 Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
-| content | text | must be between 10-1000 characters | false |
+| content | text | must be between 1-1000 characters | false |
 | images | file | images of comment | true |
 </br>
 
@@ -592,7 +592,7 @@ POST
 Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
-| content | text | must be between 10-1000 characters | false |
+| content | text | must be between 1-1000 characters | false |
 | images | file | images of comment | true |
 </br>
 
@@ -608,7 +608,7 @@ PUT
 Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
-| content | text | must be between 10-1000 characters | true |
+| content | text | must be between 1-1000 characters | true |
 | images | file | images of comment | true |
 </br>
 
