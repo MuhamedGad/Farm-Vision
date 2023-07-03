@@ -1,54 +1,3 @@
-/* const stream = require('stream');
-const express = require('express');
-const multer = require('multer');
-const { google } = require('googleapis');
-
-const clientId = "158936869416-37cm1tke7u5onu48pbmm39ea3i36gqjp.apps.googleusercontent.com"
-const clientSecret = "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"
-const redirectUri = "https://developers.google.com/oauthplayground"
-const refreshToken = ""
-
-const uploadRouter = express.Router();
-const upload = multer();
-const client = new google.auth.OAuth2(clientId, clientSecret, redirectUri);
-client.setCredentials({ refresh_token: refreshToken });
-
-const uploadFile = async (fileObject) => {
-    const bufferStream = new stream.PassThrough();
-    bufferStream.end(fileObject.buffer);
-    const { data } = await google.drive({ version: 'v3', auth: client }).files.create({
-        media: {
-            mimeType: fileObject.mimeType,
-            body: bufferStream,
-        },
-        requestBody: {
-            name: fileObject.originalname,
-            parents: ['1KzLT4_K48yvFwtpL3rXhBFO9B8iNCOML'],
-        },
-        fields: 'id,name',
-    });
-    console.log(`Uploaded file ${data.name} ${data.id}`);
-};
-
-uploadRouter.post('/', upload.any(), async (req, res) => {
-    try {
-        const { body, files } = req;
-
-        for (let f = 0; f < files.length; f += 1) {
-            await uploadFile(files[f]);
-        }
-
-        console.log(body);
-        res.status(200).send('Form Submitted');
-    } catch (f) {
-        res.status(500).send(f.message);
-    }
-});
-
-module.exports = uploadRouter;
-
- */
-
 // -------------------------------------------------------------------
 const fs = require('fs').promises;
 const path = require('path');
@@ -139,5 +88,27 @@ async function listFiles(authClient) {
   });
 }
 
-authorize().then(listFiles).catch(console.error);
-// -------------------------------------------------------------------
+// authorize().then(listFiles).catch(console.error);
+/**
+ * Uploads an image to Google Drive.
+ * @param {OAuth2Client} authClient An authorized OAuth2 client.
+ */
+async function uploadImage(authClient) {
+  const drive = google.drive({version: 'v3', auth: authClient});
+  const fileMetadata = {
+    'name': 'photo.jpg'
+  };
+  const media = {
+    mimeType: 'image/jpeg',
+    body: fs.createReadStream('photo.jpg')
+  };
+  const res = await drive.files.create({
+    resource: fileMetadata,
+    media: media,
+    fields: 'id'
+  });
+  console.log('File Id: ', res.data.id);
+}
+
+authorize().then(uploadImage).catch(console.error);
+

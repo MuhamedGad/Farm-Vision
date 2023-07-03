@@ -1,5 +1,6 @@
 const postModel = require("../models/Post")
 const commentModel = require("../models/Comment")
+const userModel = require("../models/User")
 const commentLikeModel = require("../models/CommentLike")
 const commentDisLikeModel = require("../models/CommentDisLike")
 const commentImageModel = require("../models/CommentImage")
@@ -7,26 +8,64 @@ const fs = require("fs")
 const sequelize = require("../models/sequelize")
 const { Op } = require("sequelize")
 
+const checkUserLike = async(userId, commentId) => {
+    try {
+        let userLike = await commentLikeModel.findOne({ where: {
+            [Op.and]: [{UserId: userId}, {CommentId: commentId}]
+        } })
+        if (userLike) {
+            return true
+        }
+        return false
+    } catch (err) {
+        return false
+    }
+}
+
+const checkUserDisLike = async(userId, commentId) => {
+    try {
+        let userDisLike = await commentDisLikeModel.findOne({ where: {
+            [Op.and]: [{UserId: userId}, {CommentId: commentId}]
+        } })
+        if (userDisLike) {
+            return true
+        }
+        return false
+    } catch (err) {
+        return false
+    }
+}
+
 const getCommentById = async(req, res)=>{
     try {
         let comment = req.comment,
+            token = req.token,
+            user = await userModel.findByPk(comment.UserId),
             commentImages = await commentImageModel.findAndCountAll({where:{CommentId: comment.id}}),
             imagesNames = []
         commentImages.rows.forEach(e=>{
             imagesNames.push(e.image)
         })
+        let userLike = await checkUserLike(token.UserId, comment.id)
+        let userDisLike = await checkUserDisLike(token.UserId, comment.id)
         return res.status(200).json({
             message: "Comment Found :)",
-            data: {comment, images: imagesNames}
+            data: {comment, images: imagesNames},
+            user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName},
+            userLike,
+            userDisLike
         })
     } catch (err) {
-        
+        return res.status(500).json({
+            message: "Get comment Error: " + err
+        })
     }
 }
 
 const getCommentsOfPost = async(req, res)=>{
     try{
         let post = req.post,
+            token = req.token,
             comments = await commentModel.findAndCountAll({
                 where:{PostId:post.id},
                 order:[["createdAt", "DESC"]]
@@ -34,12 +73,15 @@ const getCommentsOfPost = async(req, res)=>{
             commentsData = []
         for (let i = 0; i < comments.count; i++) {
             let comment = comments.rows[i],
+                user = await userModel.findByPk(comment.UserId),
                 commentImages = await commentImageModel.findAndCountAll({where:{CommentId: comment.id}}),
-                imagesNames = []
+                images = []
             for (let j = 0; j < commentImages.count; j++) {
-                imagesNames.push(commentImages.rows[j].image)
+                images.push(commentImages.rows[j].image)
             }
-            commentsData.push({comment: comment, images: imagesNames})
+            let userLike = await checkUserLike(token.UserId, comment.id)
+            let userDisLike = await checkUserDisLike(token.UserId, comment.id)
+            commentsData.push({comment, images, user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName}, userLike, userDisLike})
         }
         return res.status(200).json({
             message: "Found Comments :)",
@@ -204,6 +246,17 @@ const like = async(req, res)=>{
         let token = req.token,
             comment = req.comment,
             liked
+
+            let userDisLike = await checkUserDisLike(token.UserId, comment.id)
+            if(userDisLike) {
+                await sequelize.transaction(async(t)=>{
+                    await commentDisLikeModel.destroy({where: {
+                        [Op.and]: [{UserId: token.UserId}, {CommentId: comment.id}]
+                    }, transaction: t})
+                    await commentModel.update({numberOfDisLikes: comment.numberOfDisLikes-1, points: comment.points+1}, {where:{id: comment.id}, transaction: t})
+                })
+            }
+
         await sequelize.transaction(async(t)=>{
             let likeInfo = await commentLikeModel.findOne({where: {
                 [Op.and]: [{UserId: token.UserId}, {CommentId: comment.id}]
@@ -239,6 +292,17 @@ const disLike = async(req, res)=>{
         let token = req.token,
             comment = req.comment,
             disLiked
+
+        let userLike = await checkUserLike(token.UserId, comment.id)
+        if(userLike) {
+            await sequelize.transaction(async(t)=>{
+                await commentLikeModel.destroy({where: {
+                    [Op.and]: [{UserId: token.UserId}, {CommentId: comment.id}]
+                }, transaction: t})
+                await commentModel.update({numberOfDisLikes: comment.numberOfDisLikes-1, points: comment.points+1}, {where:{id: comment.id}, transaction: t})
+            })
+        }
+        
         await sequelize.transaction(async(t)=>{
             let disLikeInfo = await commentDisLikeModel.findOne({where: {
                 [Op.and]: [{UserId: token.UserId}, {CommentId: comment.id}]
