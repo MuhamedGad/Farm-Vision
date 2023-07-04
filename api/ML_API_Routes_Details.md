@@ -2,7 +2,7 @@
 
 ## **Some Notes:**
 ```
-1- token must send in request header with name "x-auth-token" 
+1- token must send in request body with name "x-auth-token"
 2- URL of the API "https://test-ml-api.onrender.com"
 ```
 
@@ -21,7 +21,7 @@ POST
 | input name | Type |
 |--------|------|
 | image | file |
-
+| x-auth-token | text |
 ### Response Data:
 - diseases: list of diseases that output from the model
 
@@ -46,7 +46,7 @@ POST
 | input name | Type |
 |--------|------|
 | image | file |
-
+| x-auth-token | text |
 ### Response Data:
 - type: string of type of the plant in the image
 
@@ -69,7 +69,7 @@ POST
 | input name | Type |
 |--------|------|
 | image | file |
-
+| x-auth-token | text |
 ### Response Data:
 - type: string of type of the plant in the image
 
@@ -91,8 +91,12 @@ POST
 ```
 ### Method:
 ```
-GET
+POST
 ```
+### Form Send Data:
+| input name | Type |
+|--------|------|
+| x-auth-token | text |
 ### Response Data:
 ```
 the image that have the name that is sent
@@ -107,8 +111,12 @@ the image that have the name that is sent
 ```
 ### Method:
 ```
-GET
+POST
 ```
+### Form Send Data:
+| input name | Type |
+|--------|------|
+| x-auth-token | text |
 ### Response Data:
 
 - list of objects each object have:
@@ -137,11 +145,14 @@ GET
 ```
 ### Method:
 ```
-DELETE
+PUT
 ```
+### Form Send Data:
+| input name | Type |
+|--------|------|
+| x-auth-token | text |
 ### Response Data:
 ```
 this message "Image deleted"
 ```
-
 </br>

@@ -7,14 +7,16 @@ const schema = {
         "feature":{
             "type":"string",
             "minLength":3,
-            "pattern":"^[a-z]+[0-9]*$"
+            "maxLength": 255
         },
         "describtion":{
             "type":"string",
-            "minLength":10
+            "minLength":10,
+            "maxLength": 255
         },
         "price":{
-            "type":"string"
+            "type":"string",
+            "maxLength": 255
         },
     }
 }

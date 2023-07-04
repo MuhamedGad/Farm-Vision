@@ -8,7 +8,7 @@ const Report = sequelize.define('Report', {
         allowNull:false
     },
     describtion:{
-        type:DataTypes.STRING,
+        type:DataTypes.STRING(1000),
         allowNull:false
     },
     status:{
@@ -25,7 +25,7 @@ User.hasMany(Report, {
 Report.belongsTo(User);
 
 (async () => {
-    await Report.sync(/* {alter:true} */);
+    await Report.sync({alter:true});
 })();
 
 module.exports = Report

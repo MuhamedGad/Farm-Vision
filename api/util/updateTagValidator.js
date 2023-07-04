@@ -7,11 +7,12 @@ const schema = {
         "tag":{
             "type":"string",
             "minLength":3,
-            "pattern":"^[a-z]*$"
+            "maxLength": 255
         },
         "describtion":{
             "type":"string",
-            "minLength":10
+            "minLength":10,
+            "maxLength": 255
         }
     }
 }

@@ -5,7 +5,7 @@ const Post = require("./Post")
 
 const Comment = sequelize.define('Comment', {
     content:{
-        type:DataTypes.STRING,
+        type:DataTypes.STRING(1000),
         allowNull:false
     },
     numberOfComments:{
@@ -49,7 +49,7 @@ Comment.hasMany(Comment, {
 Comment.belongsTo(Comment);
 
 (async () => {
-    await Comment.sync(/* {alter:true} */);
+    await Comment.sync({alter:true});
 })();
 
 module.exports = Comment

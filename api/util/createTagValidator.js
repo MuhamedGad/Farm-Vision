@@ -6,8 +6,7 @@ const schema = {
     "properties": {
         "tag":{
             "type":"string",
-            "minLength":3,
-            "pattern":"^[a-z]+[0-9]*$"
+            "minLength":3
         },
         "describtion":{
             "type":"string",
