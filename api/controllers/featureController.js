@@ -1,4 +1,5 @@
 const featureModel = require("../models/Feature")
+const userFeatureModel = require("../models/UserFeatures")
 
 const getFeatureById = (req, res)=>{
     let feature = req.feature
@@ -19,6 +20,28 @@ const getAllFeatures = async (req, res) => {
     } catch (err) {
         return res.status(500).json({
             message: "Get All Features Error: " + err
+        })
+    }
+}
+
+const getUserFeatures = async(req, res)=>{
+    try{
+        const token = req.token
+        const userFeatures = await userFeatureModel.findAndCountAll({where:{UserId: token.UserId}})
+        let features = []
+        for (let i = 0; i < userFeatures.count; i++) {
+            const e = userFeatures.rows[i];
+            let feature = await featureModel.findByPk(e['FeatureId'])
+            features.push(feature)
+        }
+        return res.status(200).json({
+            message: "Found features :)",
+            length: features.length,
+            data: features
+        })
+    }catch(err){
+        return res.status(500).json({
+            message: "Get User Features Error: " + err
         })
     }
 }
@@ -89,5 +112,6 @@ module.exports = {
     getAllFeatures,
     createFeature,
     updateFeature,
-    deleteFeature
+    deleteFeature,
+    getUserFeatures
 }

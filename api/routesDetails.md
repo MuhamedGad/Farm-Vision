@@ -665,6 +665,17 @@ Method:
 ```
 GET
 ```
+</br>
+
+### **Get my features:**
+Route:
+```
+/api/feature/getUserFeatures
+```
+Method:
+```
+GET
+```
 ---
 ## **Tag Routes:**
 ### **Get all Tags:**
