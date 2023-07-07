@@ -418,18 +418,6 @@ GET
 ---
 <br>
 
-### **Repair Report**
-Route:
-```
-/api/report/reportRepaired/:id        -(id) is report id
-```
-Method:
-```
-PUT
-```
----
-<br>
-
 ## **Post Routes:**
 ### **Get all posts:**
 Route:
@@ -730,6 +718,7 @@ Form:
 |--------|------|-------|--------|
 | title | text | minimum length 5 characters and maxmum length 30 | false |
 | describtion | text | minimum length 10 characters and maxmum length 1000 | false |
+| type | selectbox | is "feedback" or "error" | false |
 
 <br>
 
@@ -747,6 +736,7 @@ Form:
 |--------|------|-------|--------|
 | title | text | minimum length 5 characters and maxmum length 30 | true |
 | describtion | text | minimum length 10 characters and maxmum length 1000 | true |
+| type | selectbox | is "feedback" or "error" | true |
 
 <br>
 

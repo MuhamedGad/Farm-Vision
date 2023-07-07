@@ -11,10 +11,9 @@ const Report = sequelize.define('Report', {
         type:DataTypes.STRING(1000),
         allowNull:false
     },
-    status:{
-        type: DataTypes.ENUM("pending", "repaired"),
-        allowNull: false,
-        defaultValue:"pending"
+    type:{
+        type: DataTypes.ENUM("feedback", "error"),
+        allowNull: false
     }
 });
 
@@ -25,7 +24,7 @@ User.hasMany(Report, {
 Report.belongsTo(User);
 
 (async () => {
-    await Report.sync(/* {alter:true} */);
+    await Report.sync({alter:true});
 })();
 
 module.exports = Report

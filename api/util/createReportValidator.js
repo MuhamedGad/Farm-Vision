@@ -13,8 +13,11 @@ const schema = {
             "type":"string",
             "minLength":10,
             "maxLength":1000
+        },
+        "type":{
+            enum:["feedback", "error"],
         }
     },
-    "required":["title", "describtion"]
+    "required":["title", "describtion", "type"]
 }
 module.exports = ajv.compile(schema)

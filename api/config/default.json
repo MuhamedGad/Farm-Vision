@@ -1,5 +1,6 @@
 {
     "seckey": "",
+    "stripeSecretKey":"",
     "mailConfig":{},
     "dbConfig": {}
 }

@@ -1,39 +1,37 @@
 const express = require("express")
 const router = express.Router()
-const stripe = require("stripe")
 const authrization = require("../middlewares/checkPermission/authrizationMW")
-const Publishable_Key = 'pk_test_51N72caLzGzihVWNoSbs97CxSFoRMKkP1nJP2lJGyBOLYE6754wI5NE0GF3Hhq68aS1kcAAZL6ar971ycYWbMWM7Z009CQxhwRY'
 const subscribeController = require("../controllers/subscribeController")
+const config = require("config")
+const stripe = require("stripe")(config.get("stripeSecretKey"));
+const userModel = require("../models/User")
 
-// router.get("/", authrization, subscribeController.calcTotalPrice, (req, res)=>{return res.render('payment', {Publishable_Key, totalPrice: req.totalPrice})})
-router.get("/", authrization, (req, res)=>{return res.render('index')})
-// router.post("/", authrization, subscribeController.gainMoney)
-
-router.post("/", /* authrization, */ (req, res) => {
-    try {
-        console.log(1)
-        console.log(req.body.stripeToken)
-        stripe.customers.create({
-            name: "Mohamed",
-            email: "mohamed@mo.com",
-            source: req.body.stripeToken
-        })
-        .then(customer => {
-            console.log(2)
-            stripe.charges.create({
-                amount: 100,
-                currency: "usd",
-                customer: customer.id
-            })
-        })
-        .then(() => {
-            console.log(3)
-            res.render("completed")
-        })
-        .catch(err => console.log(err));
-    } catch (err) {
-        res.send(err);
-    }
-});
+router.post("/", authrization, async(req, res, next)=>{
+    const token = req.token
+    const features = req.body.features
+    const user = await userModel.findByPk(token.UserId)
+    
+},async(req, res)=>{
+    const { product } = req.body; 
+    const session = await stripe.checkout.sessions.create({ 
+        payment_method_types: ["card"], 
+        line_items: [ 
+            { 
+                price_data: { 
+                    currency: "inr", 
+                    product_data: { 
+                        name: product.name,
+                    }, 
+                    unit_amount: product.price * 100, 
+                }, 
+                quantity: product.quantity, 
+            }, 
+        ], 
+        mode: "payment", 
+        success_url: "http://localhost:3000/success", 
+        cancel_url: "http://localhost:3000/cancel", 
+    }); 
+    return res.status(200).json({ id: session.id });
+})
 
 module.exports = router

@@ -11,7 +11,7 @@ const checkPermission = require("../middlewares/checkPermission/checkPermissionO
 const checkReportFound = require("../middlewares/checkFound/checkReportFoundMW")
 
 router.get("/getMyReports", authrization, reportConstroller.getMyReports)
-router.put("/reportRepaired/:id", validID, authrization, checkAdmin, checkReportFound, reportConstroller.reportRepair)
+// router.put("/reportRepaired/:id", validID, authrization, checkAdmin, checkReportFound, reportConstroller.reportRepair)
 
 router.get('/', authrization, checkAdmin, reportConstroller.getAllReports);
 router.get('/:id', validID, authrization, checkReportFound, checkPermission, reportConstroller.getReport);

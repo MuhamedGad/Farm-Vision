@@ -11,14 +11,14 @@ const getAllReports = async (req, res) => {
                 id: reports.rows[i].id,
                 title: reports.rows[i].title,
                 describtion: reports.rows[i].describtion,
-                status: reports.rows[i].status,
+                type: reports.rows[i].type,
                 user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName}
             });
         }
         return res.status(200).json({
             message: "found reports",
             length: reports.count,
-            reports: reportsData,
+            data: reportsData,
         });
     } catch (error) {
         return res.status(500).json({
@@ -30,10 +30,16 @@ const getAllReports = async (req, res) => {
 const getReport = async (req, res) => {
     const report = req.report;
     const user = await userModel.findByPk(report.UserId);
+    const reportData = {
+        id: report.id,
+        title: report.title,
+        describtion: report.describtion,
+        type: report.type,
+        user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName}
+    }
     return res.status(200).json({
         message: "found report",
-        report: report,
-        user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName}
+        data: reportData
     });
 }
 
@@ -44,7 +50,7 @@ const getMyReports = async (req, res) => {
         return res.status(200).json({
             message: "found reports",
             length: reports.count,
-            reports: reports.rows,
+            data: reports.rows,
         });
     } catch (error) {
         return res.status(500).json({
@@ -60,6 +66,7 @@ const createReport = async (req, res) => {
 
         reportData["title"] = req.body.title
         reportData["describtion"] = req.body.describtion
+        reportData["type"] = req.body.type
         reportData["UserId"] = token.UserId
 
         const report = await reportModel.create(reportData)
@@ -82,6 +89,7 @@ const updateReport = async (req, res) => {
 
         reportData["title"] = req.body.title || report.title
         reportData["describtion"] = req.body.describtion || report.describtion
+        reportData["type"] = req.body.type || report.type
 
         await reportModel.update(reportData, {where: {id: report.id}})
 
