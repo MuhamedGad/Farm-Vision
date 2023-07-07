@@ -6,9 +6,6 @@ const helmet = require("helmet")
 const port = process.env.PORT || 8888
 const cors = require("cors")
 
-const ModelsVideo = require("./models/ModelsVideo")
-const ModelsImage = require("./models/ModelsImage")
-const DetectDiseaseResult = require("./models/DetectDiseaseResult")
 
 const user = require("./routes/User")
 const token = require("./routes/Token")
@@ -24,6 +21,10 @@ const tag = require("./routes/Tag")
 const report = require("./routes/Report")
 const subscribe = require("./routes/Subscribe")
 // const googleDriveUpload = require("./routes/GoogleDriveUpload")
+
+const ModelsVideo = require("./models/ModelsVideo")
+const ModelsImage = require("./models/ModelsImage")
+const DetectDiseaseResult = require("./models/DetectDiseaseResult")
 
 app.set('view engine', 'ejs')
 
