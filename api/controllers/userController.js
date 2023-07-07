@@ -189,11 +189,11 @@ const createUser = async (req, res) => {
 
         await sequelize.transaction(async (t) => {
             user = await userModel.create(userData, { transaction: t })
-            if(req.featuresValid){
-                for (let i = 0; i < featuresIds.length; i++) {
-                    await userFeaturesModel.create({FeatureId: featuresIds[i], UserId: user.id}, { transaction: t })
-                }
-            }
+            // if(req.featuresValid){
+            //     for (let i = 0; i < featuresIds.length; i++) {
+            //         await userFeaturesModel.create({FeatureId: featuresIds[i], UserId: user.id}, { transaction: t })
+            //     }
+            // }
 
             token = jwt.sign({ user_id: user.id, role: user.role }, config.get("seckey"))
             tokenData["token"] = token

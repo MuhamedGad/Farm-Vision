@@ -14,8 +14,8 @@ const checkValidUserFeatures = require("../middlewares/validators/userFeaturesVa
 // router.get("/verifyemail/:id/:token", userController.verifyEmail)
 
 router.get("/:id", validID, authrization, checkUserFound, checkPermission, userController.getUserByID)
-router.post("/", createUserValidator, checkValidUserFeatures, confirmPassword, encryptPassword, userController.createUser)
-router.put("/:id", validID, authrization, checkUserFound, checkPermission, updateUserValidator, checkValidUserFeatures, userController.updateUser)
+router.post("/", createUserValidator, /* checkValidUserFeatures, */ confirmPassword, encryptPassword, userController.createUser)
+router.put("/:id", validID, authrization, checkUserFound, checkPermission, updateUserValidator,/*  checkValidUserFeatures, */ userController.updateUser)
 router.delete("/:id", validID, authrization, checkUserFound, checkPermission, userController.deleteUser)
 
 module.exports = router

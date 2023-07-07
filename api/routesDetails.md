@@ -633,6 +633,21 @@ POST
 ```
 ---
 ## **Feature Routes:**
+### **Add User features:**
+Route:
+```
+/api/feature/addUserFeatures
+```
+Method:
+```
+Post
+```
+Form:
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
+| features | array | array of features that exist | false |
+</br>
+
 ### **Get all features:**
 Route:
 ```
