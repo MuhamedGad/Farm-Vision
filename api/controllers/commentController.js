@@ -1,6 +1,6 @@
+const userModel = require("../models/User")
 const postModel = require("../models/Post")
 const commentModel = require("../models/Comment")
-const userModel = require("../models/User")
 const commentLikeModel = require("../models/CommentLike")
 const commentDisLikeModel = require("../models/CommentDisLike")
 const commentImageModel = require("../models/CommentImage")

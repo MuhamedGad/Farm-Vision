@@ -17,7 +17,6 @@ const calcTotalPrice = async(req, res, next)=>{
                 let feature = await featureModel.findByPk(features.rows[i].FeatureId)
                 totalPrice += feature.price
             }
-            await userModel.update({premium: true, haveFreeTrial: false}, {where: {id: user.id}})
             req.totalPrice = totalPrice
             next()
         }
@@ -27,6 +26,7 @@ const calcTotalPrice = async(req, res, next)=>{
 }
 
 const gainMoney = (req, res)=>{
+    let token = req.token
     // Moreover you can take more details from user
     // like Address, Name, etc from form
     stripe.customers.create({
@@ -49,13 +49,16 @@ const gainMoney = (req, res)=>{
             customer: customer.id
         });
     })
-    .then((charge) => {
+    .then(async(charge) => {
+        await userModel.update({premium: true, haveFreeTrial: false}, {where: {id: token.UserId}})
         return res.status(200).json({message: "Payment Success :)"})
     })
     .catch((err) => {
         return res.status(500).json({message: "Payment Error: " + err})
     });
 }
+
+
 
 module.exports = {
     calcTotalPrice,

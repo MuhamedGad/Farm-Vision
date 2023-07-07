@@ -2,18 +2,24 @@
 <html>
 <title>Stripe Payment Demo</title>
 <body>
-	<h3>Welcome to Payment Gateway</h3>
-	<form action="/api/subscribe" method="POST">
+	<script async src="https://js.stripe.com/v3/buy-button.js"></script>
+
+	<stripe-buy-button
+		buy-button-id="buy_btn_1NQdJXIoS1mVXU06xPfFSY37"
+		publishable-key="pk_test_51NQdC9IoS1mVXU06UahQWiL4dFcX784RUHJcba8i6eOQKuoLUVFHo7t5n8KNYYJyz3V7qxWyu8UOFPGJ8t4PkglA00OcnEuLUd"
+	>
+	</stripe-buy-button>
+	<!-- <form action="/api/subscribe" method="POST">
 		<script
 			src="https://checkout.stripe.com/v2/checkout.js"
 			class="stripe-button"
-			data-key="<%=Publishable_Key%>"
-			data-amount="<%=totalPrice%>"
+			data-key="<%=//Publishable_Key%>"
+			data-amount="<%=//totalPrice%>"
 			data-currency="inr"
 			data-name="Crafty Gourav"
 			data-description="Handmade Art and Craft Products"
 			data-locale="auto" >
 		</script>
-	</form>
+	</form> -->
 </body>
 </html>

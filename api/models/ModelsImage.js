@@ -12,6 +12,9 @@ const ModelsImage = sequelize.define('ModelsImage', {
     },
     type:{
         type:DataTypes.STRING
+    },
+    confidence:{
+        type:DataTypes.FLOAT
     }
 });
 
