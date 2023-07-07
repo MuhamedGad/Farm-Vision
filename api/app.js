@@ -21,18 +21,6 @@ const report = require("./routes/Report")
 const subscribe = require("./routes/Subscribe")
 // const googleDriveUpload = require("./routes/GoogleDriveUpload")
 
-// const userModel = require("./models/User")
-// const tokenModel = require("./models/Token")
-// const featureModel = require("./models/Feature")
-// const userfeatureModel = require("./models/UserFeatures")
-// const tagModel = require("./models/Tag")
-// const postModel = require("./models/Post")
-// const commentModel = require("./models/Comment")
-// const reportModel = require("./models/Report")
-// const ModelsVideo = require("./models/ModelsVideo")
-// const ModelsImage = require("./models/ModelsImage")
-// const DetectDiseaseResult = require("./models/DetectDiseaseResult")
-
 app.set('view engine', 'ejs')
 
 app.use(bodyParser.json())
