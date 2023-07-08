@@ -14,10 +14,10 @@ const createPaymentData = (req, res, next)=>{
         price += features[i].price
         featuresNames.push(features[i].feature)
     }
-    product["name"] = featuresNames.join(", ")
+    product["name"] = "Subscribe in premium services"
     product["price"] = price
     product["quantity"] = 1
-    product["describtion"] = req.body.describtion
+    product["describtion"] = "payment for " + featuresNames.join(", ") +" features"
     req.product = product
     next()
 }

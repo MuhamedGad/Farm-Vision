@@ -4,7 +4,6 @@ const featureModel = require("../models/Feature")
 const userFeaturesModel = require("../models/UserFeatures")
 const emailsDeletedModel = require("../models/EmailsDeleted")
 const verifiedEmailTokenModel = require("../models/VerifiedEmailToken")
-const crypto = require('crypto');
 const fs = require("fs")
 const jwt = require("jsonwebtoken")
 const config = require("config")
@@ -166,7 +165,6 @@ const createUser = async (req, res) => {
             token,
             userData = createUserData(req),
             tokenData = createTokenData(req),
-            featuresIds = req.featuresIds,
             deletedEmail = await emailsDeletedModel.findOne({where:{email: req.body.email}})
 
         if (user !== null) return res.status(400).json({
@@ -189,11 +187,6 @@ const createUser = async (req, res) => {
 
         await sequelize.transaction(async (t) => {
             user = await userModel.create(userData, { transaction: t })
-            // if(req.featuresValid){
-            //     for (let i = 0; i < featuresIds.length; i++) {
-            //         await userFeaturesModel.create({FeatureId: featuresIds[i], UserId: user.id}, { transaction: t })
-            //     }
-            // }
 
             token = jwt.sign({ user_id: user.id, role: user.role }, config.get("seckey"))
             tokenData["token"] = token
@@ -279,7 +272,6 @@ const addUserByAdmin = async (req, res) => {
                 ]
             }}),
             userData = createUserData(req),
-            featuresIds = req.featuresIds,
             token = req.token,
             deletedEmail = emailsDeletedModel.findOne({where:{email: req.body.email}})
 
@@ -302,11 +294,6 @@ const addUserByAdmin = async (req, res) => {
 
         await sequelize.transaction(async (t) => {
             user = await userModel.create(userData, { transaction: t })
-            if(req.featuresValid){
-                for (let i = 0; i < featuresIds.length; i++) {
-                    await userFeaturesModel.create({FeatureId: featuresIds[i], UserId: user.id}, { transaction: t })
-                }
-            }
             /* // ---------- Verification Email ----------------
             let verificationEmailToken = crypto.createHash('sha256').update(crypto.randomBytes(32).toString('hex')).digest('hex');
             await verifiedEmailTokenModel.create({UserId:user.id, token: verificationEmailToken}, { transaction: t })
@@ -340,8 +327,7 @@ const updateUser = async (req, res) => {
     try {
         let user = req.user,
             token = req.token,
-            userData = {},
-            featuresIds = req.featuresIds
+            userData = {}
             
         let testUser = await userModel.findOne({ where: {
             [Op.or]: [
@@ -370,17 +356,8 @@ const updateUser = async (req, res) => {
         
         let tokenUser = await userModel.findByPk(token.UserId)
         userData["lastUpdatedUserName"] = tokenUser.userName
-
-        await sequelize.transaction(async (t) => {
-            if(req.featuresValid){
-                await userFeaturesModel.destroy({ where: { UserId: user.id }, transaction: t })
-                for (let i = 0; i < featuresIds.length; i++) {
-                    await userFeaturesModel.create({FeatureId: featuresIds[i], UserId: user.id}, { transaction: t })
-                }
-            }
-            await userModel.update(userData, { where: { id: user.id }, transaction: t })
-        })
-
+        
+        await userModel.update(userData, { where: { id: user.id }, transaction: t })
 
         return res.status(200).json({
             message: "User Updated Successfully :)"

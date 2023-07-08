@@ -24,7 +24,7 @@ User.hasMany(Payment, {
 Payment.belongsTo(User);
 
 (async () => {
-    await Payment.sync({alter:true});
+    await Payment.sync(/* {alter:true} */);
 })();
 
 module.exports = Payment

@@ -64,7 +64,6 @@ Form:
 | state | text | must be string | false |
 | country | text | must be string | false |
 | postCode | text | must be string | false |
-| features | checkboxes | must be an array of our project features selected by user | true |
 
 </br>
 
@@ -105,7 +104,6 @@ Form:
 | state | text | must be string | true |
 | country | text | must be string | true |
 | postCode | text | must be string | true |
-| features | checkboxes | must be an array of our project features selected by user | true |
 
 </br>
 
@@ -244,7 +242,7 @@ Form:
 | state | text | must be string | false |
 | country | text | must be string | false |
 | postCode | text | must be string | false |
-| features | checkboxes | must be an array of our project features selected by user | true |
+
 </br>
 
 ### **Update Role of user:**
@@ -771,3 +769,17 @@ Method:
 ```
 DELETE
 ```
+---
+## **Subscribe Routes:**
+Route:
+```
+/api/subscribe
+```
+Method:
+```
+POST
+```
+Form:
+| input name | Type | validate | nullable |
+|--------|------|-------|--------|
+| features | checkboxes | must be an array of our project features selected by user | false |
