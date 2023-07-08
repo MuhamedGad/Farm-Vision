@@ -1,3 +1,4 @@
+const userModel = require("../models/User")
 const featureModel = require("../models/Feature")
 const userFeatureModel = require("../models/UserFeatures")
 const sequelize = require("../models/sequelize")
@@ -83,6 +84,7 @@ const addUserFeatures = async(req, res)=>{
             for (let i = 0; i < featuresIds.length; i++) {
                 await userFeatureModel.create({FeatureId: featuresIds[i], UserId: token.UserId}, { transaction: t })
             }
+            await userModel.update({premium:true}, {where:{id:token.UserId}, transaction: t})
             return res.status(200).json({
                 message: "features Added Successfully :)"
             })
