@@ -15,7 +15,7 @@ const schema = {
             "maxLength":1000
         },
         "type":{
-            enum:["feedback", "error"],
+            enum:["feedback", "error", "suggestion", "other"],
         }
     }
 }

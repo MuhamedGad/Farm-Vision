@@ -7,10 +7,8 @@ const checkFeatureFound = require("../middlewares/checkFound/checkFeatureFoundMW
 const featureController = require("../controllers/featureController")
 const createFeatureValidator = require("../middlewares/validators/createFeatureValidatorMW")
 const updateFeatureValidator = require("../middlewares/validators/updateFeatureValidatorMW")
-const checkValidUserFeatures = require("../middlewares/validators/userFeaturesValidatorMW.js")
 
 router.get("/getUserFeatures", authrization, featureController.getUserFeatures)
-router.post("/addUserFeatures", authrization, checkValidUserFeatures, featureController.addUserFeatures)
 
 router.get("/", featureController.getAllFeatures)
 router.get("/:id", validID, checkFeatureFound, featureController.getFeatureById)

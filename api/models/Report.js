@@ -12,7 +12,7 @@ const Report = sequelize.define('Report', {
         allowNull:false
     },
     type:{
-        type: DataTypes.ENUM("feedback", "error"),
+        type: DataTypes.ENUM("feedback", "error", "suggestion", "other"),
         allowNull: false
     }
 });
@@ -24,7 +24,7 @@ User.hasMany(Report, {
 Report.belongsTo(User);
 
 (async () => {
-    await Report.sync(/* {alter:true} */);
+    await Report.sync({alter:true});
 })();
 
 module.exports = Report

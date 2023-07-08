@@ -1,66 +1,88 @@
 const userModel = require("../models/User")
-const featureModel = require("../models/Feature")
 const userFeaturesModel = require("../models/UserFeatures")
-const Secret_Key = 'sk_test_51N72caLzGzihVWNoN6t3MFV2eC2bjhdcxeNeUf8o1UnHhtOQo6zHXsijz3YFj28OdVM1JrUw0n36Ul4t3my2dNfh00xxEN6psM'
-const stripe = require('stripe')(Secret_Key)
+const paymentModel = require("../models/Payment")
+const sequelize = require("../models/sequelize")
+const config = require("config")
+const stripe = require("stripe")(config.get("stripeSecretKey"))
 
-const calcTotalPrice = async(req, res, next)=>{
+const createPaymentData = (req, res, next)=>{
+    const features = req.features
+    let product = {}
+    let featuresNames = []
+    let price = 0
+    for(let i = 0; i < features.length; i++){
+        price += features[i].price
+        featuresNames.push(features[i].feature)
+    }
+    product["name"] = featuresNames.join(", ")
+    product["price"] = price
+    product["quantity"] = 1
+    product["describtion"] = req.body.describtion
+    req.product = product
+    next()
+}
+
+const CreatePaymentSession = async(req, res, next)=>{
+    const product = req.product
     try{
-        const token = req.token
-        const user = await userModel.findByPk(token.UserId)
-        if(user.premium){
-            return res.status(400).json({message: "This account already subscribed..!"})
-        }else{
-            const features = await userFeaturesModel.findAndCountAll({where: {UserId: user.id}})
-            let totalPrice = 0
-            for(let i = 0; i<features.count; i++){
-                let feature = await featureModel.findByPk(features.rows[i].FeatureId)
-                totalPrice += feature.price
-            }
-            req.totalPrice = totalPrice
-            next()
-        }
+        const session = await stripe.checkout.sessions.create({ 
+            payment_method_types: ["card"], 
+            line_items: [ 
+                { 
+                    price_data: { 
+                        currency: "usd", 
+                        product_data: {name: product.name,}, 
+                        unit_amount: product.price * 100
+                    }, 
+                    quantity: product.quantity,
+                }, 
+            ], 
+            mode: "payment", 
+            success_url: "http://localhost:3000/success", 
+            cancel_url: "http://localhost:3000/cancel", 
+        });
+        req.sessionId = session.id
+        next()
     }catch(err){
-        return res.status(500).json({message: "Calculate Price Error: " + err})
+        return res.status(500).json({
+            message: "Subscribe Session Error: " + err
+        })
     }
 }
 
-const gainMoney = (req, res)=>{
-    let token = req.token
-    // Moreover you can take more details from user
-    // like Address, Name, etc from form
-    stripe.customers.create({
-        email: req.body.stripeEmail,
-        source: req.body.stripeToken,
-        name: 'Gourav Hammad',
-        address: {
-            line1: 'TC 9/4 Old MES colony',
-            postal_code: '452331',
-            city: 'Indore',
-            state: 'Madhya Pradesh',
-            country: 'India',
-        }
-    })
-    .then((customer) => {
-        return stripe.charges.create({
-            amount: 2500, // Charging Rs 25
-            description: 'Web Development Product',
-            currency: 'INR',
-            customer: customer.id
-        });
-    })
-    .then(async(charge) => {
-        await userModel.update({premium: true, haveFreeTrial: false}, {where: {id: token.UserId}})
-        return res.status(200).json({message: "Payment Success :)"})
-    })
-    .catch((err) => {
-        return res.status(500).json({message: "Payment Error: " + err})
-    });
+const storePaymentDetails = async(req, res)=>{
+    const token = req.token
+    const product = req.product
+    const features = req.features
+    const sessionId = req.sessionId
+    try{
+        await sequelize.transaction(async (t) => {
+            await userFeaturesModel.destroy({where:{UserId: token.UserId}, transaction: t})
+            for (let i = 0; i < features.length; i++) {
+                await userFeaturesModel.create({FeatureId: features[i].id, UserId: token.UserId}, { transaction: t })
+            }
+            await userModel.update({premium:true}, {where:{id:token.UserId}, transaction: t})
+            const payment = await paymentModel.create({
+                name:product.name,
+                price: product.price,
+                describtion:product.describtion,
+                UserId:token.UserId
+            }, {transaction: t})
+    
+            return res.status(200).json({
+                message: "Subscribtion completed",
+                sessionId: sessionId,
+            });
+        })
+    }catch(err){
+        return res.status(500).json({
+            message: "Subscribe DB Error: " + err
+        })
+    }
 }
 
-
-
 module.exports = {
-    calcTotalPrice,
-    gainMoney
+    createPaymentData,
+    CreatePaymentSession,
+    storePaymentDetails
 }

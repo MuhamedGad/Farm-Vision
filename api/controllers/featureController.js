@@ -75,27 +75,6 @@ const createFeature = async(req, res)=>{
     }
 }
 
-const addUserFeatures = async(req, res)=>{
-    const token = req.token
-    const featuresIds = req.featuresIds
-    if(req.featuresValid){
-        await sequelize.transaction(async (t) => {
-            await userFeatureModel.destroy({where:{UserId: token.UserId}, transaction: t})
-            for (let i = 0; i < featuresIds.length; i++) {
-                await userFeatureModel.create({FeatureId: featuresIds[i], UserId: token.UserId}, { transaction: t })
-            }
-            await userModel.update({premium:true}, {where:{id:token.UserId}, transaction: t})
-            return res.status(200).json({
-                message: "features Added Successfully :)"
-            })
-        })
-    }else{
-        return res.status(401).json({
-            message: "Invalid Features :("
-        })
-    }
-}
-
 const updateFeature = async(req, res)=>{
     let featureData = {}
         feature = req.feature
@@ -137,5 +116,4 @@ module.exports = {
     updateFeature,
     deleteFeature,
     getUserFeatures,
-    addUserFeatures
 }
