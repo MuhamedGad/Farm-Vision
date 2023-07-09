@@ -22,7 +22,7 @@ const createPaymentData = (req, res, next)=>{
     next()
 }
 
-const CreatePaymentSession = async(req, res, next)=>{
+const createPaymentSession = async(req, res, next)=>{
     const product = req.product
     try{
         const session = await stripe.checkout.sessions.create({ 
@@ -81,8 +81,50 @@ const storePaymentDetails = async(req, res)=>{
     }
 }
 
+const getAllPayments = async(req, res)=>{
+    try{
+        const payments = await paymentModel.findAndCountAll()
+        return res.status(200).json({
+            message: "Get payments successfully",
+            data: payments.rows,
+            length: payments.count
+        })
+    }catch(err){
+        return res.status(500).json({
+            message: "Get all payments error: " + err
+        })
+    }
+}
+
+const getPaymentById = async(req, res)=>{
+    const payment = req.payment
+    return res.status(200).json({
+        message: "Get payment successfully",
+        data: payment
+    })
+}
+
+const getUserPayments = async(req, res)=>{
+    try{
+        const token = req.token
+        const payments = await paymentModel.findAndCountAll({where:{UserId: token.UserId}})
+        return res.status(200).json({
+            message: "Get user payments successfully",
+            data: payments.rows,
+            length: payments.count
+        })
+    }catch(err){
+        return res.status(500).json({
+            message: "Get user payments error: " + err
+        })
+    }
+}
+
 module.exports = {
     createPaymentData,
-    CreatePaymentSession,
-    storePaymentDetails
+    createPaymentSession,
+    storePaymentDetails,
+    getAllPayments,
+    getPaymentById,
+    getUserPayments
 }

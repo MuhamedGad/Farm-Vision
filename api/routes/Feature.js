@@ -9,8 +9,9 @@ const createFeatureValidator = require("../middlewares/validators/createFeatureV
 const updateFeatureValidator = require("../middlewares/validators/updateFeatureValidatorMW")
 
 router.get("/getUserFeatures", authrization, featureController.getUserFeatures)
+router.get("/deleteUserFeature/:id", validID, authrization, featureController.deleteUserFeature)
 
-router.get("/", featureController.getAllFeatures)
+router.get("/", authrization, featureController.getAllFeatures)
 router.get("/:id", validID, checkFeatureFound, featureController.getFeatureById)
 router.post("/", authrization, checkAdmin, createFeatureValidator, featureController.createFeature)
 router.put("/:id", validID, authrization, checkAdmin, checkFeatureFound, updateFeatureValidator, featureController.updateFeature)

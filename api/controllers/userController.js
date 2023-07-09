@@ -120,7 +120,7 @@ const getAllUsers = async (req, res) => {
         })
     }
 }
-//
+
 const createUserData = (req)=>{
     let userData = {}
     userData["firstName"] = req.body.firstName || ""

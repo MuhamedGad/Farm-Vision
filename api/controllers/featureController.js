@@ -1,7 +1,6 @@
-const userModel = require("../models/User")
 const featureModel = require("../models/Feature")
 const userFeatureModel = require("../models/UserFeatures")
-const sequelize = require("../models/sequelize")
+const {op} = require("../models/sequelize")
 
 const getFeatureById = (req, res)=>{
     let feature = req.feature
@@ -109,6 +108,33 @@ const deleteFeature = async(req, res)=>{
     }
 }
 
+const deleteUserFeature = async(req, res)=>{
+    const token = req.token
+    const id = req.params.id
+    try{
+        const userFeature = await userFeatureModel.findOne({where:{
+            [op.and]:[
+                {UserId: token.UserId},
+                {FeatureId: id}
+            ]
+        }})
+        
+        if(userFeature == null) return res.status(404).json({
+            message: "invalid feature id or permission denied"
+        })
+        await userFeatureModel.destroy({where:{id: userFeature.id}})
+
+        return res.status(200).json({
+            message: "User feature deleted successfully"
+        })
+    }catch(err){
+        return res.status(500).json({
+            message: "Delete user feature error: " + err
+        })
+    }
+
+}
+
 module.exports = {
     getFeatureById,
     getAllFeatures,
@@ -116,4 +142,5 @@ module.exports = {
     updateFeature,
     deleteFeature,
     getUserFeatures,
+    deleteUserFeature
 }

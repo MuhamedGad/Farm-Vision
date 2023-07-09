@@ -395,6 +395,18 @@ GET
 ---
 <br>
 
+### **Get All Payments**
+Route:
+```
+/api/subscribe
+```
+Method:
+```
+GET
+```
+
+<br/>
+
 ## **Post Routes:**
 ### **Get all posts:**
 Route:
@@ -643,6 +655,17 @@ Method:
 ```
 GET
 ```
+</br>
+
+### **Cancel Register From Feature**
+Route:
+```
+/api/feature/deleteUserFeature/:id      -(id) is id of feature
+```
+Method:
+```
+GET
+```
 ---
 
 ## **Tag Routes:**
@@ -755,6 +778,7 @@ DELETE
 ---
 
 ## **Subscribe Routes:**
+### **Add Payment (Subscribe)**
 Route:
 ```
 /api/subscribe
@@ -767,3 +791,27 @@ Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
 | features | checkboxes | must be an array of our project features selected by user | false |
+
+<br/>
+
+### **Get User Payments**
+Route:
+```
+/api/subscribe/getMyPayments
+```
+Method:
+```
+GET
+```
+
+<br/>
+
+### **Get Payment Py Id**
+Route:
+```
+/api/subscribe/:id      -id of payment
+```
+Method:
+```
+GET
+```
