@@ -121,32 +121,6 @@ DELETE
 
 </br>
 
-<!-- ### **Get Image:**
-Route:
-```
-/api/logo/:imagename       - (:imagename) means name of image that wanted
-```
-Method:
-```
-GET
-```
-</br>
-
-### **Update Profile Image:**
-Route:
-```
-/api/logo/:id       - (:id) means id of user that is owner of image
-```
-Method:
-```
-PUT
-```
-Form:
-| input name | Type |
-|--------|------|
-| image | file |
-</br> -->
-
 ### **Update Password:**
 Route:
 ```
@@ -172,6 +146,7 @@ Form:
     | password | password | must not be less than 8 and must be string | false |
     | confirmPassword | password | must not be less than 8 and must be string | false |
 ---
+
 ## **Devices that logined Routes:**
 ### **Get device info**
 Route:
@@ -205,6 +180,7 @@ Method:
 DELETE
 ```
 ---
+
 ## **Admin Only Routes:**
 ### **Get All Users:**
 Route:
@@ -530,6 +506,7 @@ Method:
 POST
 ```
 ---
+
 ## **Comment Routes:**
 ### **Get comment:**
 Route:
@@ -633,6 +610,7 @@ Method:
 POST
 ```
 ---
+
 ## **Feature Routes:**
 ### **Get all features:**
 Route:
@@ -666,6 +644,7 @@ Method:
 GET
 ```
 ---
+
 ## **Tag Routes:**
 ### **Get all Tags:**
 Route:
@@ -704,6 +683,7 @@ Form:
 | tag | text | minimum length 3 characters and must be small chars with no spaces | false |
 | describtion | text | minimum length 10 characters | false |
 ---
+
 ## **Report Routes:**
 ### **Create Report:**
 Route:
@@ -773,6 +753,7 @@ Method:
 DELETE
 ```
 ---
+
 ## **Subscribe Routes:**
 Route:
 ```

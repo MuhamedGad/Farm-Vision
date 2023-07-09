@@ -389,14 +389,16 @@ const updateUser = async (req, res) => {
         
         let tokenUser = await userModel.findByPk(token.UserId)
         userData["lastUpdatedUserName"] = tokenUser.userName
-        
+        let testimage
         if (!req.file) {
             userData["image"] = user.image
+            testimage = false
         }else{
             let imgsrc = req.file.filename
             let directoryPath = __dirname.replace("controllers", "public/images/")
             let imageData = fs.readFileSync(directoryPath+imgsrc)
             userData["image"] = imageData
+            testimage = true
             fs.unlink(directoryPath + imgsrc, (err) => {
                 if (err) return res.status(500).json({
                     message: "Delete logo from server error: " + err
@@ -407,7 +409,7 @@ const updateUser = async (req, res) => {
         await userModel.update(userData, {where: { id: user.id }})
 
         return res.status(200).json({
-            message: "User Updated Successfully :)"
+            message: "User Updated Successfully :)"+(testimage)?" image updated":" image not found"
         })
     } catch (err) {
         return res.status(500).json({
