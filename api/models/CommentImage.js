@@ -3,9 +3,9 @@ const sequelize = require("./sequelize")
 const Comment = require("./Comment")
 
 const CommentImage = sequelize.define('CommentImage', {
-    image: {
-        type: DataTypes.BLOB("long"),
-    },
+    // image: {
+    //     type: DataTypes.BLOB("long"),
+    // },
 })
 
 Comment.hasMany(CommentImage, {
@@ -15,7 +15,7 @@ Comment.hasMany(CommentImage, {
 CommentImage.belongsTo(Comment);
 
 (async () => {
-    await CommentImage.sync({alter:true});
+    await CommentImage.sync(/* {alter:true} */);
 })();
 
 module.exports = CommentImage
