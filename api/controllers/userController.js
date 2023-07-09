@@ -13,7 +13,6 @@ const deviceDetector = require("device-detector-js")
 const detector = new deviceDetector()
 const bcrypt = require("bcrypt")
 const nodeMail = require("../util/nodeMail")
-// const Blob = require ('node-blob');
 const subscribeFormLink = "http://google.com"
 const verifiedEmailLink = "http://localhost:8888/api/user/verifyemail"
 
@@ -121,7 +120,7 @@ const getAllUsers = async (req, res) => {
         })
     }
 }
-
+//
 const createUserData = (req)=>{
     let userData = {}
     userData["firstName"] = req.body.firstName || ""
@@ -389,16 +388,14 @@ const updateUser = async (req, res) => {
         
         let tokenUser = await userModel.findByPk(token.UserId)
         userData["lastUpdatedUserName"] = tokenUser.userName
-        let testimage
+        
         if (!req.file) {
             userData["image"] = user.image
-            testimage = false
         }else{
             let imgsrc = req.file.filename
             let directoryPath = __dirname.replace("controllers", "public/images/")
             let imageData = fs.readFileSync(directoryPath+imgsrc)
             userData["image"] = imageData
-            testimage = true
             fs.unlink(directoryPath + imgsrc, (err) => {
                 if (err) return res.status(500).json({
                     message: "Delete logo from server error: " + err
@@ -409,7 +406,7 @@ const updateUser = async (req, res) => {
         await userModel.update(userData, {where: { id: user.id }})
 
         return res.status(200).json({
-            message: "User Updated Successfully :)"+(testimage)?" image updated":" image not found"
+            message: "User Updated Successfully :)"
         })
     } catch (err) {
         return res.status(500).json({
@@ -425,14 +422,6 @@ const deleteUser = async (req, res) => {
         await sequelize.transaction(async (t) => {
             await emailsDeletedModel.create({email:user.email}, {transaction: t})
             await userModel.destroy({where: { id: user.id }, transaction: t})
-            // if (user.image !== "logo.jpg") {
-            //     let directoryPath = __dirname.replace("controllers", "public/images/")
-            //     fs.unlink(directoryPath + user.image, (err) => {
-            //         if (err) return res.status(500).json({
-            //             message: "Delete logo from server error: " + err
-            //         })
-            //     })
-            // }
         })
 
         return res.status(200).json({
@@ -568,44 +557,6 @@ const login = async (req, res) => {
     }
 }
 
-// const getLogo = (req, res) => {
-//     const user = req.user
-//     const base64data = Buffer.from(user.image).toString('base64');
-//     return res.status(200).json({image:base64data})
-// }
-
-// const updateLogo = async (req, res) => {
-//     const token = req.token
-//     const user = req.user
-//     if (!req.file) {
-//         return res.status(403).json({
-//             message: "No File Uploaded :("
-//         })
-//     }
-
-//     try {
-//         let imgsrc = req.file.filename
-//         let directoryPath = __dirname.replace("controllers", "public/images/")
-//         let imageData = fs.readFileSync(directoryPath+imgsrc)
-//         // const blob = new Blob ( [req.file.buffer], {type: req.file.mimetype });
-//         let tokenUser = await userModel.findByPk(token.UserId)
-//         await userModel.update({ image: imageData, lastUpdatedUserName: tokenUser.userName }, { where: { id: user.id } })
-//         fs.unlink(directoryPath + imgsrc, (err) => {
-//             if (err) return res.status(500).json({
-//                 message: "Delete logo from server error: " + err
-//             })
-//         })
-
-//         return res.status(200).json({
-//             message: "Image updated Successfully :)"
-//         })
-//     } catch (err) {
-//         return res.status(500).json({
-//             message: "Update Image Error: " + err
-//         })
-//     }
-// }
-
 module.exports = {
     createUser,
     updateUser,
@@ -616,7 +567,5 @@ module.exports = {
     addUserByAdmin,
     updatePassword,
     login,
-    // getLogo,
-    // updateLogo,
     verifyEmail
 }

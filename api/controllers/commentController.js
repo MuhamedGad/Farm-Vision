@@ -173,15 +173,6 @@ const updateComment = async(req, res)=>{
 
     try{
         await sequelize.transaction(async (t) => {
-            // let oldFiles = await  commentImageModel.findAndCountAll({where:{CommentId: comment.id}, transaction: t})
-            // for (let i = 0; i < oldFiles.count; i++) {
-            //     let directoryPath = __dirname.replace("controllers", "public/images/")
-            //     fs.unlink(directoryPath + oldFiles.rows[i].image, (err) => {
-            //         if (err) return res.status(500).json({
-            //             message: "Delete logo from server error: " + err
-            //         })
-            //     })
-            // }
             await commentImageModel.destroy({where:{CommentId: comment.id}, transaction: t})
             filesnames.forEach(async e=>{
                 let imgsrc = e
@@ -212,15 +203,6 @@ const deleteComment = async(req, res)=>{
         let comment = req.comment
 
         if(comment.CommentId) await sequelize.transaction(async (t) => {
-            // let oldFiles = await  commentImageModel.findAndCountAll({where:{CommentId: comment.id}, transaction: t})
-            // for (let i = 0; i < oldFiles.count; i++) {
-            //     let directoryPath = __dirname.replace("controllers", "public/images/")
-            //     fs.unlink(directoryPath + oldFiles.rows[i].image, (err) => {
-            //         if (err) return res.status(500).json({
-            //             message: "Delete logo from server error: " + err
-            //         })
-            //     })
-            // }
             await commentModel.destroy({where: {
                 [Op.or]: [{id: comment.id}, {CommentId: comment.id}]
             }, transaction: t})
@@ -233,15 +215,6 @@ const deleteComment = async(req, res)=>{
         })
 
         else await sequelize.transaction(async (t) => {
-            // let oldFiles = await  commentImageModel.findAndCountAll({where:{CommentId: comment.id}, transaction: t})
-            // for (let i = 0; i < oldFiles.count; i++) {
-            //     let directoryPath = __dirname.replace("controllers", "public/images/")
-            //     fs.unlink(directoryPath + oldFiles.rows[i].image, (err) => {
-            //         if (err) return res.status(500).json({
-            //             message: "Delete logo from server error: " + err
-            //         })
-            //     })
-            // }
             await commentModel.destroy({where: {
                 [Op.or]: [{id: comment.id}, {CommentId: comment.id}]
             }, transaction: t})

@@ -1,12 +1,10 @@
 const userModel = require("../models/User")
 const postModel = require("../models/Post")
-const commentModel = require("../models/Comment")
 const tagModel = require("../models/Tag")
 const postLikeModel = require("../models/PostLike")
 const postDisLikeModel = require("../models/PostDisLike")
 const postTagsModel = require("../models/PostTags")
 const postImageModel = require("../models/PostImage")
-const commentImageModel = require("../models/CommentImage")
 const fs = require("fs")
 const sequelize = require("../models/sequelize")
 const { Op } = require("sequelize")
@@ -307,24 +305,6 @@ const deletePost = async(req, res)=>{
                 let tag = await tagModel.findOne({where: {id: postTags[i].TagId}, transaction: t})
                 await tagModel.update({numberOfPosts: tag.numberOfPosts-1}, {where:{id:tag.id}, transaction: t})
             }
-
-            // let oldFilesOfPost = await postImageModel.findAndCountAll({where:{PostId: post.id}, transaction: t})
-            // let comments = await  commentModel.findAndCountAll({where:{PostId: post.id}, transaction: t}),
-            //     oldFilesOfComment = []
-            // for (let i = 0; i < comments.count; i++) {
-            //     let comment = comments.rows[i]
-            //     let commentImages = await  commentImageModel.findAndCountAll({where:{CommentId: comment.id}, transaction: t})
-            //     oldFilesOfComment.push(...commentImages.rows)
-            // }
-            // let oldFiles = [...oldFilesOfPost.rows, ...oldFilesOfComment]
-            // for (let i = 0; i < oldFiles.length; i++) {
-            //     let directoryPath = __dirname.replace("controllers", "public/images/")
-            //     fs.unlink(directoryPath + oldFiles[i].image, (err) => {
-            //         if (err) return res.status(500).json({
-            //             message: "Delete logo from server error: " + err
-            //         })
-            //     })
-            // }
             await postModel.destroy({where: { id: post.id }, transaction: t})
         })
         return res.status(200).json({
