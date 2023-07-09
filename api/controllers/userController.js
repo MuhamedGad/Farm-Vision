@@ -13,6 +13,7 @@ const deviceDetector = require("device-detector-js")
 const detector = new deviceDetector()
 const bcrypt = require("bcrypt")
 const nodeMail = require("../util/nodeMail")
+// const Blob = require ('node-blob');
 const subscribeFormLink = "http://google.com"
 const verifiedEmailLink = "http://localhost:8888/api/user/verifyemail"
 
@@ -77,6 +78,9 @@ const getUserByID = async (req, res) => {
             let featureData = await featureModel.findByPk(feature.FeatureId)
             features.push(featureData.feature)
         }
+
+        user.image = Buffer.from(user.image).toString('base64');
+
         return res.status(200).json({
             message: "User Found :)",
             data: {user, features}
@@ -103,6 +107,7 @@ const getAllUsers = async (req, res) => {
                     features.push(featureData.feature)
                 }
             }
+            user.image = Buffer.from(user.image).toString('base64');
             usersData.push({user, features})
         }
         return res.status(200).json({
@@ -357,7 +362,7 @@ const updateUser = async (req, res) => {
         let tokenUser = await userModel.findByPk(token.UserId)
         userData["lastUpdatedUserName"] = tokenUser.userName
         
-        await userModel.update(userData, { where: { id: user.id }, transaction: t })
+        await userModel.update(userData, {where: { id: user.id }})
 
         return res.status(200).json({
             message: "User Updated Successfully :)"
@@ -520,19 +525,14 @@ const login = async (req, res) => {
 }
 
 const getLogo = (req, res) => {
-    let options = {
-            root: __dirname.replace("controllers", "public"),
-        },
-        fileName = "images/" + req.params.imagename
-    return res.sendFile(fileName, options, function (err) {
-        if (err) return res.status(500).json({
-            message: "Send logo error: " + err
-        })
-    })
+    const user = req.user
+    const base64data = Buffer.from(user.image).toString('base64');
+    return res.status(200).json({image:base64data})
 }
 
 const updateLogo = async (req, res) => {
-    let user = req.user
+    const token = req.token
+    const user = req.user
     if (!req.file) {
         return res.status(403).json({
             message: "No File Uploaded :("
@@ -541,16 +541,17 @@ const updateLogo = async (req, res) => {
 
     try {
         let imgsrc = req.file.filename
-        if (user.image !== "logo.jpg") {
-            let directoryPath = __dirname.replace("routes", "public/images/")
-            fs.unlink(directoryPath + user.image, (err) => {
-                if (err) return res.status(500).json({
-                    message: "Delete logo from server error: " + err
-                })
-            })
-        }
+        let directoryPath = __dirname.replace("controllers", "public/images/")
+        let imageData = fs.readFileSync(directoryPath+imgsrc)
+        // const blob = new Blob ( [req.file.buffer], {type: req.file.mimetype });
         let tokenUser = await userModel.findByPk(token.UserId)
-        await userModel.update({ image: imgsrc, lastUpdatedUserName: tokenUser.userName }, { where: { id: user.id } })
+        await userModel.update({ image: imageData, lastUpdatedUserName: tokenUser.userName }, { where: { id: user.id } })
+        fs.unlink(directoryPath + imgsrc, (err) => {
+            if (err) return res.status(500).json({
+                message: "Delete logo from server error: " + err
+            })
+        })
+
         return res.status(200).json({
             message: "Image updated Successfully :)"
         })
