@@ -391,7 +391,7 @@ const updateUser = async (req, res) => {
         userData["lastUpdatedUserName"] = tokenUser.userName
         
         if (!req.file) {
-            userData["image"] = null
+            userData["image"] = user.image
         }else{
             let imgsrc = req.file.filename
             let directoryPath = __dirname.replace("controllers", "public/images/")
