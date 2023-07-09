@@ -3,10 +3,9 @@ const sequelize = require("./sequelize")
 const Post = require("./Post")
 
 const PostImage = sequelize.define('PostImage', {
-    // image:{
-    //     type:DataTypes.STRING,
-    //     allowNull:true
-    // }
+    image: {
+        type: DataTypes.BLOB("long"),
+    },
 })
 
 Post.hasMany(PostImage, {

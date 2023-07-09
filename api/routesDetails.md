@@ -64,6 +64,7 @@ Form:
 | state | text | must be string | false |
 | country | text | must be string | false |
 | postCode | text | must be string | false |
+| image | file | logo of user | true |
 
 </br>
 
@@ -104,6 +105,7 @@ Form:
 | state | text | must be string | true |
 | country | text | must be string | true |
 | postCode | text | must be string | true |
+| image | file | logo of user | true |
 
 </br>
 
@@ -119,7 +121,7 @@ DELETE
 
 </br>
 
-### **Get Image:**
+<!-- ### **Get Image:**
 Route:
 ```
 /api/logo/:imagename       - (:imagename) means name of image that wanted
@@ -143,7 +145,7 @@ Form:
 | input name | Type |
 |--------|------|
 | image | file |
-</br>
+</br> -->
 
 ### **Update Password:**
 Route:
@@ -242,6 +244,7 @@ Form:
 | state | text | must be string | false |
 | country | text | must be string | false |
 | postCode | text | must be string | false |
+| image | file | logo of user | true |
 
 </br>
 

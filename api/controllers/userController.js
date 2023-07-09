@@ -423,14 +423,14 @@ const deleteUser = async (req, res) => {
         await sequelize.transaction(async (t) => {
             await emailsDeletedModel.create({email:user.email}, {transaction: t})
             await userModel.destroy({where: { id: user.id }, transaction: t})
-            if (user.image !== "logo.jpg") {
-                let directoryPath = __dirname.replace("controllers", "public/images/")
-                fs.unlink(directoryPath + user.image, (err) => {
-                    if (err) return res.status(500).json({
-                        message: "Delete logo from server error: " + err
-                    })
-                })
-            }
+            // if (user.image !== "logo.jpg") {
+            //     let directoryPath = __dirname.replace("controllers", "public/images/")
+            //     fs.unlink(directoryPath + user.image, (err) => {
+            //         if (err) return res.status(500).json({
+            //             message: "Delete logo from server error: " + err
+            //         })
+            //     })
+            // }
         })
 
         return res.status(200).json({
