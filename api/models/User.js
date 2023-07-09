@@ -24,10 +24,9 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  image: {
-    type: DataTypes.BLOB("long"),
-    // allowNull: true
-  },
+  // image: {
+  //   type: DataTypes.BLOB("long"),
+  // },
   role: {
     type: DataTypes.ENUM("admin", "superAdmin", "farmer", "engineer"),
     allowNull: false

@@ -3,10 +3,10 @@ const sequelize = require("./sequelize")
 const Comment = require("./Comment")
 
 const CommentImage = sequelize.define('CommentImage', {
-    image:{
-        type:DataTypes.STRING,
-        allowNull:true
-    }
+    // image:{
+    //     type:DataTypes.STRING,
+    //     allowNull:true
+    // }
 })
 
 Comment.hasMany(CommentImage, {
@@ -16,7 +16,7 @@ Comment.hasMany(CommentImage, {
 CommentImage.belongsTo(Comment);
 
 (async () => {
-    await CommentImage.sync(/* {alter:true} */);
+    await CommentImage.sync({alter:true});
 })();
 
 module.exports = CommentImage

@@ -9,12 +9,13 @@ const authrization = require("../middlewares/checkPermission/authrizationMW")
 const checkUserFound = require("../middlewares/checkFound/checkUserFoundMW")
 const checkPermission = require("../middlewares/checkPermission/checkPermissionOnUserMW")
 const confirmPassword = require("../middlewares/validators/confirmPasswordMW")
+const upload = require("../middlewares/uploadImageMW")
 
 // router.get("/verifyemail/:id/:token", userController.verifyEmail)
 
 router.get("/:id", validID, authrization, checkUserFound, checkPermission, userController.getUserByID)
-router.post("/", createUserValidator, confirmPassword, encryptPassword, userController.createUser)
-router.put("/:id", validID, authrization, checkUserFound, checkPermission, updateUserValidator, userController.updateUser)
+router.post("/", upload.single("image"), createUserValidator, confirmPassword, encryptPassword, userController.createUser)
+router.put("/:id", validID, authrization, checkUserFound, checkPermission, upload.single("image"), updateUserValidator, userController.updateUser)
 router.delete("/:id", validID, authrization, checkUserFound, checkPermission, userController.deleteUser)
 
 module.exports = router

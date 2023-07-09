@@ -79,7 +79,7 @@ const getUserByID = async (req, res) => {
             features.push(featureData.feature)
         }
 
-        user.image = Buffer.from(user.image).toString('base64');
+        user.image = (user.image)?Buffer.from(user.image).toString('base64'):user.image
 
         return res.status(200).json({
             message: "User Found :)",
@@ -107,7 +107,7 @@ const getAllUsers = async (req, res) => {
                     features.push(featureData.feature)
                 }
             }
-            user.image = Buffer.from(user.image).toString('base64');
+            user.image = (user.image)?Buffer.from(user.image).toString('base64'):user.image;
             usersData.push({user, features})
         }
         return res.status(200).json({
@@ -189,6 +189,20 @@ const createUser = async (req, res) => {
 
         userData["loginDevices"] = 1
         userData["lastUpdatedUserName"] = req.body.userName
+
+        if (!req.file) {
+            userData["image"] = null
+        }else{
+            let imgsrc = req.file.filename
+            let directoryPath = __dirname.replace("controllers", "public/images/")
+            let imageData = fs.readFileSync(directoryPath+imgsrc)
+            userData["image"] = imageData
+            fs.unlink(directoryPath + imgsrc, (err) => {
+                if (err) return res.status(500).json({
+                    message: "Delete logo from server error: " + err
+                })
+            })
+        }
 
         await sequelize.transaction(async (t) => {
             user = await userModel.create(userData, { transaction: t })
@@ -297,6 +311,20 @@ const addUserByAdmin = async (req, res) => {
         let adminUser = await userModel.findByPk(token.UserId)
         userData["lastUpdatedUserName"] = adminUser.userName
 
+        if (!req.file) {
+            userData["image"] = null
+        }else{
+            let imgsrc = req.file.filename
+            let directoryPath = __dirname.replace("controllers", "public/images/")
+            let imageData = fs.readFileSync(directoryPath+imgsrc)
+            userData["image"] = imageData
+            fs.unlink(directoryPath + imgsrc, (err) => {
+                if (err) return res.status(500).json({
+                    message: "Delete logo from server error: " + err
+                })
+            })
+        }
+
         await sequelize.transaction(async (t) => {
             user = await userModel.create(userData, { transaction: t })
             /* // ---------- Verification Email ----------------
@@ -362,6 +390,20 @@ const updateUser = async (req, res) => {
         let tokenUser = await userModel.findByPk(token.UserId)
         userData["lastUpdatedUserName"] = tokenUser.userName
         
+        if (!req.file) {
+            userData["image"] = null
+        }else{
+            let imgsrc = req.file.filename
+            let directoryPath = __dirname.replace("controllers", "public/images/")
+            let imageData = fs.readFileSync(directoryPath+imgsrc)
+            userData["image"] = imageData
+            fs.unlink(directoryPath + imgsrc, (err) => {
+                if (err) return res.status(500).json({
+                    message: "Delete logo from server error: " + err
+                })
+            })
+        }
+
         await userModel.update(userData, {where: { id: user.id }})
 
         return res.status(200).json({
@@ -524,43 +566,43 @@ const login = async (req, res) => {
     }
 }
 
-const getLogo = (req, res) => {
-    const user = req.user
-    const base64data = Buffer.from(user.image).toString('base64');
-    return res.status(200).json({image:base64data})
-}
+// const getLogo = (req, res) => {
+//     const user = req.user
+//     const base64data = Buffer.from(user.image).toString('base64');
+//     return res.status(200).json({image:base64data})
+// }
 
-const updateLogo = async (req, res) => {
-    const token = req.token
-    const user = req.user
-    if (!req.file) {
-        return res.status(403).json({
-            message: "No File Uploaded :("
-        })
-    }
+// const updateLogo = async (req, res) => {
+//     const token = req.token
+//     const user = req.user
+//     if (!req.file) {
+//         return res.status(403).json({
+//             message: "No File Uploaded :("
+//         })
+//     }
 
-    try {
-        let imgsrc = req.file.filename
-        let directoryPath = __dirname.replace("controllers", "public/images/")
-        let imageData = fs.readFileSync(directoryPath+imgsrc)
-        // const blob = new Blob ( [req.file.buffer], {type: req.file.mimetype });
-        let tokenUser = await userModel.findByPk(token.UserId)
-        await userModel.update({ image: imageData, lastUpdatedUserName: tokenUser.userName }, { where: { id: user.id } })
-        fs.unlink(directoryPath + imgsrc, (err) => {
-            if (err) return res.status(500).json({
-                message: "Delete logo from server error: " + err
-            })
-        })
+//     try {
+//         let imgsrc = req.file.filename
+//         let directoryPath = __dirname.replace("controllers", "public/images/")
+//         let imageData = fs.readFileSync(directoryPath+imgsrc)
+//         // const blob = new Blob ( [req.file.buffer], {type: req.file.mimetype });
+//         let tokenUser = await userModel.findByPk(token.UserId)
+//         await userModel.update({ image: imageData, lastUpdatedUserName: tokenUser.userName }, { where: { id: user.id } })
+//         fs.unlink(directoryPath + imgsrc, (err) => {
+//             if (err) return res.status(500).json({
+//                 message: "Delete logo from server error: " + err
+//             })
+//         })
 
-        return res.status(200).json({
-            message: "Image updated Successfully :)"
-        })
-    } catch (err) {
-        return res.status(500).json({
-            message: "Update Image Error: " + err
-        })
-    }
-}
+//         return res.status(200).json({
+//             message: "Image updated Successfully :)"
+//         })
+//     } catch (err) {
+//         return res.status(500).json({
+//             message: "Update Image Error: " + err
+//         })
+//     }
+// }
 
 module.exports = {
     createUser,
@@ -572,7 +614,7 @@ module.exports = {
     addUserByAdmin,
     updatePassword,
     login,
-    getLogo,
-    updateLogo,
+    // getLogo,
+    // updateLogo,
     verifyEmail
 }
