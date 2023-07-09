@@ -4,6 +4,76 @@ const paymentModel = require("../models/Payment")
 const sequelize = require("../models/sequelize")
 const config = require("config")
 const stripe = require("stripe")(config.get("stripeSecretKey"))
+const nodeMail = require("../util/nodeMail")
+
+const unsubscribe = async(userId)=>{
+    try{
+        let user = await userModel.findByPk(userId)
+        let message = `Hello ${user.firstName}, We would like to inform you that your subscription period finished and you should subscribe again to be able to user our features`,
+            email = user.email,
+            subject = "End subscribtion"
+
+        nodeMail(email, subject, message)
+        await sequelize.transaction(async t=>{
+            await userFeaturesModel.destroy({where:{UserId:userId}, transaction: t})
+            await userModel.update({premium: false}, {where:{id:userId}, transaction: t})
+        })
+    }catch(err){
+        console.log(err)
+    }
+}
+
+const warnningBefore5Days = async(userId)=>{
+    try{
+        let user = await userModel.findByPk(userId)
+        let message = `Hello ${user.firstName}, We would like to inform you that you have only 5 of the 30 days of your subscribe to use our site. So, please, go to subscribe page and subscribe..!`,
+            email = user.email,
+            subject = "Warnning of end subscribtion"
+    
+        nodeMail(email, subject, message)
+    }catch(err){
+        console.log(err)
+    }
+}
+
+const getAllPayments = async(req, res)=>{
+    try{
+        const payments = await paymentModel.findAndCountAll()
+        return res.status(200).json({
+            message: "Get payments successfully",
+            data: payments.rows,
+            length: payments.count
+        })
+    }catch(err){
+        return res.status(500).json({
+            message: "Get all payments error: " + err
+        })
+    }
+}
+
+const getPaymentById = async(req, res)=>{
+    const payment = req.payment
+    return res.status(200).json({
+        message: "Get payment successfully",
+        data: payment
+    })
+}
+
+const getUserPayments = async(req, res)=>{
+    try{
+        const token = req.token
+        const payments = await paymentModel.findAndCountAll({where:{UserId: token.UserId}})
+        return res.status(200).json({
+            message: "Get user payments successfully",
+            data: payments.rows,
+            length: payments.count
+        })
+    }catch(err){
+        return res.status(500).json({
+            message: "Get user payments error: " + err
+        })
+    }
+}
 
 const createPaymentData = (req, res, next)=>{
     const features = req.features
@@ -68,7 +138,9 @@ const storePaymentDetails = async(req, res)=>{
                 describtion:product.describtion,
                 UserId:token.UserId
             }, {transaction: t})
-    
+            
+            setTimeout(warnningBefore5Days, 2160000000, token.userId)
+            setTimeout(unsubscribe, 2592000000, token.UserId)
             return res.status(200).json({
                 message: "Subscribtion completed",
                 sessionId: sessionId,
@@ -77,45 +149,6 @@ const storePaymentDetails = async(req, res)=>{
     }catch(err){
         return res.status(500).json({
             message: "Subscribe DB Error: " + err
-        })
-    }
-}
-
-const getAllPayments = async(req, res)=>{
-    try{
-        const payments = await paymentModel.findAndCountAll()
-        return res.status(200).json({
-            message: "Get payments successfully",
-            data: payments.rows,
-            length: payments.count
-        })
-    }catch(err){
-        return res.status(500).json({
-            message: "Get all payments error: " + err
-        })
-    }
-}
-
-const getPaymentById = async(req, res)=>{
-    const payment = req.payment
-    return res.status(200).json({
-        message: "Get payment successfully",
-        data: payment
-    })
-}
-
-const getUserPayments = async(req, res)=>{
-    try{
-        const token = req.token
-        const payments = await paymentModel.findAndCountAll({where:{UserId: token.UserId}})
-        return res.status(200).json({
-            message: "Get user payments successfully",
-            data: payments.rows,
-            length: payments.count
-        })
-    }catch(err){
-        return res.status(500).json({
-            message: "Get user payments error: " + err
         })
     }
 }

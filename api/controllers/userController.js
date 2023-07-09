@@ -31,7 +31,7 @@ const endFreeTrialEmail = async(userId)=>{
             nodeMail(email, subject, message, link)
         }
     }catch(err){
-        console.error("After 7 days Error: "+err)
+        console.log("After 7 days Error: "+err)
     }
 }
 
@@ -63,7 +63,7 @@ const after5DaysEmail = async(userId)=>{
             setTimeout(endFreeTrialEmail, 120000, user.id)
         }
     }catch(err){
-        console.error("After 5 days Error: " + err)
+        console.log("After 5 days Error: " + err)
     }
 }
 
