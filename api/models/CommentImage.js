@@ -3,10 +3,9 @@ const sequelize = require("./sequelize")
 const Comment = require("./Comment")
 
 const CommentImage = sequelize.define('CommentImage', {
-    image:{
-        type:DataTypes.STRING,
-        allowNull:true
-    }
+    image: {
+        type: DataTypes.BLOB("long"),
+    },
 })
 
 Comment.hasMany(CommentImage, {

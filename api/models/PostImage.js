@@ -15,7 +15,7 @@ Post.hasMany(PostImage, {
 PostImage.belongsTo(Post);
 
 (async () => {
-    await PostImage.sync({alter:true});
+    await PostImage.sync(/* {alter:true} */);
 })();
 
 module.exports = PostImage
