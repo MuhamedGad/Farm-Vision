@@ -1,6 +1,7 @@
 {
     "seckey": "seckeyvariable",
     "stripeSecretKey":"stripeSecretKey",
+    "stripePublishableKey":"stripePublishableKey",
     "mailConfig":{
         "host":"mailhost",
         "port":"mailport",

@@ -806,6 +806,18 @@ GET
 
 <br/>
 
+### **Get Publishable key**
+Route:
+```
+/api/subscribe/getPublishabeKey
+```
+Method:
+```
+GET
+```
+
+<br/>
+
 ### **Get Payment Py Id**
 Route:
 ```

@@ -6,6 +6,10 @@ const config = require("config")
 const stripe = require("stripe")(config.get("stripeSecretKey"))
 const nodeMail = require("../util/nodeMail")
 
+const getPublishabeKey = (req, res)=>{
+    return res.status(200).json({key: config.get("stripePublishableKey")})
+}
+
 const unsubscribe = async(userId)=>{
     try{
         let user = await userModel.findByPk(userId)
@@ -159,5 +163,6 @@ module.exports = {
     storePaymentDetails,
     getAllPayments,
     getPaymentById,
-    getUserPayments
+    getUserPayments,
+    getPublishabeKey
 }

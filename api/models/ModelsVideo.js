@@ -14,6 +14,9 @@ const ModelsVideo = sequelize.define('ModelsVideo', {
     number:{
         type:DataTypes.INTEGER,
         allowNull:false
+    },
+    resultVideo:{
+        type:DataTypes.STRING
     }
 });
 
@@ -24,7 +27,7 @@ User.hasMany(ModelsVideo, {
 ModelsVideo.belongsTo(User);
 
 (async () => {
-    await ModelsVideo.sync(/* {alter:true} */);
+    await ModelsVideo.sync({alter:true});
 })();
 
 module.exports = ModelsVideo

@@ -1,6 +1,7 @@
 {
     "seckey": "",
     "stripeSecretKey":"",
+    "stripePublishableKey":"",
     "mailConfig":{},
     "dbConfig": {}
 }

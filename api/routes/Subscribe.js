@@ -8,6 +8,7 @@ const checkPaymentFound = require("../middlewares/checkFound/checkPaymentFoundMW
 const checkPermission = require("../middlewares/checkPermission/checkPermissionOnPaymentMW")
 
 router.get("/getMyPayments", authrization, paymentController.getUserPayments)
+router.get("/getPublishabeKey", authrization, paymentController.getPublishabeKey)
 
 router.get("/", authrization, checkAdmin, paymentController.getAllPayments)
 router.get("/:id", authrization, checkPaymentFound, checkPermission, paymentController.getPaymentById)
