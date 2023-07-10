@@ -3,13 +3,6 @@ const sequelize = require("./sequelize")
 const User = require("./User")
 
 const ModelsImage = sequelize.define('ModelsImage', {
-    // image:{
-    //     type:DataTypes.STRING,
-    //     allowNull:false
-    // },
-    // resultImage:{
-    //     type:DataTypes.STRING
-    // },
     image: {
         type: DataTypes.BLOB("long"),
     },
@@ -31,7 +24,7 @@ User.hasMany(ModelsImage, {
 ModelsImage.belongsTo(User);
 
 (async () => {
-    await ModelsImage.sync({alter:true});
+    await ModelsImage.sync(/* {alter:true} */);
 })();
 
 module.exports = ModelsImage
