@@ -15,6 +15,10 @@ const Feature = sequelize.define('Feature', {
     price:{
         type:DataTypes.INTEGER,
         allowNull:false
+    },
+    type:{
+        type: DataTypes.ENUM("video", "image"),
+        allowNull: false
     }
 });
 
@@ -22,7 +26,7 @@ User.hasMany(Feature)
 Feature.belongsTo(User);
 
 (async () => {
-    await Feature.sync(/* {alter:true} */);
+    await Feature.sync({alter:true});
 })();
 
 module.exports = Feature
