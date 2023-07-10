@@ -27,7 +27,7 @@ User.hasMany(ModelsVideo, {
 ModelsVideo.belongsTo(User);
 
 (async () => {
-    await ModelsVideo.sync({alter:true});
+    await ModelsVideo.sync(/* {alter:true} */);
 })();
 
 module.exports = ModelsVideo

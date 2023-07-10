@@ -10,12 +10,12 @@ const ModelsImage = sequelize.define('ModelsImage', {
     // resultImage:{
     //     type:DataTypes.STRING
     // },
-    // image: {
-    //     type: DataTypes.BLOB("long"),
-    // },
-    // resultImage:{
-    //     type: DataTypes.BLOB("long"),
-    // },
+    image: {
+        type: DataTypes.BLOB("long"),
+    },
+    resultImage:{
+        type: DataTypes.BLOB("long"),
+    },
     type:{
         type:DataTypes.STRING
     },
