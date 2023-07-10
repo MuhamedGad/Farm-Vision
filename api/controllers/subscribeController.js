@@ -5,6 +5,7 @@ const sequelize = require("../models/sequelize")
 const config = require("config")
 const stripe = require("stripe")(config.get("stripeSecretKey"))
 const nodeMail = require("../util/nodeMail")
+const frontendAddress = "http://localhost:5173"
 
 const getPublishabeKey = (req, res)=>{
     return res.status(200).json({key: config.get("stripePublishableKey")})
@@ -112,8 +113,8 @@ const createPaymentSession = async(req, res, next)=>{
                 }, 
             ], 
             mode: "payment", 
-            success_url: "http://localhost:3000/success", 
-            cancel_url: "http://localhost:3000/cancel", 
+            success_url: frontendAddress+"/pricing/success", 
+            cancel_url: frontendAddress+"/pricing/failed", 
         });
         req.sessionId = session.id
         next()
