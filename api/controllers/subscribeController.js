@@ -11,10 +11,10 @@ const getPublishabeKey = (req, res)=>{
     return res.status(200).json({key: config.get("stripePublishableKey")})
 }
 
-const unsubscribe = async(userId)=>{
+const unsubscribe = async(userId, features)=>{
     try{
         let user = await userModel.findByPk(userId)
-        let message = `Hello ${user.firstName}, We would like to inform you that your subscription period finished and you should subscribe again to be able to user our features`,
+        let message = `Hello ${user.firstName}, We would like to inform you that your subscription period finished and you should subscribe again to be able to user our features(${features})`,
             email = user.email,
             subject = "End subscribtion"
 
@@ -28,10 +28,10 @@ const unsubscribe = async(userId)=>{
     }
 }
 
-const warnningBefore5Days = async(userId)=>{
+const warnningBefore5Days = async(userId, features)=>{
     try{
         let user = await userModel.findByPk(userId)
-        let message = `Hello ${user.firstName}, We would like to inform you that you have only 5 of the 30 days of your subscribe to use our site. So, please, go to subscribe page and subscribe..!`,
+        let message = `Hello ${user.firstName}, We would like to inform you that you have only 5 of the 30 days of your subscribe to use our services(${features}). So, please, go to subscribe page and renew your subscribtion..!`,
             email = user.email,
             subject = "Warnning of end subscribtion"
     
@@ -132,24 +132,26 @@ const storePaymentDetails = async(req, res)=>{
     const sessionId = req.sessionId
     try{
         await sequelize.transaction(async (t) => {
-            await userFeaturesModel.destroy({where:{UserId: token.UserId}, transaction: t})
+            const user = await userModel.findByPk(token.UserId)
             for (let i = 0; i < features.length; i++) {
                 await userFeaturesModel.create({FeatureId: features[i].id, UserId: token.UserId}, { transaction: t })
             }
-            await userModel.update({premium:true}, {where:{id:token.UserId}, transaction: t})
             const payment = await paymentModel.create({
                 name:product.name,
                 price: product.price,
                 describtion:product.describtion,
                 UserId:token.UserId
             }, {transaction: t})
-            
-            setTimeout(warnningBefore5Days, 2160000000, token.userId)
-            setTimeout(unsubscribe, 2592000000, token.UserId)
+
+            setTimeout(warnningBefore5Days, 2160000000, token.userId, features.join(", "))
+            setTimeout(unsubscribe, 2592000000, token.UserId, features.join(", "))
+
+            if(!user.premium) await userModel.update({premium:true}, {where:{id:token.UserId}, transaction: t})
+
             return res.status(200).json({
                 message: "Subscribtion completed",
                 sessionId: sessionId,
-            });
+            })
         })
     }catch(err){
         return res.status(500).json({

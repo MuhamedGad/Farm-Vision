@@ -5,6 +5,7 @@ module.exports = async(req, res, next)=>{
         featuresData = new Set()
     try{
         if(features && Array.isArray(features)){
+            if(features.length == 0) return res.status(401).json({"message": "Invalid Features :("})
             for(let i = 0; i < features.length; i++){
                 let feature = await featuresModel.findOne({where:{feature: features[i]}})
                 if (feature === null) return res.status(401).json({
