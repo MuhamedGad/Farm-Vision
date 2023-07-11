@@ -22,7 +22,8 @@ Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
 | x-auth-token | text | must be valid token | false |
-| features | checkboxes | must be an array of our project features selected by user | false |
+| features | checkboxes | must be an array of our project features that have type image selected by user | false |
+| image | file | the image | false |
 
 Response Data:
 - message: simple message to feedback
@@ -99,7 +100,8 @@ Form:
 | input name | Type | validate | nullable |
 |--------|------|-------|--------|
 | x-auth-token | text | must be valid token | false |
-| features | checkboxes | must be an array of our project features selected by user | false |
+| features | checkboxes | must be an array of our project features that have type video selected by user | false |
+| video | file | the image | false |
 
 Response Data:
 - message: simple message to feedback
