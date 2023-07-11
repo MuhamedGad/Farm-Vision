@@ -1,4 +1,5 @@
 const tagModel = require("../models/Tag")
+const { Op } = require("sequelize")
 
 const getTagById = (req, res)=>{
     let tag = req.tag
