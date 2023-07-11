@@ -18,7 +18,10 @@ const schema = {
             "type":"string",
             "maxLength": 255
         },
+        "type":{
+            enum:["image", "video", "other"],
+        }
     },
-    "required":["feature", "describtion", "price"]
+    "required":["feature", "describtion", "price", "type"]
 }
 module.exports = ajv.compile(schema)
