@@ -109,11 +109,11 @@ const deleteReport = async (req, res) => {
         await reportModel.destroy({where: {id: report.id}})
         return res.status(200).json({
             message: "report deleted successfully"
-        });
+        })
     } catch (error) {
         return res.status(500).json({
             message: "Delete report Error: " + error,
-        });
+        })
     }
 }
 

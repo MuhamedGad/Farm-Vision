@@ -1,7 +1,7 @@
 const userModel = require("../models/User")
 const featureModel = require("../models/Feature")
 const userFeatureModel = require("../models/UserFeatures")
-const {op} = require("../models/sequelize")
+const {Op} = require("sequelize")
 
 const getFeatureById = (req, res)=>{
     let feature = req.feature
@@ -54,6 +54,38 @@ const getUserFeatures = async(req, res)=>{
     }catch(err){
         return res.status(500).json({
             message: "Get User Features Error: " + err
+        })
+    }
+}
+
+const getUnsubscribedFeatures = async(req, res)=>{
+    try{
+        const token = req.token
+        const user = await userModel.findByPk(token.UserId)
+        if(user.haveFreeTrial == true) {
+            return res.status(200).json({
+                message: "Found features :)",
+                length: 0,
+                data: []
+            })
+        }else{
+            const userFeatures = await userFeatureModel.findAndCountAll({where:{UserId: token.UserId}})
+            let features = []
+            for (let i = 0; i < userFeatures.count; i++) {
+                const e = userFeatures.rows[i];
+                let feature = await featureModel.findByPk(e['FeatureId'])
+                features.push(feature.feature)
+            }
+            const unsubscribedFeatures = await featureModel.findAndCountAll({where:{feature:{[Op.notIn]:features}}})
+            return res.status(200).json({
+                message: "Found features :)",
+                length: unsubscribedFeatures.count,
+                data: unsubscribedFeatures.rows
+            })
+        }
+    }catch(err){
+        return res.status(500).json({
+            message: "Get Unsubscribed Features Error: " + err
         })
     }
 }
@@ -153,5 +185,6 @@ module.exports = {
     updateFeature,
     deleteFeature,
     getUserFeatures,
-    deleteUserFeature
+    deleteUserFeature,
+    getUnsubscribedFeatures
 }

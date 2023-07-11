@@ -658,6 +658,19 @@ Method:
 ```
 GET
 ```
+
+</br>
+
+### **Get my unsubscribed features:**
+Route:
+```
+/api/feature/getUnsubscribedFeatures
+```
+Method:
+```
+GET
+```
+
 </br>
 
 ### **Cancel Register From Feature**

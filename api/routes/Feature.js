@@ -10,6 +10,7 @@ const updateFeatureValidator = require("../middlewares/validators/updateFeatureV
 
 router.get("/getUserFeatures", authrization, featureController.getUserFeatures)
 router.get("/deleteUserFeature/:id", validID, authrization, featureController.deleteUserFeature)
+router.get("/getUnsubscribedFeatures", authrization, featureController.getUnsubscribedFeatures)
 
 router.get("/", authrization, featureController.getAllFeatures)
 router.get("/:id", validID, checkFeatureFound, featureController.getFeatureById)
