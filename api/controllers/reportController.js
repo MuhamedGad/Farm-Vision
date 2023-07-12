@@ -12,7 +12,7 @@ const getAllReports = async (req, res) => {
                 title: reports.rows[i].title,
                 describtion: reports.rows[i].describtion,
                 type: reports.rows[i].type,
-                user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName}
+                user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName, role: user.role}
             });
         }
         return res.status(200).json({
@@ -35,7 +35,7 @@ const getReport = async (req, res) => {
         title: report.title,
         describtion: report.describtion,
         type: report.type,
-        user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName}
+        user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName, role: user.role}
     }
     return res.status(200).json({
         message: "found report",

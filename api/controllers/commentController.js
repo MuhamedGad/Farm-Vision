@@ -52,7 +52,7 @@ const getCommentById = async(req, res)=>{
         return res.status(200).json({
             message: "Comment Found :)",
             data: {comment, images},
-            user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName},
+            user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName, role: user.role},
             userLike,
             userDisLike
         })
@@ -83,7 +83,7 @@ const getCommentsOfPost = async(req, res)=>{
             }
             let userLike = await checkUserLike(token.UserId, comment.id)
             let userDisLike = await checkUserDisLike(token.UserId, comment.id)
-            commentsData.push({comment, images, user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName}, userLike, userDisLike})
+            commentsData.push({comment, images, user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName, role: user.role}, userLike, userDisLike})
         }
         return res.status(200).json({
             message: "Found Comments :)",

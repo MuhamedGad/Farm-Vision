@@ -60,7 +60,7 @@ const getPostById = async (req, res) => {
 
         return res.status(200).json({
             message: "Post Found :)",
-            data: {post, images, tags, user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName},userLike, userDisLike}
+            data: {post, images, tags, user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName, role: user.role},userLike, userDisLike}
         })
     } catch (err) {
         return res.status(500).json({
@@ -92,7 +92,7 @@ const getAllPosts = async (req, res) => {
             }
             let userLike = await checkUserLike(token.UserId, post.id)
             let userDisLike = await checkUserDisLike(token.UserId, post.id)
-            postsData.push({post, images, tags, user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName}, userLike, userDisLike})
+            postsData.push({post, images, tags, user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName, role: user.role}, userLike, userDisLike})
         }
         return res.status(200).json({
             message: "Found posts :)",
@@ -139,7 +139,7 @@ const getPostsForUser = async(req, res)=>{
             message: "Found posts :)",
             length: posts.count,
             data: postsData,
-            user:{userName:user.userName, firstName:user.firstName, lastName:user.lastName}
+            user:{userName:user.userName, firstName:user.firstName, lastName:user.lastName, role: user.role}
         })
     } catch (err) {
         return res.status(500).json({
@@ -180,7 +180,7 @@ const getPostsForTag = async(req, res)=>{
             }
             let userLike = await checkUserLike(token.UserId, post.id)
             let userDisLike = await checkUserDisLike(token.UserId, post.id)
-            postsData.push({post, images, tags, user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName}, userLike, userDisLike})
+            postsData.push({post, images, tags, user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName, role: user.role}, userLike, userDisLike})
         }
         return res.status(200).json({
             message: "Found posts :)",
