@@ -69,13 +69,21 @@ const after5DaysEmail = async(userId)=>{
 
 const getUserByID = async (req, res) => {
     try {
-        let user = req.user,
-            userFeatures = await userFeaturesModel.findAndCountAll({where:{UserId: user.id}}),
-            features = []
-        for (let i = 0; i < userFeatures.count; i++) {
-            const feature = userFeatures.rows[i];
-            let featureData = await featureModel.findByPk(feature.FeatureId)
-            features.push(featureData.feature)
+        const   user = req.user,
+                features = []
+        if(user.haveFreeTrial){
+            const features = await featureModel.findAndCountAll()
+            for (let i = 0; i < features.count; i++) {
+                const feature = features.rows[i];
+                features.push(feature.feature)
+            }
+        }else{
+            const userFeatures = await userFeaturesModel.findAndCountAll({where:{UserId: user.id}})
+            for (let i = 0; i < userFeatures.count; i++) {
+                let feature = userFeatures.rows[i];
+                const featureData = await featureModel.findByPk(feature.FeatureId)
+                features.push(featureData.feature)
+            }
         }
 
         user.image = (user.image)?Buffer.from(user.image).toString('base64'):user.image
@@ -97,9 +105,15 @@ const getAllUsers = async (req, res) => {
             usersData = []
         for (let i = 0; i < users.count; i++) {
             let user = users.rows[i],
-                userFeatures = await userFeaturesModel.findAndCountAll({where:{UserId: user.id}}),
                 features = []
-            if(userFeatures){
+            if(user.haveFreeTrial){
+                const features = await featureModel.findAndCountAll()
+                for (let i = 0; i < features.count; i++) {
+                    const feature = features.rows[i];
+                    features.push(feature.feature)
+                }
+            }else{
+                let userFeatures = await userFeaturesModel.findAndCountAll({where:{UserId: user.id}})
                 for (let j = 0; j < userFeatures.count; j++) {
                     let feature = userFeatures.rows[j],
                         featureData = await featureModel.findByPk(feature.FeatureId)
