@@ -1,7 +1,9 @@
 const userModel = require("../models/User")
 const featureModel = require("../models/Feature")
 const userFeatureModel = require("../models/UserFeatures")
+const xml2js = require("xml2js")
 const {Op} = require("sequelize")
+const fs = require("fs")
 
 const getFeatureById = (req, res)=>{
     let feature = req.feature
@@ -98,8 +100,25 @@ const createFeature = async(req, res)=>{
     featureData["feature"] = req.body.feature
     featureData["describtion"] = req.body.describtion
     featureData["price"] = parseInt(req.body.price)
+    featureData["type"] = req.body.type
 
     try{
+        if(!req.file) featureData["icon"] = null
+        else{
+            // const parser = new xml2js.Parser()
+            // const builder = new xml2js.Builder()
+            // console.log(req.file.buffer)
+            const filesrc = req.file.filename; // get the file path from req.file
+            const directoryPath = __dirname.replace("controllers", "public/images/")
+            const svgStr = fs.readFileSync(directoryPath+filesrc); // read the file as a string
+            // parser.parseString(req.file.buffer, (err, result)=>{
+            //     if(err) return res.status(500).json({message: "Create Feature Error: " + err})
+            //     const xmlString = builder.buildObject(result)
+            //     featureData["icon"] = xmlString
+            // })
+            featureData["icon"] = svgStr
+        }
+
         let checkFeatureFound = await featureModel.findOne({where:{feature:featureData.feature}})
         if (checkFeatureFound !== null) return res.status(400).json({
             message: "Feature is actually exist :("
@@ -124,8 +143,18 @@ const updateFeature = async(req, res)=>{
     featureData["feature"] = req.body.feature || feature.feature
     featureData["describtion"] = req.body.describtion || feature.describtion
     featureData["price"] = parseInt(req.body.price) || feature.price
+    featureData["type"] = req.body.type || feature.type
 
+    
     try{
+        if(!req.file) featureData["icon"] = null
+        else{
+            const filesrc = req.file.filename
+            const directoryPath = __dirname.replace("controllers", "public/images/")
+            const svgStr = fs.readFileSync(directoryPath+filesrc)
+            featureData["icon"] = svgStr
+        }
+
         await featureModel.update(featureData, {where:{id:feature.id}})
         return res.status(200).json({
             message: "Feature updated successfully :)"
@@ -156,7 +185,7 @@ const deleteUserFeature = async(req, res)=>{
     const id = req.params.id
     try{
         const userFeature = await userFeatureModel.findOne({where:{
-            [op.and]:[
+            [Op.and]:[
                 {UserId: token.UserId},
                 {FeatureId: id}
             ]

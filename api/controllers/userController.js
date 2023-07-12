@@ -72,9 +72,9 @@ const getUserByID = async (req, res) => {
         const   user = req.user,
                 features = []
         if(user.haveFreeTrial){
-            const features = await featureModel.findAndCountAll()
-            for (let i = 0; i < features.count; i++) {
-                const feature = features.rows[i];
+            const featuresData = await featureModel.findAndCountAll()
+            for (let i = 0; i < featuresData.count; i++) {
+                const feature = featuresData.rows[i];
                 features.push(feature.feature)
             }
         }else{
@@ -107,9 +107,9 @@ const getAllUsers = async (req, res) => {
             let user = users.rows[i],
                 features = []
             if(user.haveFreeTrial){
-                const features = await featureModel.findAndCountAll()
-                for (let i = 0; i < features.count; i++) {
-                    const feature = features.rows[i];
+                const featuresData = await featureModel.findAndCountAll()
+                for (let i = 0; i < featuresData.count; i++) {
+                    const feature = featuresData.rows[i];
                     features.push(feature.feature)
                 }
             }else{
