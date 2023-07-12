@@ -105,18 +105,15 @@ const createFeature = async(req, res)=>{
     try{
         if(!req.file) featureData["icon"] = null
         else{
-            // const parser = new xml2js.Parser()
-            // const builder = new xml2js.Builder()
-            // console.log(req.file.buffer)
-            const filesrc = req.file.filename; // get the file path from req.file
+            const filesrc = req.file.filename
             const directoryPath = __dirname.replace("controllers", "public/images/")
-            const svgStr = fs.readFileSync(directoryPath+filesrc); // read the file as a string
-            // parser.parseString(req.file.buffer, (err, result)=>{
-            //     if(err) return res.status(500).json({message: "Create Feature Error: " + err})
-            //     const xmlString = builder.buildObject(result)
-            //     featureData["icon"] = xmlString
-            // })
+            const svgStr = fs.readFileSync(directoryPath+filesrc)
             featureData["icon"] = svgStr
+            fs.unlink(directoryPath + filesrc, (err) => {
+                if (err) return res.status(500).json({
+                    message: "Delete logo from server error: " + err
+                })
+            })
         }
 
         let checkFeatureFound = await featureModel.findOne({where:{feature:featureData.feature}})
@@ -153,6 +150,11 @@ const updateFeature = async(req, res)=>{
             const directoryPath = __dirname.replace("controllers", "public/images/")
             const svgStr = fs.readFileSync(directoryPath+filesrc)
             featureData["icon"] = svgStr
+            fs.unlink(directoryPath + filesrc, (err) => {
+                if (err) return res.status(500).json({
+                    message: "Delete logo from server error: " + err
+                })
+            })
         }
 
         await featureModel.update(featureData, {where:{id:feature.id}})

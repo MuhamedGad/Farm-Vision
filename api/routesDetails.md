@@ -277,6 +277,7 @@ Form:
 | describtion | text | minimum length 10 characters | false |
 | price | number | must be number | false |
 | type | selectbox | must be "image", "video" or "other" | false |
+| icon | file | icon of feature | true |
 </br>
 
 ### **update feature:**
@@ -295,6 +296,7 @@ Form:
 | describtion | text | minimum length 10 characters | true |
 | price | number | must be number | true |
 | type | selectbox | must be "image", "video" or "other" | true |
+| icon | file | icon of feature | true |
 
 </br>
 
