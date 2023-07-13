@@ -18,4 +18,4 @@ const storage = multer.diskStorage({
     }
 })
 
-module.exports = multer({ storage: storage, fileFilter: imageFilter })
+module.exports = multer({ storage: storage/* , fileFilter: imageFilter */ })
