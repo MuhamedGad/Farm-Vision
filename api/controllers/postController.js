@@ -46,10 +46,11 @@ const getPostById = async (req, res) => {
             postImages = await postImageModel.findAndCountAll({where:{PostId: post.id}}),
             images = [],
             tags = []
-        postImages.rows.forEach(e=>{
-            let image = (e.image)?Buffer.from(e.image).toString('base64'):e.image
+        
+        for(let i = 0; i < postImages.count; i++){
+            let image = (postImages.rows[i].image)?Buffer.from(postImages.rows[i].image).toString('base64'):postImages.rows[i].image
             images.push(image)
-        })
+        }
         for (let i = 0; i < postTags.count; i++) {
             let tagData = await tagModel.findByPk(postTags.rows[i].TagId)
             tags.push(tagData.tag)
@@ -217,16 +218,17 @@ const createPost = async(req, res)=>{
                 await postTagsModel.create({TagId: tags[i].id, PostId: post.id}, { transaction: t })
                 await tagModel.update({numberOfPosts: tags[i].numberOfPosts + 1}, {where:{id: tags[i].id}, transaction: t})
             }
+            console.log(filesnames)
             for (let j = 0; j < filesnames.length; j++) {
                 let imgsrc = filesnames[j]
                 let directoryPath = __dirname.replace("controllers", "public/images/")
                 let imageData = fs.readFileSync(directoryPath+imgsrc)
+                await postImageModel.create({image: imageData, PostId: post.id}, {transaction: t})
                 fs.unlink(directoryPath + imgsrc, (err) => {
                     if (err) return res.status(500).json({
                         message: "Delete logo from server error: " + err
                     })
                 })
-                await postImageModel.create({image: imageData, PostId: post.id}, {transaction: t})
             }
         })
 
