@@ -43,11 +43,11 @@ Response Data:
 ### **Get Images Data (Images History)**
 Route:
 ```
-/api/imagesModels
+/api/imagesModels/get
 ```
 Method:
 ```
-GET
+POST
 ```
 Response Data:
 - message: simple message to feedback
@@ -59,11 +59,11 @@ Response Data:
 ### **Get Image Data (One Row Of History)**
 Route:
 ```
-/api/imagesModels/:id        -(id) id of image data
+/api/imagesModels/get/:id        -(id) id of image data
 ```
 Method:
 ```
-GET
+POST
 ```
 Response Data:
 - message: simple message to feedback
@@ -75,11 +75,11 @@ Response Data:
 ### **Delete Image Data (One Row Of History)**
 Route:
 ```
-/api/imagesModels/:id        -(id) id of image data
+/api/imagesModels/delete/:id        -(id) id of image data
 ```
 Method:
 ```
-DELETE
+POST
 ```
 Response Data:
 - message: simple message to feedback
@@ -117,11 +117,11 @@ Response Data:
 ### **Get Videos Data (Videos History)**
 Route:
 ```
-/api/videosModels
+/api/videosModels/get
 ```
 Method:
 ```
-GET
+POST
 ```
 Form:
 | input name | Type | validate | nullable |
@@ -137,11 +137,11 @@ Response Data:
 ### **Get Video Data (One Row Of History)**
 Route:
 ```
-/api/videosModels/:id        -(id) id of image data
+/api/videosModels/get/:id        -(id) id of image data
 ```
 Method:
 ```
-GET
+POST
 ```
 Form:
 | input name | Type | validate | nullable |
@@ -157,11 +157,11 @@ Response Data:
 ### **Delete Video Data (One Row Of History)**
 Route:
 ```
-/api/videosModels/:id        -(id) id of image data
+/api/videosModels/delete/:id        -(id) id of image data
 ```
 Method:
 ```
-DELETE
+POST
 ```
 Form:
 | input name | Type | validate | nullable |
