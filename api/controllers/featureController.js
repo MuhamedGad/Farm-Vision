@@ -157,6 +157,9 @@ const deleteUserFeature = async(req, res)=>{
     const token = req.token
     const id = req.params.id
     try{
+        const user = await userModel.findByPk(token.UserId)
+        if(user.haveFreeTrial == true) return res.status(400).json({message: "You can't cancel feature in free trial"})
+
         const userFeature = await userFeatureModel.findOne({where:{
             [Op.and]:[
                 {UserId: token.UserId},
@@ -170,11 +173,11 @@ const deleteUserFeature = async(req, res)=>{
         await userFeatureModel.destroy({where:{id: userFeature.id}})
 
         return res.status(200).json({
-            message: "User feature deleted successfully"
+            message: "User feature canceled successfully"
         })
     }catch(err){
         return res.status(500).json({
-            message: "Delete user feature error: " + err
+            message: "cancel user feature error: " + err
         })
     }
 
