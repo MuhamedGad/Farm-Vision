@@ -3,16 +3,12 @@ const sequelize = require("./sequelize")
 const User = require("./User")
 
 const Payment = sequelize.define('Payment', {
-    name:{
-        type:DataTypes.STRING,
-        allowNull:false
-    },
     price:{
-        type:DataTypes.INTEGER,
+        type:DataTypes.FLOAT,
         allowNull:false
     },
     describtion:{
-        type:DataTypes.STRING(1000),
+        type:DataTypes.STRING,
         allowNull:false
     }
 });
@@ -24,7 +20,7 @@ User.hasMany(Payment, {
 Payment.belongsTo(User);
 
 (async () => {
-    await Payment.sync(/* {alter:true} */);
+    await Payment.sync({alter:true});
 })();
 
 module.exports = Payment

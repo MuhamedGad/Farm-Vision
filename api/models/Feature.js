@@ -13,7 +13,7 @@ const Feature = sequelize.define('Feature', {
         allowNull:false
     },
     price:{
-        type:DataTypes.INTEGER,
+        type:DataTypes.FLOAT,
         allowNull:false
     },
     type:{
@@ -26,7 +26,7 @@ User.hasMany(Feature)
 Feature.belongsTo(User);
 
 (async () => {
-    await Feature.sync(/* {alter:true} */);
+    await Feature.sync({alter:true});
 })();
 
 module.exports = Feature

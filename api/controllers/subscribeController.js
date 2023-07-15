@@ -137,7 +137,6 @@ const storePaymentDetails = async(req, res)=>{
                 await userFeaturesModel.create({FeatureId: features[i].id, UserId: token.UserId}, { transaction: t })
             }
             const payment = await paymentModel.create({
-                name:product.name,
                 price: product.price,
                 describtion:product.describtion,
                 UserId:token.UserId

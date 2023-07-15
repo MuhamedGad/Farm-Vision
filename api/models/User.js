@@ -31,12 +31,12 @@ const User = sequelize.define('User', {
     type: DataTypes.ENUM("admin", "superAdmin", "farmer", "engineer"),
     allowNull: false
   },
-  premium:{
+  premium: {
     type: DataTypes.BOOLEAN,
     allowNull:false,
     defaultValue: false
   },
-  haveFreeTrial:{
+  haveFreeTrial: {
     type: DataTypes.BOOLEAN,
     allowNull:false,
     defaultValue: true
