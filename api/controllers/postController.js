@@ -218,7 +218,7 @@ const createPost = async(req, res)=>{
                 await postTagsModel.create({TagId: tags[i].id, PostId: post.id}, { transaction: t })
                 await tagModel.update({numberOfPosts: tags[i].numberOfPosts + 1}, {where:{id: tags[i].id}, transaction: t})
             }
-            console.log(filesnames)
+
             for (let j = 0; j < filesnames.length; j++) {
                 let imgsrc = filesnames[j]
                 let directoryPath = __dirname.replace("controllers", "public/images/")

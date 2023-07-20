@@ -21,7 +21,6 @@ const feature = require("./routes/Feature")
 const tag = require("./routes/Tag")
 const report = require("./routes/Report")
 const subscribe = require("./routes/Subscribe")
-// const googleDriveUpload = require("./routes/GoogleDriveUpload")
 
 app.set('view engine', 'ejs')
 
@@ -44,7 +43,6 @@ app.use("/api/feature", feature)
 app.use("/api/tag", tag)
 app.use("/api/report", report)
 app.use("/api/subscribe", subscribe)
-// app.use("/api/googleDriveUpload", googleDriveUpload)
 
 app.use((req, res) => { res.status(400).json({ message: "Not Found This endpoint :(" }) })
 

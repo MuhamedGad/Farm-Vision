@@ -15,7 +15,7 @@ const upload = require("../middlewares/uploadImageMW")
 
 router.get("/:id", validID, authrization, checkUserFound, checkPermission, userController.getUserByID)
 router.post("/", upload.single("image"), createUserValidator, confirmPassword, encryptPassword, userController.createUser)
-router.put("/:id", validID, authrization, checkUserFound, checkPermission, upload.single("image"), updateUserValidator, userController.updateUser)
+router.put("/:id", validID, authrization, upload.single("image"), checkUserFound, checkPermission, updateUserValidator, userController.updateUser)
 router.delete("/:id", validID, authrization, checkUserFound, checkPermission, userController.deleteUser)
 
 module.exports = router

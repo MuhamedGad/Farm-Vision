@@ -13,7 +13,7 @@ router.get("/getUserFeatures", authrization, featureController.getUserFeatures)
 router.get("/getUnsubscribedFeatures", authrization, featureController.getUnsubscribedFeatures)
 
 router.get("/", authrization, featureController.getAllFeatures)
-router.get("/:id", validID, checkFeatureFound, featureController.getFeatureById)
+router.get("/:id", validID, authrization, checkFeatureFound, featureController.getFeatureById)
 router.post("/", authrization, upload.single("icon"), checkAdmin, createFeatureValidator, featureController.createFeature)
 router.put("/:id", validID, authrization, upload.single("icon"), checkAdmin, checkFeatureFound, updateFeatureValidator, featureController.updateFeature)
 router.delete("/:id", validID, authrization, checkAdmin, checkFeatureFound, featureController.deleteFeature)
