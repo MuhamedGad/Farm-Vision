@@ -272,8 +272,9 @@ const updatePost = async(req, res)=>{
                 await tagModel.update({numberOfPosts: tag.numberOfPosts + 1}, {where:{id: tags[i].id}, transaction: t})
             }
 
-            await postImageModel.destroy({where:{PostId: post.id}, transaction: t})
-
+            if(!filesnames.length === 0){
+                await postImageModel.destroy({where:{PostId: post.id}, transaction: t})
+            }
             filesnames.forEach(async e=>{
                 let imgsrc = e
                 let directoryPath = __dirname.replace("controllers", "public/images/")

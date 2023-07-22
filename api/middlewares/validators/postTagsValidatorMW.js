@@ -5,6 +5,7 @@ module.exports = async(req, res, next)=>{
         tagsData = new Set()
     
     if(tags){
+        tags = tags.split(",")
         if(Array.isArray(tags)){
             for(let i = 0; i < tags.length; i++){
                 let tag = await tagsModel.findOne({where:{tag: tags[i]}})
