@@ -173,7 +173,9 @@ const updateComment = async(req, res)=>{
 
     try{
         await sequelize.transaction(async (t) => {
-            await commentImageModel.destroy({where:{CommentId: comment.id}, transaction: t})
+            if(!filesnames.length === 0){
+                await commentImageModel.destroy({where:{CommentId: comment.id}, transaction: t})
+            }
             filesnames.forEach(async e=>{
                 let imgsrc = e
                 let directoryPath = __dirname.replace("controllers", "public/images/")
