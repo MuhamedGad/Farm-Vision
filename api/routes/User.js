@@ -11,7 +11,7 @@ const checkPermission = require("../middlewares/checkPermission/checkPermissionO
 const confirmPassword = require("../middlewares/validators/confirmPasswordMW")
 const upload = require("../middlewares/uploadImageMW")
 
-// router.get("/verifyemail/:id/:token", userController.verifyEmail)
+router.post("/verifyemail", userController.verifyEmail)
 
 router.get("/:id", validID, authrization, checkUserFound, checkPermission, userController.getUserByID)
 router.post("/", upload.single("image"), createUserValidator, confirmPassword, encryptPassword, userController.createUser)

@@ -6,7 +6,7 @@ const {Op} = require("sequelize")
 const getFeatureById = (req, res)=>{
     let feature = req.feature
     return res.status(200).json({
-        message: "Feature Found :)",
+        message: "Feature Found.",
         data: feature
     })
 }
@@ -15,7 +15,7 @@ const getAllFeatures = async (req, res) => {
     try {
         let features = await featureModel.findAndCountAll()
         return res.status(200).json({
-            message: "Found features :)",
+            message: "Found features.",
             length: features.count,
             data: features.rows
         })
@@ -33,7 +33,7 @@ const getUserFeatures = async(req, res)=>{
         if(user.haveFreeTrial == true) {
             const features = await featureModel.findAndCountAll()
             return res.status(200).json({
-                message: "Found features :)",
+                message: "Found features.",
                 length: features.count,
                 data: features.rows
             })
@@ -46,7 +46,7 @@ const getUserFeatures = async(req, res)=>{
                 features.push(feature)
             }
             return res.status(200).json({
-                message: "Found features :)",
+                message: "Found features.",
                 length: features.length,
                 data: features
             })
@@ -64,7 +64,7 @@ const getUnsubscribedFeatures = async(req, res)=>{
         const user = await userModel.findByPk(token.UserId)
         if(user.haveFreeTrial == true) {
             return res.status(200).json({
-                message: "Found features :)",
+                message: "Found features.",
                 length: 0,
                 data: []
             })
@@ -78,7 +78,7 @@ const getUnsubscribedFeatures = async(req, res)=>{
             }
             const unsubscribedFeatures = await featureModel.findAndCountAll({where:{feature:{[Op.notIn]:features}}})
             return res.status(200).json({
-                message: "Found features :)",
+                message: "Found features.",
                 length: unsubscribedFeatures.count,
                 data: unsubscribedFeatures.rows
             })
@@ -103,12 +103,12 @@ const createFeature = async(req, res)=>{
     try{
         let checkFeatureFound = await featureModel.findOne({where:{feature:featureData.feature}})
         if (checkFeatureFound !== null) return res.status(400).json({
-            message: "Feature is actually exist :("
+            message: "Feature is actually exist."
         })
         
         let feature = await featureModel.create(featureData)
         return res.status(200).json({
-            message: "Feature created successfully :)",
+            message: "Feature created successfully.",
             id: feature.id
         })
     }catch(err){
@@ -130,7 +130,7 @@ const updateFeature = async(req, res)=>{
     try{
         await featureModel.update(featureData, {where:{id:feature.id}})
         return res.status(200).json({
-            message: "Feature updated successfully :)"
+            message: "Feature updated successfully."
         })
     }catch(err){
         return res.status(500).json({
@@ -144,7 +144,7 @@ const deleteFeature = async(req, res)=>{
         let feature = req.feature
         await featureModel.destroy({where: { id: feature.id }})
         return res.status(200).json({
-            message: "Feature Deleted Successfully :)"
+            message: "Feature Deleted Successfully."
         })
     } catch (err) {
         return res.status(500).json({
@@ -158,7 +158,7 @@ const deleteUserFeature = async(req, res)=>{
     const id = req.params.id
     try{
         const user = await userModel.findByPk(token.UserId)
-        if(user.haveFreeTrial == true) return res.status(400).json({message: "You can't cancel feature in free trial"})
+        if(user.haveFreeTrial == true) return res.status(400).json({message: "You can't cancel feature in free trial."})
 
         const userFeature = await userFeatureModel.findOne({where:{
             [Op.and]:[
@@ -168,12 +168,12 @@ const deleteUserFeature = async(req, res)=>{
         }})
         
         if(userFeature == null) return res.status(404).json({
-            message: "invalid feature id or permission denied"
+            message: "invalid feature id or permission denied."
         })
         await userFeatureModel.destroy({where:{id: userFeature.id}})
 
         return res.status(200).json({
-            message: "User feature canceled successfully"
+            message: "User feature canceled successfully."
         })
     }catch(err){
         return res.status(500).json({

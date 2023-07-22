@@ -9,14 +9,14 @@ module.exports = (req, res, next)=>{
             req.valid = 1
             next()
         }else return res.status(403).json({
-            message: "forbidden command",
+            message: "forbidden command.",
         })
     }else{
         if(resetValidator(req.body)){
             req.valid = 1
             next()
         }else return res.status(403).json({
-            message: "forbidden command",
+            message: "forbidden command.",
         })
     }
 }

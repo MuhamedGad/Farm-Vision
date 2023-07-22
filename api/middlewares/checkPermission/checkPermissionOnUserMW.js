@@ -13,7 +13,7 @@ module.exports = (req, res, next)=>{
             next()
         }
         else return res.status(401).json({
-            message: "Access Denied :("
+            message: "Access Denied."
         })
     });
 }

@@ -4,7 +4,7 @@ module.exports = async (req, res, next) => {
     try {
         let feature = await featureModel.findByPk(req.params.id)
         if (feature === null) return res.status(404).json({
-            message: "Feature Not Found :("
+            message: "Feature Not Found."
         })
         else {
             req.feature = feature

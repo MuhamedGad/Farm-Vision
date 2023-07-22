@@ -4,7 +4,7 @@ module.exports = async(req, res, next)=>{
     try {
         let post = await postModel.findByPk(req.params.id)
         if(post === null) return res.status(404).json({
-            message: "Post Not Found :("
+            message: "Post Not Found."
         })
         else {
             req.post = post

@@ -13,8 +13,16 @@ const deviceDetector = require("device-detector-js")
 const detector = new deviceDetector()
 const bcrypt = require("bcrypt")
 const nodeMail = require("../util/nodeMail")
-const subscribeFormLink = "http://google.com"
-const verifiedEmailLink = "http://localhost:8888/api/user/verifyemail"
+const subscribeFormLink = "http://localhost:5173/pricing/"
+
+function generateCode (length) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let code = '';
+    for (let i = 0; i < length; i++) {
+        code += characters.charAt (Math.floor(Math.random() * characters.length));
+    }
+    return code;
+}
 
 const endFreeTrialEmail = async(userId)=>{
     try{
@@ -58,80 +66,9 @@ const after5DaysEmail = async(userId)=>{
                 }
     
             nodeMail(email, subject, message, link)
-            // 172800000ms for 2 day
-            // 120000ms for 2 min
-            setTimeout(endFreeTrialEmail, 120000, user.id)
         }
     }catch(err){
         console.log("After 5 days Error: " + err)
-    }
-}
-
-const getUserByID = async (req, res) => {
-    try {
-        const   user = req.user,
-                features = []
-        if(user.haveFreeTrial){
-            const featuresData = await featureModel.findAndCountAll()
-            for (let i = 0; i < featuresData.count; i++) {
-                const feature = featuresData.rows[i];
-                features.push(feature.feature)
-            }
-        }else{
-            const userFeatures = await userFeaturesModel.findAndCountAll({where:{UserId: user.id}})
-            for (let i = 0; i < userFeatures.count; i++) {
-                let feature = userFeatures.rows[i];
-                const featureData = await featureModel.findByPk(feature.FeatureId)
-                features.push(featureData.feature)
-            }
-        }
-
-        user.image = (user.image)?Buffer.from(user.image).toString('base64'):user.image
-
-        return res.status(200).json({
-            message: "User Found :)",
-            data: {user, features}
-        })
-    } catch (err) {
-        return res.status(500).json({
-            message:"Get User Error: " + err
-        })
-    }
-}
-
-const getAllUsers = async (req, res) => {
-    try {
-        let users = await userModel.findAndCountAll(),
-            usersData = []
-        for (let i = 0; i < users.count; i++) {
-            let user = users.rows[i],
-                features = []
-            if(user.haveFreeTrial){
-                const featuresData = await featureModel.findAndCountAll()
-                for (let i = 0; i < featuresData.count; i++) {
-                    const feature = featuresData.rows[i];
-                    features.push(feature.feature)
-                }
-            }else{
-                let userFeatures = await userFeaturesModel.findAndCountAll({where:{UserId: user.id}})
-                for (let j = 0; j < userFeatures.count; j++) {
-                    let feature = userFeatures.rows[j],
-                        featureData = await featureModel.findByPk(feature.FeatureId)
-                    features.push(featureData.feature)
-                }
-            }
-            user.image = (user.image)?Buffer.from(user.image).toString('base64'):user.image;
-            usersData.push({user, features})
-        }
-        return res.status(200).json({
-            message: "Found users :)",
-            length: users.count,
-            data: usersData
-        })
-    } catch (err) {
-        return res.status(500).json({
-            message:"Get All Users Error: " + err
-        })
     }
 }
 
@@ -171,6 +108,74 @@ const createTokenData = (req)=>{
     return tokenData
 }
 
+const getUserByID = async (req, res) => {
+    try {
+        const   user = req.user,
+                features = []
+        if(user.haveFreeTrial){
+            const featuresData = await featureModel.findAndCountAll()
+            for (let i = 0; i < featuresData.count; i++) {
+                const feature = featuresData.rows[i];
+                features.push(feature.feature)
+            }
+        }else{
+            const userFeatures = await userFeaturesModel.findAndCountAll({where:{UserId: user.id}})
+            for (let i = 0; i < userFeatures.count; i++) {
+                let feature = userFeatures.rows[i];
+                const featureData = await featureModel.findByPk(feature.FeatureId)
+                features.push(featureData.feature)
+            }
+        }
+
+        user.image = (user.image)?Buffer.from(user.image).toString('base64'):user.image
+
+        return res.status(200).json({
+            message: "User Found.",
+            data: {user, features}
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message:"Get User Error: " + err
+        })
+    }
+}
+
+const getAllUsers = async (req, res) => {
+    try {
+        let users = await userModel.findAndCountAll(),
+            usersData = []
+        for (let i = 0; i < users.count; i++) {
+            let user = users.rows[i],
+                features = []
+            if(user.haveFreeTrial){
+                const featuresData = await featureModel.findAndCountAll()
+                for (let i = 0; i < featuresData.count; i++) {
+                    const feature = featuresData.rows[i];
+                    features.push(feature.feature)
+                }
+            }else{
+                let userFeatures = await userFeaturesModel.findAndCountAll({where:{UserId: user.id}})
+                for (let j = 0; j < userFeatures.count; j++) {
+                    let feature = userFeatures.rows[j],
+                        featureData = await featureModel.findByPk(feature.FeatureId)
+                    features.push(featureData.feature)
+                }
+            }
+            user.image = (user.image)?Buffer.from(user.image).toString('base64'):user.image;
+            usersData.push({user, features})
+        }
+        return res.status(200).json({
+            message: "Found users.",
+            length: users.count,
+            data: usersData
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message:"Get All Users Error: " + err
+        })
+    }
+}
+
 const createUser = async (req, res) => {
     try {
         let user = await userModel.findOne({ where: {
@@ -186,7 +191,7 @@ const createUser = async (req, res) => {
             deletedEmail = await emailsDeletedModel.findOne({where:{email: req.body.email}})
 
         if (user !== null) return res.status(400).json({
-            message: "Email, phoneNumber or userName is actually exist :("
+            message: "Email, phoneNumber or userName is actually exist."
         })
 
         if(deletedEmail !== null){
@@ -197,7 +202,7 @@ const createUser = async (req, res) => {
         if(req.body.role == "farmer" || req.body.role == "engineer"){
             userData["role"] = req.body.role
         }else return res.status(403).json({
-            message: "forbidden command"
+            message: "forbidden command."
         })
 
         userData["loginDevices"] = 1
@@ -219,35 +224,28 @@ const createUser = async (req, res) => {
 
         await sequelize.transaction(async (t) => {
             user = await userModel.create(userData, { transaction: t })
-
+            /* const verificationEmailToken = generateCode(6)
+            await verifiedEmailTokenModel.create({UserId:user.id, token: verificationEmailToken}, { transaction: t })
+            let to = user.email,
+                subject = "Verification Email",
+                message = `Hello ${user.firstName}, Verify your email address so we know it's really you, and so we can send you important information about your Farm Vision account. Please Enter this code in the app to verify your email: <span style="font-size:large">${verificationEmailToken}</span>`
+            await nodeMail(to, subject, message)
+            return res.status(200).json({
+                message: "Please check your email to verify.",
+                id: user.id
+            }) */
             token = jwt.sign({ user_id: user.id, role: user.role }, config.get("seckey"))
             tokenData["token"] = token
             tokenData["UserId"] = user.id
             await tokenModel.create(tokenData, { transaction: t })
-
-            /* // ---------- Verification Email ----------------
-            let verificationEmailToken = crypto.createHash('sha256').update(crypto.randomBytes(32).toString('hex')).digest('hex');
-            await verifiedEmailTokenModel.create({UserId:user.id, token: verificationEmailToken}, { transaction: t })
-            let to = user.email,
-                subject = "Verification Email",
-                message = `Hello ${user.firstName}, Verify your email address so we know it's really you, and so we can send you important information about your Farm Vision account.`,
-                link = {
-                    url: verifiedEmailLink + `/${user.id}/${verificationEmailToken}`,
-                    describtion: "Verify email address"
-                }
-            await nodeMail(to, subject, message, link)
-            // ---------------------------------------------- */
         })
 
         return res.status(200).json({
-            message: "User Created Successfully :)",
+            message: "User Created Successfully.",
             token,
             id: user.id,
             role: user.role
         })
-        // return res.status(200).json({
-        //     message: "Please check your email to verify."
-        // })
     } catch (err) {
         return res.status(500).json({
             message: "Create User Error: " + err
@@ -257,37 +255,47 @@ const createUser = async (req, res) => {
 
 const verifyEmail = async(req, res)=>{
     try{
-        let userId = req.params.id,
-            user,
-            emailToken = req.params.token,
-            verifiedEmailToken = await verifiedEmailTokenModel.findOne({ where: {
-                [Op.and]: [
-                    { UserId: userId },
-                    { token: emailToken }
-                ]
-            }})
-    
-        if (verifiedEmailToken !== null) {
+        const   code = req.body.code,
+                id = req.body.id,
+                userToken = await verifiedEmailTokenModel.findOne({where:{
+                    [Op.and]: [{UserId: id}, {token: code}]
+                }})
+        let tokenData = createTokenData(req),
+            token,
+            user
+        if(userToken !== null){
+            user = await userModel.findByPk(userToken.UserId)
             await sequelize.transaction(async (t) => {
-                user = await userModel.findByPk(userId)
-                await verifiedEmailTokenModel.destroy({where: {id: verifiedEmailToken.id}, transaction: t})
-                await userModel.update({verified: true}, {where:{id: user.id}, transaction: t})
+                await verifiedEmailTokenModel.destroy({where:{id: userToken.id}, transaction: t})
+                token = jwt.sign({ user_id: user.id, role: user.role }, config.get("seckey"))
+                tokenData["token"] = token
+                tokenData["UserId"] = user.id
+                await tokenModel.create(tokenData, { transaction: t })
+                await userModel.update({verified: true, loginDevices: 1}, {where:{id: user.id}, transaction: t})
             })
 
             // 432000000ms for 5 days
             // 300000ms for 5 min
+            // 604800000ms for 7 day
+            // 420000ms for 7 min
             if(user.haveFreeTrial){
                 console.log("start timer")
                 setTimeout(after5DaysEmail, 300000, user.id)
+                setTimeout(endFreeTrialEmail, 420000, user.id)
             }
 
             return res.status(200).json({
-                message: "User Created Successfully you can login now :)"
+                message: "User Created Successfully.",
+                token,
+                id: user.id,
+                role: user.role
             })
-        }else return res.status(400).json({
-            message: "soory..! Not found verify token to this email :("
-        })
-    } catch (err) {
+        }else{
+            return res.status(400).json({
+                message: "code or id not correct.",
+            })
+        }
+    }catch(err){
         return res.status(500).json({
             message: "Verify Email Error: " + err
         })
@@ -308,7 +316,7 @@ const addUserByAdmin = async (req, res) => {
             deletedEmail = emailsDeletedModel.findOne({where:{email: req.body.email}})
 
         if (user !== null) return res.status(400).json({
-            message: "Email, phoneNumber or userName is actually exist :("
+            message: "Email, phoneNumber or userName is actually exist."
         })
 
         if(deletedEmail !== null){
@@ -317,7 +325,7 @@ const addUserByAdmin = async (req, res) => {
         }
 
         if(token.role === "admin" && req.body.role === "superAdmin") return res.status(401).json({
-            message: "Access Denied :("
+            message: "Access Denied."
         })
         else userData["role"] = req.body.role
 
@@ -340,28 +348,12 @@ const addUserByAdmin = async (req, res) => {
 
         await sequelize.transaction(async (t) => {
             user = await userModel.create(userData, { transaction: t })
-            /* // ---------- Verification Email ----------------
-            let verificationEmailToken = crypto.createHash('sha256').update(crypto.randomBytes(32).toString('hex')).digest('hex');
-            await verifiedEmailTokenModel.create({UserId:user.id, token: verificationEmailToken}, { transaction: t })
-            let to = user.email,
-                subject = "Verification Email",
-                message = `Hello ${user.firstName}, Verify your email address so we know it's really you, and so we can send you important information about your Farm Vision account.`,
-                link = {
-                    url: verifiedEmailLink + `/${user.id}/${verificationEmailToken}`,
-                    describtion: "Verify email address"
-                }
-            await nodeMail(to, subject, message, link)
-            // ---------------------------------------------- */
         })
 
         return res.status(200).json({
-            message: "User Created Successfully :)",
+            message: "User Created Successfully.",
             id: user.id
         })
-        // return res.status(200).json({
-        //     message: "User Created Successfully but not verified so please check this emails to verify then he can login :)",
-        //     id: user.id
-        // })
     } catch (err) {
         return res.status(500).json({
             message: "Create User Error: " + err
@@ -384,7 +376,7 @@ const updateUser = async (req, res) => {
         }})
 
         if (testUser !== null && user.id !== testUser.id) return res.status(400).json({
-            message: "Email, phoneNumber or userName is actually exist :(",
+            message: "Email, phoneNumber or userName is actually exist.",
         })
         userData["firstName"] = (req.body.firstName)?req.body.firstName:user.firstName
         userData["lastName"] = (req.body.lastName)?req.body.lastName:user.lastName
@@ -420,7 +412,7 @@ const updateUser = async (req, res) => {
         await userModel.update(userData, {where: { id: user.id }})
 
         return res.status(200).json({
-            message: "User Updated Successfully :)"
+            message: "User Updated Successfully."
         })
     } catch (err) {
         return res.status(500).json({
@@ -439,7 +431,7 @@ const deleteUser = async (req, res) => {
         })
 
         return res.status(200).json({
-            message: "User Deleted Successfully :)"
+            message: "User Deleted Successfully."
         })
 
     } catch (err) {
@@ -461,7 +453,7 @@ const updateRole = async (req, res) => {
                     await tokenModel.destroy({ where: { UserId: user.id }, transaction: t });
                 });
             else return res.status(401).json({
-                message: "Access Denied :("
+                message: "Access Denied."
             })
         }else await sequelize.transaction(async (t) => {
             await userModel.update({ role: role, lastUpdatedUserName: tokenUser.userName }, { where: { id: user.id }, transaction: t });
@@ -469,7 +461,7 @@ const updateRole = async (req, res) => {
         });
 
         return res.status(200).json({
-            message: "Role Updated Successfully :)"
+            message: "Role Updated Successfully."
         })
     } catch (err) {
         return res.status(500).json({
@@ -490,14 +482,14 @@ const updatePassword = async (req, res) => {
             })
     
             if (!result) return res.status(403).json({
-                message: "Old password not correct :("
+                message: "Old password not correct."
             })
     
             try {
                 tokenUser = await userModel.findByPk(token.UserId)
                 await userModel.update({ password: req.body.password, lastUpdatedUserName: tokenUser.userName }, { where: { id: user.id } })
                 return res.status(200).json({
-                    message: "Password Updated Successfully :)"
+                    message: "Password Updated Successfully."
                 })
             } catch (err) {
                 return res.status(500).json({
@@ -510,7 +502,7 @@ const updatePassword = async (req, res) => {
             tokenUser = await userModel.findByPk(token.UserId)
             await userModel.update({ password: req.body.password, lastUpdatedUserName: tokenUser.userName }, { where: { id: user.id } })
             return res.status(200).json({
-                message: "Password Updated Successfully :)"
+                message: "Password Updated Successfully."
             })
         } catch (err) {
             return res.status(500).json({
@@ -525,7 +517,7 @@ const login = async (req, res) => {
         let user = await userModel.findOne({ where: { email: req.body.email } }),
             tokenData = {}
         if (user === null) return res.status(404).json({
-            message: "Invalid email or password..!"
+            message: "Invalid email or password."
         })
 
         bcrypt.compare(req.body.password, user.password, async (err, result) => {
@@ -534,16 +526,16 @@ const login = async (req, res) => {
             })
 
             if (!result) return res.status(404).json({
-                message: "Invalid email or password..!"
+                message: "Invalid email or password."
             })
 
             // if(!user.verified) return res.status(401).json({
-            //     message: "Please check your email to verify email first..!"
+            //     message: "Please check your email to verify email first."
             // })
 
             let tokensOfUser = await tokenModel.findAndCountAll({ where: { UserId: user.id } })
             if (tokensOfUser.count >= user.devicesNumber) return res.status(400).json({
-                message: "Sorry..! The allowed number of devices has been exceeded"
+                message: "Sorry..! The allowed number of devices has been exceeded."
             })
 
             const token = jwt.sign({ user_id: user.id, role: user.role }, config.get("seckey"))
@@ -558,7 +550,7 @@ const login = async (req, res) => {
             });
 
             return res.status(200).json({
-                message: "Login successfully..!",
+                message: "Login successfully.",
                 token,
                 user_id: user.id,
                 role: user.role

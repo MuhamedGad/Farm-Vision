@@ -6,7 +6,7 @@ const getAllTokens = async(req, res)=>{
     try {
         let tokens = await tokenModel.findAndCountAll()
         return res.status(200).json({
-            message: "Found tokens :)",
+            message: "Found tokens.",
             length: tokens.count,
             data: tokens.rows
         })
@@ -20,7 +20,7 @@ const getAllTokens = async(req, res)=>{
 const getTokenByID = async(req, res)=>{
     let token = req.tokenFound
     return res.status(200).json({
-        message: "User Found :)",
+        message: "User Found.",
         data: token
     })
 }
@@ -30,7 +30,7 @@ const getTokensForUser = async(req, res)=>{
         let token = req.token,
             tokens = await tokenModel.findAndCountAll({where:{UserId:token.UserId}})
         return res.status(200).json({
-            message: "Found tokens :)",
+            message: "Found tokens.",
             length: tokens.count,
             data: tokens.rows
         })
@@ -53,7 +53,7 @@ const deleteToken = async(token, res)=>{
         });
 
         return res.status(200).json({
-            message: "Logout Successfully :)"
+            message: "Logout Successfully."
         })
     } catch (err) {
         return res.status(500).json({

@@ -421,6 +421,18 @@ Method:
 ```
 GET
 ```
+Response:
+```
+message: "Found posts."
+length: posts number
+data: list of PostsData each postData => {post, images, tags, user, userLike, userDisLike}
+- post => {id, content, createdAt, updatedAt, UserId}
+- images => list of images
+- tags => list of tags
+- user => {userName, firstName, lastName, role} the user that own the post
+- userLike: if user like the post or not
+- userDisLike: if user dislike the post or not
+```
 </br>
 
 ### **Get posts of specific user:**
@@ -431,6 +443,18 @@ Route:
 Method:
 ```
 GET
+```
+Response:
+```
+message: "Found posts."
+length: posts number
+user:{userName, firstName, lastName, role} owner of the post
+data: list of PostsData each postData => {post, images, tags, userLike, userDisLike}
+- post => {id, content, createdAt, updatedAt, UserId}
+- images => list of images
+- tags => list of tags
+- userLike: if user like the post or not
+- userDisLike: if user dislike the post or not
 ```
 </br>
 
@@ -443,6 +467,18 @@ Method:
 ```
 GET
 ```
+Response:
+```
+message: "Found posts."
+length: posts number
+data: list of PostsData each postData => {post, images, tags, user, userLike, userDisLike}
+- post => {id, content, createdAt, updatedAt, UserId}
+- images => list of images
+- tags => list of tags
+- user => {userName, firstName, lastName, role}  owner of the post
+- userLike: if user like the post or not
+- userDisLike: if user dislike the post or not
+```
 </br>
 
 ### **Get post:**
@@ -453,6 +489,17 @@ Route:
 Method:
 ```
 GET
+```
+Response:
+```
+message: "Post Found."
+data: PostData => {post, images, tags, user, userLike, userDisLike}
+- post => {id, content, createdAt, updatedAt, UserId}
+- images => list of images
+- tags => list of tags
+- user => {userName, firstName, lastName, role}
+- userLike: if user like the post or not
+- userDisLike: if user dislike the post or not
 ```
 </br>
 
@@ -471,6 +518,12 @@ Form:
 | content | text | must be between 10-1000 characters | false |
 | tags | checkboxes | must be array of valid tags that saved | false |
 | images | file | images of post | true |
+
+Response:
+```
+message: "Post created successfully.",
+id: postId
+```
 </br>
 
 ### **Update post:**
@@ -488,6 +541,11 @@ Form:
 | content | text | must be between 10-1000 characters | false |
 | tags | checkboxes | must be array of valid tags that saved | true |
 | images | file | images of post | true |
+
+Response:
+```
+message: "Post updated successfully."
+```
 </br>
 
 ### **Delete post:**
@@ -498,6 +556,10 @@ Route:
 Method:
 ```
 DELETE
+```
+Response:
+```
+message: "Post Deleted Successfully."
 ```
 </br>
 
@@ -510,6 +572,11 @@ Method:
 ```
 POST
 ```
+Response:
+```
+message: "Liked." or "Unliked."
+liked: true for like or false for unlike
+```
 </br>
 
 ### **DisLike or UnDislike post:**
@@ -520,6 +587,11 @@ Route:
 Method:
 ```
 POST
+```
+Response:
+```
+message: "DisLiked." or "UnDisLiked."
+disLiked: true for DisLiked or false for UnDisLiked
 ```
 ---
 
@@ -533,6 +605,16 @@ Method:
 ```
 GET
 ```
+Response:
+```
+message: "Comment Found.",
+user: {userName, firstName, lastName, role} comment owner
+userLike: if user like the post or not
+userDisLike: if user dislike the post or not
+data: commentData => {comment, images}
+- comment => {id, content, createdAt, updatedAt, UserId}
+- images => list of images
+```
 </br>
 
 ### **Get comments of specific post:**
@@ -543,6 +625,17 @@ Route:
 Method:
 ```
 GET
+```
+Response:
+```
+message: "Found comments."
+length: comments number
+data: list of CommentsData each commentData => {comment, images, user, userLike, userDisLike}
+- comment => {id, content, createdAt, updatedAt, UserId}
+- images => list of images
+- user => {userName, firstName, lastName, role}
+- userLike: if user like the post or not
+- userDisLike: if user dislike the post or not
 ```
 </br>
 
@@ -560,6 +653,12 @@ Form:
 |--------|------|-------|--------|
 | content | text | must be between 1-1000 characters | false |
 | images | file | images of comment | true |
+
+Response:
+```
+message: "Comment created successfully.",
+id: commentId
+```
 </br>
 
 ### **Create comment on comment:**
@@ -576,6 +675,12 @@ Form:
 |--------|------|-------|--------|
 | content | text | must be between 1-1000 characters | false |
 | images | file | images of comment | true |
+
+Response:
+```
+message: "Comment created successfully.",
+id: commentId
+```
 </br>
 
 ### **Update comment:**
@@ -592,6 +697,12 @@ Form:
 |--------|------|-------|--------|
 | content | text | must be between 1-1000 characters | true |
 | images | file | images of comment | true |
+
+Response:
+```
+message: "Comment updated successfully.",
+id: commentId
+```
 </br>
 
 ### **Delete comment:**
@@ -602,6 +713,11 @@ Route:
 Method:
 ```
 DELETE
+```
+Response:
+```
+message: "Comment Deleted successfully.",
+id: commentId
 ```
 </br>
 
@@ -614,6 +730,11 @@ Method:
 ```
 POST
 ```
+Response:
+```
+message: "Liked." or "Unliked."
+liked: true for like or false for unlike
+```
 </br>
 
 ### **DisLike or UnDislike comment:**
@@ -624,6 +745,11 @@ Route:
 Method:
 ```
 POST
+```
+Response:
+```
+message: "DisLiked." or "UnDisLiked."
+disLiked: true for DisLiked or false for UnDisLiked
 ```
 ---
 
@@ -706,6 +832,11 @@ Method:
 ```
 GET
 ```
+Response:
+```
+message: "Tag Found."
+data: tagData=>{tag, describtion, numberOfPosts}
+```
 </br>
 
 ### **Add tag request:**
@@ -722,6 +853,12 @@ Form:
 |--------|------|-------|--------|
 | tag | text | minimum length 3 characters and must be small chars with no spaces | false |
 | describtion | text | minimum length 10 characters | false |
+
+Response:
+```
+message: "Tag requested successfully."
+id: tagId
+```
 ---
 
 ## **Report Routes:**

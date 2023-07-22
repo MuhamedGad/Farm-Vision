@@ -45,7 +45,7 @@ const getAllPayments = async(req, res)=>{
     try{
         const payments = await paymentModel.findAndCountAll()
         return res.status(200).json({
-            message: "Get payments successfully",
+            message: "Get payments successfully.",
             data: payments.rows,
             length: payments.count
         })
@@ -59,7 +59,7 @@ const getAllPayments = async(req, res)=>{
 const getPaymentById = async(req, res)=>{
     const payment = req.payment
     return res.status(200).json({
-        message: "Get payment successfully",
+        message: "Get payment successfully.",
         data: payment
     })
 }
@@ -69,7 +69,7 @@ const getUserPayments = async(req, res)=>{
         const token = req.token
         const payments = await paymentModel.findAndCountAll({where:{UserId: token.UserId}})
         return res.status(200).json({
-            message: "Get user payments successfully",
+            message: "Get user payments successfully.",
             data: payments.rows,
             length: payments.count
         })
@@ -148,7 +148,7 @@ const storePaymentDetails = async(req, res)=>{
             if(!user.premium) await userModel.update({premium:true}, {where:{id:token.UserId}, transaction: t})
 
             return res.status(200).json({
-                message: "Subscribtion completed",
+                message: "Subscribtion completed.",
                 sessionId: sessionId,
             })
         })

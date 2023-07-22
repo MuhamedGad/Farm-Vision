@@ -4,7 +4,7 @@ const { Op } = require("sequelize")
 const getTagById = (req, res)=>{
     let tag = req.tag
     return res.status(200).json({
-        message: "Tag Found :)",
+        message: "Tag Found.",
         data: tag
     })
 }
@@ -13,7 +13,7 @@ const getAllTags = async (req, res) => {
     try {
         let tags = await tagModel.findAndCountAll({where:{isAccepted: true}, order:[["numberOfPosts", "DESC"]]})
         return res.status(200).json({
-            message: "Found tags :)",
+            message: "Found tags.",
             length: tags.count,
             data: tags.rows
         })
@@ -35,11 +35,11 @@ const createTag = async(req, res)=>{
 
     try{
         let checkTag = await tagModel.findOne({where:{tag:tagData.tag}})
-        if(checkTag) return res.status(400).json({message: "Tag already exists :("})
+        if(checkTag) return res.status(400).json({message: "Tag already exists."})
 
         let tag = await tagModel.create(tagData)
         return res.status(200).json({
-            message: "Tag created successfully :)",
+            message: "Tag created successfully.",
             id: tag.id
         })
     }catch(err){
@@ -60,11 +60,11 @@ const updateTag = async(req, res)=>{
         let checkTag = await tagModel.findOne({where:{
             [Op.and]: [{tag: tagData.tag}, {id: {[Op.not]: tag.id}}]
         }})
-        if(checkTag) return res.status(400).json({message: "Tag already exists :("})
+        if(checkTag) return res.status(400).json({message: "Tag already exists."})
         
         await tagModel.update(tagData, {where:{id:tag.id}})
         return res.status(200).json({
-            message: "Tag updated successfully :)"
+            message: "Tag updated successfully."
         })
     }catch(err){
         return res.status(500).json({
@@ -78,7 +78,7 @@ const deleteTag = async(req, res)=>{
         let tag = req.tag
         await tagModel.destroy({where: { id: tag.id }})
         return res.status(200).json({
-            message: "Tag Deleted Successfully :)"
+            message: "Tag Deleted Successfully."
         })
     } catch (err) {
         return res.status(500).json({
@@ -99,7 +99,7 @@ const addTagRequest = async(req, res)=>{
     try{
         let tag = await tagModel.create(tagData)
         return res.status(200).json({
-            message: "Tag requested successfully :)",
+            message: "Tag requested successfully.",
             id: tag.id
         })
     }catch(err){
@@ -113,7 +113,7 @@ const getTagRequests = async(req, res)=>{
     try {
         let tags = await tagModel.findAndCountAll({where:{isAccepted:false}})
         return res.status(200).json({
-            message: "Found tag requests :)",
+            message: "Found tag requests.",
             length: tags.count,
             data: tags.rows
         })
@@ -133,7 +133,7 @@ const acceptTagRequest = async(req, res)=>{
     try{
         await tagModel.update(tagData, {where:{id:tag.id}})
         return res.status(200).json({
-            message: "Tag accepted successfully :)"
+            message: "Tag accepted successfully."
         })
     }catch(err){
         return res.status(500).json({
@@ -147,7 +147,7 @@ const rejectTagRequest = async(req, res)=>{
         let tag = req.tag
         await tagModel.destroy({where: { id: tag.id }})
         return res.status(200).json({
-            message: "Tag request rejected successfully :)"
+            message: "Tag request rejected successfully."
         })
     } catch (err) {
         return res.status(500).json({

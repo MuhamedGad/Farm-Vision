@@ -4,7 +4,7 @@ module.exports = async (req, res, next) => {
     try {
         let tag = await tagModel.findByPk(req.params.id)
         if (tag === null) return res.status(404).json({
-            message: "Tag Not Found :("
+            message: "Tag Not Found."
         })
         else {
             req.tag = tag

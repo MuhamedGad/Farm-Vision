@@ -11,7 +11,7 @@ const imageFilter = (req, file, cb) => {
 
 const storage = multer.diskStorage({
     destination: (req, file, callBack) => {
-        callBack(null, './public/images')     // './public/images/' directory name where save the images
+        callBack(null, './public/images')
     },
     filename: (req, file, callBack) => {
         callBack(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))

@@ -19,7 +19,7 @@ module.exports = (req, res, next)=>{
                     req.token.role = Decoded.role
                     next()
                 }else return res.status(401).json({
-                    message: "Access Denied :("
+                    message: "Access Denied."
                 })
             }catch(err){
                 return res.status(500).json({

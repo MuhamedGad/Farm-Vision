@@ -50,7 +50,7 @@ const getCommentById = async(req, res)=>{
         let userLike = await checkUserLike(token.UserId, comment.id)
         let userDisLike = await checkUserDisLike(token.UserId, comment.id)
         return res.status(200).json({
-            message: "Comment Found :)",
+            message: "Comment Found.",
             data: {comment, images},
             user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName, role: user.role},
             userLike,
@@ -86,7 +86,7 @@ const getCommentsOfPost = async(req, res)=>{
             commentsData.push({comment, images, user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName, role: user.role}, userLike, userDisLike})
         }
         return res.status(200).json({
-            message: "Found Comments :)",
+            message: "Found Comments.",
             length: comments.count,
             data: commentsData
         })
@@ -147,7 +147,7 @@ const creatComment = async(req, res)=>{
         })
 
         return res.status(200).json({
-            message: "Comment created successfully :)",
+            message: "Comment created successfully.",
             id: comment.id
         })
     }catch(err){
@@ -191,7 +191,7 @@ const updateComment = async(req, res)=>{
         })
 
         return res.status(200).json({
-            message: "Comment updated successfully :)"
+            message: "Comment updated successfully."
         })
     }catch(err){
         return res.status(500).json({
@@ -226,7 +226,7 @@ const deleteComment = async(req, res)=>{
         })
         
         return res.status(200).json({
-            message: "Comment Deleted Successfully :)"
+            message: "Comment Deleted Successfully."
         })
     } catch (err) {
         return res.status(500).json({
@@ -271,7 +271,7 @@ const like = async(req, res)=>{
             }
         })
         return res.status(200).json({
-            message: (liked)?"Liked :)":"Unliked :(",
+            message: (liked)?"Liked.":"Unliked.",
             liked
         })
     } catch (err) {
@@ -317,7 +317,7 @@ const disLike = async(req, res)=>{
             }
         })
         return res.status(200).json({
-            message: (disLiked)?"disLiked :)":"UndisLiked :(",
+            message: (disLiked)?"disLiked.":"UndisLiked.",
             disLiked
         })
     } catch (err) {

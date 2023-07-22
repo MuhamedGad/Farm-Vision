@@ -60,7 +60,7 @@ const getPostById = async (req, res) => {
         let userDisLike = await checkUserDisLike(token.UserId, post.id)
 
         return res.status(200).json({
-            message: "Post Found :)",
+            message: "Post Found.",
             data: {post, images, tags, user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName, role: user.role},userLike, userDisLike}
         })
     } catch (err) {
@@ -96,7 +96,7 @@ const getAllPosts = async (req, res) => {
             postsData.push({post, images, tags, user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName, role: user.role}, userLike, userDisLike})
         }
         return res.status(200).json({
-            message: "Found posts :)",
+            message: "Found posts.",
             length: posts.count,
             data: postsData
         })
@@ -137,7 +137,7 @@ const getPostsForUser = async(req, res)=>{
             postsData.push({post, images, tags, userLike, userDisLike})
         }
         return res.status(200).json({
-            message: "Found posts :)",
+            message: "Found posts.",
             length: posts.count,
             data: postsData,
             user:{userName:user.userName, firstName:user.firstName, lastName:user.lastName, role: user.role}
@@ -184,7 +184,7 @@ const getPostsForTag = async(req, res)=>{
             postsData.push({post, images, tags, user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName, role: user.role}, userLike, userDisLike})
         }
         return res.status(200).json({
-            message: "Found posts :)",
+            message: "Found posts.",
             length: posts.length,
             data: postsData
         })
@@ -233,7 +233,7 @@ const createPost = async(req, res)=>{
         })
 
         return res.status(200).json({
-            message: "Post created successfully :)",
+            message: "Post created successfully.",
             id: post.id
         })
     }catch(err){
@@ -290,7 +290,7 @@ const updatePost = async(req, res)=>{
         })
         
         return res.status(200).json({
-            message: "Post updated successfully :)"
+            message: "Post updated successfully."
         })
     }catch(err){
         return res.status(500).json({
@@ -311,7 +311,7 @@ const deletePost = async(req, res)=>{
             await postModel.destroy({where: { id: post.id }, transaction: t})
         })
         return res.status(200).json({
-            message: "Post Deleted Successfully :)"
+            message: "Post Deleted Successfully."
         })
     } catch (err) {
         return res.status(500).json({
@@ -354,7 +354,7 @@ const like = async(req, res)=>{
             }
         })
         return res.status(200).json({
-            message: (liked)?"Liked :)":"Unliked :(",
+            message: (liked)?"Liked.":"Unliked.",
             liked
         })
     } catch (err) {
@@ -398,7 +398,7 @@ const disLike = async(req, res)=>{
             }
         })
         return res.status(200).json({
-            message: (disLiked)?"DisLiked :)":"UnDisLiked :(",
+            message: (disLiked)?"DisLiked.":"UnDisLiked.",
             disLiked
         })
     } catch (err) {

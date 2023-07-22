@@ -16,7 +16,7 @@ const getAllReports = async (req, res) => {
             });
         }
         return res.status(200).json({
-            message: "found reports",
+            message: "found reports.",
             length: reports.count,
             data: reportsData,
         });
@@ -38,7 +38,7 @@ const getReport = async (req, res) => {
         user: {userName: user.userName, firstName: user.firstName, lastName: user.lastName, role: user.role}
     }
     return res.status(200).json({
-        message: "found report",
+        message: "found report.",
         data: reportData
     });
 }
@@ -48,7 +48,7 @@ const getMyReports = async (req, res) => {
         const   token = req.token,
                 reports = await reportModel.findAndCountAll({where: {UserId: token.UserId}})
         return res.status(200).json({
-            message: "found reports",
+            message: "found reports.",
             length: reports.count,
             data: reports.rows,
         });
@@ -72,7 +72,7 @@ const createReport = async (req, res) => {
         const report = await reportModel.create(reportData)
 
         return res.status(200).json({
-            message: "report created successfully",
+            message: "report created successfully.",
             id: report.id
         });
     } catch (error) {
@@ -94,7 +94,7 @@ const updateReport = async (req, res) => {
         await reportModel.update(reportData, {where: {id: report.id}})
 
         return res.status(200).json({
-            message: "report updated successfully"
+            message: "report updated successfully."
         });
     } catch (error) {
         return res.status(500).json({
@@ -108,7 +108,7 @@ const deleteReport = async (req, res) => {
         const report = req.report;
         await reportModel.destroy({where: {id: report.id}})
         return res.status(200).json({
-            message: "report deleted successfully"
+            message: "report deleted successfully."
         })
     } catch (error) {
         return res.status(500).json({
@@ -122,7 +122,7 @@ const reportRepair = async (req, res) => {
         const report = req.report;
         await reportModel.update({status: "repaired"}, {where: {id: report.id}})
         return res.status(200).json({
-            message: "report repaired successfully"
+            message: "report repaired successfully."
         });
     } catch (error) {
         return res.status(500).json({

@@ -4,7 +4,7 @@ module.exports = async(req, res, next)=>{
     try {
         let tokenFound = await tokenModel.findByPk(req.params.id)
         if(tokenFound === null) return res.status(404).json({
-            message: "Token Not Found :("
+            message: "Token Not Found."
         })
         else {
             req.tokenFound = tokenFound

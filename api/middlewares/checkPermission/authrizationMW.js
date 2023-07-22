@@ -3,13 +3,13 @@ const tokenModel = require("../../models/Token")
 module.exports = async (req, res, next) => {
     let token = req.header("x-auth-token")
     if (!token) return res.status(401).json({
-        message: "Please signin or register..!"
+        message: "Token required."
     })
 
     try {
         let tokenFromDataBase = await tokenModel.findOne({ where: { token: token } })
         if (tokenFromDataBase === null) return res.status(404).json({
-            message: "Invalid Token :("
+            message: "Invalid Token."
         })
         else {
             req.token = tokenFromDataBase
